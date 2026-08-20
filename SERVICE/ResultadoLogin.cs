@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL
+namespace SERVICE
 {
-    public class Class1
+    public enum ResultadoLogin
     {
+        Exitoso,
+        CredencialesInvalidas,
+        UsuarioBloqueado
     }
 }

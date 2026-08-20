@@ -1,7 +1,7 @@
 <Solution>
-  <Project Path="BE/BE.csproj" />
-  <Project Path="BLL/BLL.csproj" />
-  <Project Path="DAL/DAL.csproj" />
+  <Project Path="BE/BE.csproj" Id="1603e61d-c181-4b3e-abbc-40bb8a2382e2" />
+  <Project Path="BLL/BLL.csproj" Id="97c21b9a-f6bf-46b2-9f19-dc01a1ff5b8c" />
+  <Project Path="DAL/DAL.csproj" Id="eca3c378-e24d-46ff-9c2c-7f0d594f6c79" />
   <Project Path="Doverie_App/" Type="Website" DisplayName="Doverie_App">
     <BuildType Project="Debug" />
     <Properties Name="WebsiteProperties">
@@ -13,7 +13,7 @@
       <Property Name="Debug.AspNetCompiler.Updateable" Value="&quot;true&quot;" />
       <Property Name="Debug.AspNetCompiler.VirtualPath" Value="&quot;/localhost_65429&quot;" />
       <Property Name="DefaultWebSiteLanguage" Value="&quot;Visual C#&quot;" />
-      <Property Name="ProjectReferences" Value="&quot;{1603e61d-c181-4b3e-abbc-40bb8a2382e2}|BE.dll;{97c21b9a-f6bf-46b2-9f19-dc01a1ff5b8c}|BLL.dll;{f3640c05-6932-46f3-ae47-aaa731429072}|SERVICE.dll;&quot;" />
+      <Property Name="ProjectReferences" Value="&quot;{1603e61d-c181-4b3e-abbc-40bb8a2382e2}|BE.dll;{97c21b9a-f6bf-46b2-9f19-dc01a1ff5b8c}|BLL.dll;{f3640c05-6932-46f3-ae47-aaa731429072}|SERVICE.dll;{ECA3C378-E24D-46FF-9C2C-7F0D594F6C79}|DAL.dll;&quot;" />
       <Property Name="Release.AspNetCompiler.Debug" Value="&quot;False&quot;" />
       <Property Name="Release.AspNetCompiler.FixedNames" Value="&quot;false&quot;" />
       <Property Name="Release.AspNetCompiler.ForceOverwrite" Value="&quot;true&quot;" />
@@ -25,5 +25,5 @@
       <Property Name="VWDPort" Value="&quot;65429&quot;" />
     </Properties>
   </Project>
-  <Project Path="SERVICE/SERVICE.csproj" />
+  <Project Path="SERVICE/SERVICE.csproj" Id="f3640c05-6932-46f3-ae47-aaa731429072" />
 </Solution>
