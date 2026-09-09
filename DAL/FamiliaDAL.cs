@@ -87,13 +87,13 @@ namespace DAL
         public Dictionary<int, ComponentePermiso> ArmarArbol()
         {
             DAO Dao = new DAO();
-            Dictionary<int, ComponentePermiso> Nodos = new Dictionary<int, ComponentePermiso>();
-
+            Dictionary<int, PermisoBE> Permisos = new Dictionary<int, PermisoBE>();
             PermisoDAL PermisoDal = new PermisoDAL();
             foreach (PermisoBE Permiso in PermisoDal.Listar())
             {
-                Nodos[Permiso.Id] = Permiso;
+                Permisos[Permiso.Id] = Permiso;
             }
+            Dictionary<int, FamiliaBE> Familias = new Dictionary<int, FamiliaBE>();
             DataSet DsFamilias = Dao.ExecuteDataSetStoredProcedure("SP_Familia_Listar", null, CommandType.StoredProcedure);
             foreach (DataRow Fila in DsFamilias.Tables[0].Rows)
             {
@@ -102,24 +102,32 @@ namespace DAL
                     Id = Convert.ToInt32(Fila["Id"]),
                     Nombre = Fila["Nombre"].ToString()
                 };
-                Nodos[Familia.Id] = Familia;
+                Familias[Familia.Id] = Familia;
             }
             DataSet DsComponentes = Dao.ExecuteDataSetStoredProcedure("SP_FamiliaComponente_Listar", null, CommandType.StoredProcedure);
             foreach (DataRow Fila in DsComponentes.Tables[0].Rows)
             {
                 int FamiliaId = Convert.ToInt32(Fila["FamiliaId"]);
-                FamiliaBE FamiliaPadre = (FamiliaBE)Nodos[FamiliaId];
+                FamiliaBE FamiliaPadre = Familias[FamiliaId];
 
                 if (Fila["PermisoId"] != DBNull.Value)
                 {
                     int PermisoId = Convert.ToInt32(Fila["PermisoId"]);
-                    FamiliaPadre.AgregarHijo(Nodos[PermisoId]);
+                    FamiliaPadre.AgregarHijo(Permisos[PermisoId]);
                 }
                 else
                 {
                     int SubFamiliaId = Convert.ToInt32(Fila["SubFamiliaId"]);
-                    FamiliaPadre.AgregarHijo(Nodos[SubFamiliaId]);
+                    FamiliaPadre.AgregarHijo(Familias[SubFamiliaId]);
                 }
+            }
+            // El diccionario final solo necesita tener las Familias (nadie externo
+            // busca un Permiso suelto por Id acá — PerfilDAL, por ejemplo, solo
+            // busca Familias, ya que PerfilFamilia únicamente vincula Perfiles con Familias).
+            Dictionary<int, ComponentePermiso> Nodos = new Dictionary<int, ComponentePermiso>();
+            foreach (var Par in Familias)
+            {
+                Nodos[Par.Key] = Par.Value;
             }
             return Nodos;
         }

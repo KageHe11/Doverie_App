@@ -15,7 +15,75 @@
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href="~/Default.aspx">Doverie</a>
+                <a class="navbar-brand d-flex align-items-center" href="/Default.aspx">
+                    <img src="/Content/img/logo.png" alt="Doverie" height="30" class="me-2" />
+                    Doverie
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarMenu">
+                    <ul class="navbar-nav me-auto">
+
+                        <asp:Panel ID="pnlAdmin" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Usuarios.aspx">Usuarios</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    Credenciales
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="/Perfiles.aspx">Perfiles</a></li>
+                                    <li><a class="dropdown-item" href="/Familias.aspx">Familias</a></li>
+                                    <li><a class="dropdown-item" href="/Permisos.aspx">Permisos</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled d-flex align-items-center" href="#">
+                                    Bitácora
+                                    <span class="badge bg-secondary ms-2">Próximamente</span>
+                                </a>
+                            </li>
+                        </asp:Panel>
+
+                        <asp:Panel ID="pnlEmpresa" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item me-2">
+                                <a class="nav-link disabled d-flex align-items-center" href="#">
+                                    Documentos
+                                    <span class="badge bg-secondary ms-2">Próximamente</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Usuarios.aspx">Usuarios</a>
+                            </li>
+                        </asp:Panel>
+
+                        <asp:Panel ID="pnlEmpleadoOFreelance" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link disabled d-flex align-items-center" href="#">
+                                    Documentos
+                                    <span class="badge bg-secondary ms-2">Próximamente</span>
+                                </a>
+                            </li>
+                        </asp:Panel>
+
+                    </ul>
+
+                    <div class="d-flex align-items-center">
+                        <asp:Panel ID="pnlNoLogueado" runat="server">
+                            <a class="btn btn-outline-light btn-sm" href="/Login.aspx">Iniciar sesión</a>
+                        </asp:Panel>
+                        <asp:Panel ID="pnlLogueado" runat="server" CssClass="d-flex align-items-center" Visible="false">
+                            <span class="text-light me-3"><asp:Literal ID="litSaludo" runat="server" /></span>
+                            <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-outline-light btn-sm" OnClick="btnCerrarSesion_Click">
+                                Cerrar sesión
+                            </asp:LinkButton>
+                        </asp:Panel>
+                    </div>
+                </div>
             </div>
         </nav>
 

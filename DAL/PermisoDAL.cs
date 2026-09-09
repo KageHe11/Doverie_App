@@ -82,5 +82,13 @@ namespace DAL
                 Descripcion = Fila["Descripcion"].ToString()
             };
         }
+        public PermisoBE ObtenerPorNombre(string nombre)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Nombre", nombre } };
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Permiso_ObtenerPorNombre", Parametros, CommandType.StoredProcedure);
+            if (Ds.Tables[0].Rows.Count == 0) return null;
+            return MapearFila(Ds.Tables[0].Rows[0]);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL;
 
 namespace BLL
 {
@@ -11,8 +12,33 @@ namespace BLL
     {
         public List<PerfilBE> Listar()
         {
+            PerfilDAL Dal = new PerfilDAL();
+            return Dal.Listar();
+        }
+        public void Registrar(PerfilBE perfil)
+        {
+            PerfilDAL Dal = new PerfilDAL();
+            Dal.Registrar(perfil);
+        }
+        public void ActualizarDatos(PerfilBE perfil)
+        {
+            PerfilDAL Dal = new PerfilDAL();
+            Dal.ActualizarDatos(perfil);
+        }
+        public void ActualizarEstado(PerfilBE perfil)
+        {
+            PerfilDAL Dal = new PerfilDAL();
+            Dal.ActualizarEstado(perfil);
+        }
+        public PerfilBE ObtenerDatos(int id)
+        {
+            PerfilDAL PerfilDal = new PerfilDAL();
+            return PerfilDal.ObtenerDatos(id);
+        }
+        public void ActualizarPermisos(PerfilBE perfil)
+        {
             DAL.PerfilDAL PerfilDal = new DAL.PerfilDAL();
-            return PerfilDal.Listar();
+            PerfilDal.ActualizarPermisos(perfil);
         }
     }
 }

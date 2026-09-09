@@ -1,10 +1,7 @@
-﻿using BE;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BE;
 
 namespace DAL
 {
@@ -28,32 +25,51 @@ namespace DAL
                 { "@NombrePerfil", Pperfil.NombrePerfil }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_Registrar", Parametros, CommandType.StoredProcedure);
-            foreach (FamiliaBE Familia in Pperfil.Familias)
-            {
-                InsertarFamiliaPerfil(Pperfil.Id, Familia.Id);
-            }
         }
-        public void ActualizarPermisos(PerfilBE Pperfil)
+        public void ActualizarDatos(PerfilBE Pperfil)
         {
-            List<int> FamiliasActuales = ObtenerFamiliasActuales(Pperfil.Id);
-            List<int> FamiliasNuevas = new List<int>();
-            foreach (FamiliaBE Familia in Pperfil.Familias) FamiliasNuevas.Add(Familia.Id);
-            foreach (FamiliaBE Familia in Pperfil.Familias)
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
-                if (!FamiliasActuales.Contains(Familia.Id))
-                    InsertarFamiliaPerfil(Pperfil.Id, Familia.Id);
-            }
-            foreach (int IdActual in FamiliasActuales)
-            {
-                if (!FamiliasNuevas.Contains(IdActual))
-                    EliminarFamiliaPerfil(Pperfil.Id, IdActual);
-            }
+                { "@Id", Pperfil.Id },
+                { "@NombrePerfil", Pperfil.NombrePerfil }
+            };
+            Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_ActualizarDatos", Parametros, CommandType.StoredProcedure);
         }
-        public void Eliminar(int Pid)
+        public void ActualizarEstado(PerfilBE Pperfil)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Id", Pperfil.Id },
+                { "@Activo", Pperfil.Activo }
+            };
+            Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_ActualizarEstado", Parametros, CommandType.StoredProcedure);
+        }
+        public PerfilBE ObtenerDatos(int Pid)
         {
             DAO Dao = new DAO();
             Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
-            Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_Eliminar", Parametros, CommandType.StoredProcedure);
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ObtenerDatos", Parametros, CommandType.StoredProcedure);
+            if (Ds.Tables[0].Rows.Count == 0) return null;
+            DataRow Fila = Ds.Tables[0].Rows[0];
+            PerfilBE Perfil = new PerfilBE
+            {
+                Id = Convert.ToInt32(Fila["Id"]),
+                NombrePerfil = Fila["NombrePerfil"].ToString(),
+                Activo = Convert.ToBoolean(Fila["Activo"])
+            };
+            FamiliaDAL FamiliaDal = new FamiliaDAL();
+            Dictionary<int, ComponentePermiso> Arbol = FamiliaDal.ArmarArbol();
+            foreach (int IdFamilia in ObtenerFamiliasActuales(Pid))
+            {
+                if (Arbol.ContainsKey(IdFamilia))
+                {
+                    Perfil.Familias.Add((FamiliaBE)Arbol[IdFamilia]);
+                }
+            }
+
+            return Perfil;
         }
         public List<PerfilBE> Listar()
         {
@@ -65,64 +81,65 @@ namespace DAL
                 Perfiles.Add(new PerfilBE
                 {
                     Id = Convert.ToInt32(Fila["Id"]),
-                    NombrePerfil = Fila["NombrePerfil"].ToString()
+                    NombrePerfil = Fila["NombrePerfil"].ToString(),
+                    Activo = Convert.ToBoolean(Fila["Activo"])
                 });
             }
             return Perfiles;
         }
-        public PerfilBE ObtenerDatos(int Pid)
+        public List<int> ObtenerFamiliasActuales(int perfilId)
         {
             DAO Dao = new DAO();
-            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
-            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ObtenerDatos", Parametros, CommandType.StoredProcedure);
-            if (Ds.Tables[0].Rows.Count == 0) return null;
-            PerfilBE Perfil = new PerfilBE
-            {
-                Id = Convert.ToInt32(Ds.Tables[0].Rows[0]["Id"]),
-                NombrePerfil = Ds.Tables[0].Rows[0]["NombrePerfil"].ToString()
-            };
-            FamiliaDAL FamiliaDal = new FamiliaDAL();
-            Dictionary<int, ComponentePermiso> Arbol = FamiliaDal.ArmarArbol();
-            foreach (int IdFamilia in ObtenerFamiliasActuales(Pid))
-            {
-                Perfil.Familias.Add((FamiliaBE)Arbol[IdFamilia]);
-            }
-            return Perfil;
-        }
-        public bool ExistePorNombre(string Pnombre)
-        {
-            DAO Dao = new DAO();
-            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@NombrePerfil", Pnombre } };
-            object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Perfil_ExistePorNombre", Parametros, CommandType.StoredProcedure);
-            return Convert.ToInt32(Resultado) > 0;
-        }
-        private List<int> ObtenerFamiliasActuales(int PerfilId)
-        {
-            DAO Dao = new DAO();
-            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@PerfilId", PerfilId } };
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@PerfilId", perfilId } };
             DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_PerfilFamilia_ListarPorPerfil", Parametros, CommandType.StoredProcedure);
+
             List<int> Ids = new List<int>();
             foreach (DataRow Fila in Ds.Tables[0].Rows)
+            {
                 Ids.Add(Convert.ToInt32(Fila["FamiliaId"]));
+            }
             return Ids;
         }
-        private void InsertarFamiliaPerfil(int PerfilId, int FamiliaId)
+        public void ActualizarPermisos(PerfilBE perfil)
+        {
+            List<int> FamiliasActuales = ObtenerFamiliasActuales(perfil.Id);
+            List<int> FamiliasNuevas = new List<int>();
+            foreach (FamiliaBE Familia in perfil.Familias)
+            {
+                FamiliasNuevas.Add(Familia.Id);
+            }
+            foreach (FamiliaBE Familia in perfil.Familias)
+            {
+                if (!FamiliasActuales.Contains(Familia.Id))
+                {
+                    InsertarFamiliaPerfil(perfil.Id, Familia.Id);
+                }
+            }
+            foreach (int IdActual in FamiliasActuales)
+            {
+                if (!FamiliasNuevas.Contains(IdActual))
+                {
+                    EliminarFamiliaPerfil(perfil.Id, IdActual);
+                }
+            }
+        }
+        private void InsertarFamiliaPerfil(int perfilId, int familiaId)
         {
             DAO Dao = new DAO();
             Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
-                { "@PerfilId", PerfilId },
-                { "@FamiliaId", FamiliaId }
+                { "@PerfilId", perfilId },
+                { "@FamiliaId", familiaId }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_PerfilFamilia_Registrar", Parametros, CommandType.StoredProcedure);
         }
-        private void EliminarFamiliaPerfil(int PerfilId, int FamiliaId)
+        private void EliminarFamiliaPerfil(int perfilId, int familiaId)
         {
             DAO Dao = new DAO();
             Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
-                { "@PerfilId", PerfilId },
-                { "@FamiliaId", FamiliaId }
+                { "@PerfilId", perfilId },
+                { "@FamiliaId", familiaId }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_PerfilFamilia_Eliminar", Parametros, CommandType.StoredProcedure);
         }

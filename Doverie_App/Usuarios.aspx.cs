@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 /// o tiene un Id cargado).
 public partial class Usuarios : PaginaBase
 {
+    protected override string PermisoRequerido { get { return "VerUsuarios"; } }
     protected void Page_Load(object sender, EventArgs e)
     {
         // Solo la primera carga (no en cada postback, para no perder
@@ -164,6 +165,11 @@ public partial class Usuarios : PaginaBase
     private void CerrarModal()
     {
         ScriptManager.RegisterStartupScript(this, GetType(), "cerrarModal",
-            "var m = bootstrap.Modal.getInstance(document.getElementById('modalUsuario')); if(m) m.hide();", true);
+            @"var m = bootstrap.Modal.getInstance(document.getElementById('modalUsuario'));
+          if (m) m.hide();
+          document.body.classList.remove('modal-open');
+          document.body.style.removeProperty('padding-right');
+          document.querySelectorAll('.modal-backdrop').forEach(function(b) { b.remove(); });",
+            true);
     }
 }

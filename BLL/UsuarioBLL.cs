@@ -65,12 +65,13 @@ namespace BLL
                 return ResultadoLogin.UsuarioBloqueado;
             }
             HashService Hasheo = new HashService();
-            if(!Hasheo.VerificarContrasena(Pcontrasena, Usuario.Contrasena))
+            if (!Hasheo.VerificarContrasena(Pcontrasena, Usuario.Contrasena))
             {
                 return ResultadoLogin.CredencialesInvalidas;
             }
             ReiniciarIntentos(Usuario);
-            //Obtenr Perfil
+            PerfilBLL PerfilBll = new PerfilBLL();
+            Usuario.Perfil = PerfilBll.ObtenerDatos(Usuario.Perfil.Id);
             TokenService ServioToken = new TokenService();
             Token = ServioToken.GenerarToken(Usuario);
             UsuarioLogueado = Usuario;

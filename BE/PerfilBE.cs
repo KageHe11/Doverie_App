@@ -10,6 +10,7 @@ namespace BE
     {
         public int Id { get; set; }
         public string NombrePerfil { get; set; }
+        public bool Activo { get; set; }
         public IList<FamiliaBE> Familias { get; set; }
         public PerfilBE()
         {
