@@ -109,6 +109,13 @@ public partial class Usuarios : PaginaBase
             // --- ALTA ---
             // La contraseña es obligatoria al crear un usuario nuevo.
             HashService Hasheo = new HashService();
+            if (UsuarioBll.ExistePorNombreUsuario(txtNombreUsuario.Text))
+            {
+                lblErrorModal.Text = "Ya existe un usuario con ese nombre de usuario.";
+                lblErrorModal.Visible = true;
+                AbrirModal();
+                return;
+            }
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
             {
                 lblErrorModal.Text = "La contraseña es obligatoria para un usuario nuevo.";

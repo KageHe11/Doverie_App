@@ -28,6 +28,12 @@
                         <asp:Button ID="btnIngresar" runat="server" Text="Ingresar" CssClass="btn btn-primary" OnClick="btnIngresar_Click" />
                     </div>
 
+                    <div class="text-center mt-3">
+                        <a href="/RecuperarContrasena.aspx">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <div class="text-center mt-2">
+                        <a href="/Registro.aspx">¿No tenés cuenta? Registrate</a>
+                </div>
                 </div>
             </div>
 

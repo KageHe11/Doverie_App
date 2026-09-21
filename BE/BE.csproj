@@ -41,10 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitacoraBE.cs" />
     <Compile Include="ComponentePermiso.cs" />
     <Compile Include="FamiliaBE.cs" />
     <Compile Include="PerfilBE.cs" />
     <Compile Include="PermisoBE.cs" />
+    <Compile Include="ResultadoModificarPerfil.cs" />
+    <Compile Include="ResultadoRecuperacion.cs" />
+    <Compile Include="ResultadoRegistro.cs" />
+    <Compile Include="ResultadoRestablecimiento.cs" />
     <Compile Include="UsuarioBE.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -16,6 +16,7 @@ public partial class Site : MasterPage
             litSaludo.Text = ArmarSaludo(Usuario);
             pnlAdmin.Visible = TienePermisoDeAdmin(Usuario);
             pnlEmpresa.Visible = Usuario.Empresa;
+            pnlMiPerfil.Visible = !Usuario.Empleado;
             pnlEmpleadoOFreelance.Visible = Usuario.Empleado || Usuario.Independiente;
         }
         else

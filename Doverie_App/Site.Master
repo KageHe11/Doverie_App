@@ -42,10 +42,7 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link disabled d-flex align-items-center" href="#">
-                                    Bitácora
-                                    <span class="badge bg-secondary ms-2">Próximamente</span>
-                                </a>
+                                <a class="nav-link" href="/Bitacora.aspx">Bitácora</a>
                             </li>
                         </asp:Panel>
 
@@ -57,7 +54,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/Usuarios.aspx">Usuarios</a>
+                                 <a class="nav-link" href="/EmpleadosEmpresa.aspx">Usuarios</a>
                             </li>
                         </asp:Panel>
 
@@ -78,9 +75,12 @@
                         </asp:Panel>
                         <asp:Panel ID="pnlLogueado" runat="server" CssClass="d-flex align-items-center" Visible="false">
                             <span class="text-light me-3"><asp:Literal ID="litSaludo" runat="server" /></span>
-                            <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-outline-light btn-sm" OnClick="btnCerrarSesion_Click">
+                                <asp:Panel ID="pnlMiPerfil" runat="server" CssClass="me-2">
+                                    <a class="btn btn-outline-light btn-sm" href="/MiPerfil.aspx">Mi Perfil</a>
+                                </asp:Panel>
+                                <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-outline-light btn-sm" OnClick="btnCerrarSesion_Click">
                                 Cerrar sesión
-                            </asp:LinkButton>
+                                </asp:LinkButton>
                         </asp:Panel>
                     </div>
                 </div>

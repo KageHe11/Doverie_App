@@ -34,8 +34,8 @@ namespace DAL
                 { "@Independiente", Pusuario.Independiente },
                 { "@Local", Pusuario.Local },
                 { "@PerfilId", Pusuario.Perfil.Id },
-                { "@EmpresaId", DBNull.Value },
-                { "@IdiomaId", DBNull.Value }
+                { "@EmpresaId", Pusuario.EmpresaId.HasValue ? (object)Pusuario.EmpresaId.Value : DBNull.Value },
+                { "@IdiomaId", DBNull.Value },
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_Registrar", Parametros, CommandType.StoredProcedure);
         }
@@ -59,7 +59,7 @@ namespace DAL
                 { "@Motivo", (object)Pusuario.Motivo ?? DBNull.Value },
                 { "@Intentos", Pusuario.Intentos },
                 { "@PerfilId", Pusuario.Perfil.Id },
-                { "@EmpresaId", DBNull.Value },
+                { "@EmpresaId", Pusuario.EmpresaId.HasValue ? (object)Pusuario.EmpresaId.Value : DBNull.Value },
                 { "@IdiomaId", DBNull.Value }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarDatos", Parametros, CommandType.StoredProcedure);
@@ -75,14 +75,12 @@ namespace DAL
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarEstado", Parametros, CommandType.StoredProcedure);
         }
-
         public int ContarActivos()
         {
             DAO Dao = new DAO();
             object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ContarActivos", null, CommandType.StoredProcedure);
             return Convert.ToInt32(Resultado);
         }
-
         public UsuarioBE ObtenerDatos(int Pid)
         {
             DAO Dao = new DAO();
@@ -91,7 +89,6 @@ namespace DAL
             if (Ds.Tables[0].Rows.Count == 0) return null;
             return MapearFila(Ds.Tables[0].Rows[0]);
         }
-
         public List<UsuarioBE> ListarActivos()
         {
             DAO Dao = new DAO();
@@ -120,6 +117,8 @@ namespace DAL
             }
             return Usuarios;
         }
+        /// Busca un Usuario por NombreUsuario. Trae todos sus campos, incluida
+        /// la Contraseña (hasheada) — necesaria para que la BLL pueda verificarla.
         public UsuarioBE ObtenerPorNombreUsuario(string PnombreUsuario)
         {
             DAO Dao = new DAO();
@@ -127,6 +126,43 @@ namespace DAL
             DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Usuario_ObtenerPorNombreUsuario", Parametros, CommandType.StoredProcedure);
             if (Ds.Tables[0].Rows.Count == 0) return null;
             return MapearFila(Ds.Tables[0].Rows[0]);
+        }
+        public List<UsuarioBE> ListarPorEmpresa(int empresaId)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@EmpresaId", empresaId } };
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Usuario_ListarPorEmpresa", Parametros, CommandType.StoredProcedure);
+            List<UsuarioBE> Usuarios = new List<UsuarioBE>();
+            foreach (DataRow Fila in Ds.Tables[0].Rows)
+            {
+                Usuarios.Add(MapearFila(Fila));
+            }
+            return Usuarios;
+        }
+        public bool ExistePorGmailExcluyendo(string gmail, int idExcluir)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Gmail", gmail },
+                { "@IdExcluir", idExcluir }
+            };
+            object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorGmailExcluyendo", Parametros, CommandType.StoredProcedure);
+            return Convert.ToInt32(Resultado) > 0;
+        }
+        public bool ExistePorGmail(string gmail)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Gmail", gmail } };
+            object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorGmail", Parametros, CommandType.StoredProcedure);
+            return Convert.ToInt32(Resultado) > 0;
+        }
+        public bool ExistePorNombreUsuario(string nombreUsuario)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@NombreUsuario", nombreUsuario } };
+            object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorNombreUsuario", Parametros, CommandType.StoredProcedure);
+            return Convert.ToInt32(Resultado) > 0;
         }
         /// Convierte una fila del DataSet en un UsuarioBE. El Perfil queda
         /// armado solo con el Id (no el árbol completo de permisos) — eso
@@ -150,7 +186,8 @@ namespace DAL
                 Suspendido = Convert.ToBoolean(Fila["Suspendido"]),
                 Motivo = Fila["Motivo"] == DBNull.Value ? null : Fila["Motivo"].ToString(),
                 Intentos = Convert.ToInt32(Fila["Intentos"]),
-                Perfil = Fila["PerfilId"] == DBNull.Value ? null : new PerfilBE { Id = Convert.ToInt32(Fila["PerfilId"]) }
+                Perfil = Fila["PerfilId"] == DBNull.Value ? null : new PerfilBE { Id = Convert.ToInt32(Fila["PerfilId"]) },
+                EmpresaId = Fila["EmpresaId"] == DBNull.Value ? (int?)null : Convert.ToInt32(Fila["EmpresaId"]),
             };
         }
     }

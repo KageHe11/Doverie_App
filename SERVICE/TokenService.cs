@@ -22,6 +22,9 @@ namespace SERVICE
             string ClaveSecreta = ConfigurationManager.AppSettings["JwtClaveSecreta"];
             return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ClaveSecreta));
         }
+        // Genera el JWT de sesión: incluye el Id del Usuario y expira a los
+        // 30 minutos. Este token es lo único que identifica al Usuario en cada
+        // request posterior (vía la cookie TokenSesion).
         public string GenerarToken(UsuarioBE usuario)
         {
             SymmetricSecurityKey Clave = ObtenerClave();
@@ -62,6 +65,58 @@ namespace SERVICE
             {
                 return false;
             }
+        }
+        public string GenerarTokenRecuperacion(UsuarioBE usuario)
+        {
+            SymmetricSecurityKey Clave = ObtenerClave();
+            SigningCredentials Credenciales = new SigningCredentials(Clave, SecurityAlgorithms.HmacSha256);
+            List<Claim> Claims = new List<Claim>
+            {
+                new Claim("Id", usuario.Id.ToString()),
+                new Claim("Tipo", "Recuperacion"),
+                new Claim("Huella", ObtenerHuella(usuario.Contrasena))
+            };
+            JwtSecurityToken Token = new JwtSecurityToken(
+                claims: Claims,
+                expires: DateTime.UtcNow.AddMinutes(30),
+                signingCredentials: Credenciales
+            );
+            return new JwtSecurityTokenHandler().WriteToken(Token);
+        }
+        public bool ValidarTokenRecuperacion(string token, out int idUsuario, out string huella)
+        {
+            idUsuario = 0;
+            huella = null;
+            try
+            {
+                JwtSecurityTokenHandler Handler = new JwtSecurityTokenHandler();
+                TokenValidationParameters Parametros = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = ObtenerClave()
+                };
+                ClaimsPrincipal Principal = Handler.ValidateToken(token, Parametros, out SecurityToken TokenValidado);
+                string Tipo = Principal.FindFirst("Tipo")?.Value;
+                if (Tipo != "Recuperacion") return false;
+                idUsuario = int.Parse(Principal.FindFirst("Id").Value);
+                huella = Principal.FindFirst("Huella")?.Value;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// corta del hash de contraseña actual. Sirve para detectar si
+        /// el link de recuperación ya fue usado: si la contraseña cambió desde
+        /// que se generó el token, la huella guardada en el token ya no
+        /// coincide con la huella de la contraseña actual del Usuario.
+        public string ObtenerHuella(string contrasenaHasheada)
+        {
+            return contrasenaHasheada.Substring(0, Math.Min(20, contrasenaHasheada.Length));
         }
     }
 }

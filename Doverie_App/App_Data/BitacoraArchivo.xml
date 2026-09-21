@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<Bitacora xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Evento>
+    <Id>30</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T16:13:40.053</Fecha>
+    <Detalle>Registro de prueba #27</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>31</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T15:13:40.053</Fecha>
+    <Detalle>Registro de prueba #28</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>32</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T14:13:40.053</Fecha>
+    <Detalle>Registro de prueba #29</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>33</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T13:13:40.057</Fecha>
+    <Detalle>Registro de prueba #30</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>34</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T12:13:40.06</Fecha>
+    <Detalle>Registro de prueba #31</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>35</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T11:13:40.06</Fecha>
+    <Detalle>Registro de prueba #32</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>29</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T17:13:40.053</Fecha>
+    <Detalle>Registro de prueba #26</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>28</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T18:13:40.053</Fecha>
+    <Detalle>Registro de prueba #25</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>27</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T19:13:40.053</Fecha>
+    <Detalle>Registro de prueba #24</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>26</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T20:13:40.053</Fecha>
+    <Detalle>Registro de prueba #23</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>25</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T21:13:40.05</Fecha>
+    <Detalle>Registro de prueba #22</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>24</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T22:13:40.05</Fecha>
+    <Detalle>Registro de prueba #21</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>23</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-13T23:13:40.05</Fecha>
+    <Detalle>Registro de prueba #20</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>22</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-14T00:13:40.05</Fecha>
+    <Detalle>Registro de prueba #19</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>21</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-14T01:13:40.047</Fecha>
+    <Detalle>Registro de prueba #18</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+  <Evento>
+    <Id>20</Id>
+    <Accion>Login</Accion>
+    <Fecha>2026-09-14T02:13:40.047</Fecha>
+    <Detalle>Registro de prueba #17</Detalle>
+    <UsuarioId>1</UsuarioId>
+    <NombreUsuario>admin</NombreUsuario>
+  </Evento>
+</Bitacora>

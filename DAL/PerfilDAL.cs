@@ -22,7 +22,8 @@ namespace DAL
             Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
                 { "@Id", Pperfil.Id },
-                { "@NombrePerfil", Pperfil.NombrePerfil }
+                { "@NombrePerfil", Pperfil.NombrePerfil },
+                { "@AsignablePorEmpresa", Pperfil.AsignablePorEmpresa }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_Registrar", Parametros, CommandType.StoredProcedure);
         }
@@ -32,7 +33,8 @@ namespace DAL
             Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
                 { "@Id", Pperfil.Id },
-                { "@NombrePerfil", Pperfil.NombrePerfil }
+                { "@NombrePerfil", Pperfil.NombrePerfil },
+                { "@AsignablePorEmpresa", Pperfil.AsignablePorEmpresa }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_ActualizarDatos", Parametros, CommandType.StoredProcedure);
         }
@@ -57,7 +59,8 @@ namespace DAL
             {
                 Id = Convert.ToInt32(Fila["Id"]),
                 NombrePerfil = Fila["NombrePerfil"].ToString(),
-                Activo = Convert.ToBoolean(Fila["Activo"])
+                Activo = Convert.ToBoolean(Fila["Activo"]),
+                AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
             };
             FamiliaDAL FamiliaDal = new FamiliaDAL();
             Dictionary<int, ComponentePermiso> Arbol = FamiliaDal.ArmarArbol();
@@ -82,7 +85,8 @@ namespace DAL
                 {
                     Id = Convert.ToInt32(Fila["Id"]),
                     NombrePerfil = Fila["NombrePerfil"].ToString(),
-                    Activo = Convert.ToBoolean(Fila["Activo"])
+                    Activo = Convert.ToBoolean(Fila["Activo"]),
+                    AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
                 });
             }
             return Perfiles;
@@ -142,6 +146,38 @@ namespace DAL
                 { "@FamiliaId", familiaId }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_PerfilFamilia_Eliminar", Parametros, CommandType.StoredProcedure);
+        }
+        public List<PerfilBE> ListarAsignablesPorEmpresa()
+        {
+            DAO Dao = new DAO();
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ListarAsignablesPorEmpresa", null, CommandType.StoredProcedure);
+            List<PerfilBE> Perfiles = new List<PerfilBE>();
+            foreach (DataRow Fila in Ds.Tables[0].Rows)
+            {
+                Perfiles.Add(new PerfilBE
+                {
+                    Id = Convert.ToInt32(Fila["Id"]),
+                    NombrePerfil = Fila["NombrePerfil"].ToString(),
+                    Activo = Convert.ToBoolean(Fila["Activo"]),
+                    AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
+                });
+            }
+            return Perfiles;
+        }
+        public PerfilBE ObtenerPorNombre(string nombre)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@NombrePerfil", nombre } };
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ObtenerPorNombre", Parametros, CommandType.StoredProcedure);
+            if (Ds.Tables[0].Rows.Count == 0) return null;
+            DataRow Fila = Ds.Tables[0].Rows[0];
+            return new PerfilBE
+            {
+                Id = Convert.ToInt32(Fila["Id"]),
+                NombrePerfil = Fila["NombrePerfil"].ToString(),
+                Activo = Convert.ToBoolean(Fila["Activo"]),
+                AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
+            };
         }
     }
 }

@@ -109,7 +109,11 @@ public partial class Perfiles : PaginaBase
         }
         if (Id == 0)
         {
-            PerfilBE NuevoPerfil = new PerfilBE { NombrePerfil = txtNombrePerfil.Text };
+            PerfilBE NuevoPerfil = new PerfilBE
+            {
+                NombrePerfil = txtNombrePerfil.Text,
+                AsignablePorEmpresa = chkAsignablePorEmpresa.Checked
+            };
             PerfilBll.Registrar(NuevoPerfil);
             foreach (ListItem Item in lstFamiliasSeleccionadas.Items)
             {
@@ -119,7 +123,12 @@ public partial class Perfiles : PaginaBase
         }
         else
         {
-            PerfilBE Perfil = new PerfilBE { Id = Id, NombrePerfil = txtNombrePerfil.Text };
+            PerfilBE Perfil = new PerfilBE
+            {
+                Id = Id,
+                NombrePerfil = txtNombrePerfil.Text,
+                AsignablePorEmpresa = chkAsignablePorEmpresa.Checked
+            };
             PerfilBll.ActualizarDatos(Perfil);
             foreach (ListItem Item in lstFamiliasSeleccionadas.Items)
             {

@@ -24,6 +24,7 @@ namespace BE
         public string Motivo { get; set; }
         public int Intentos { get; set; }
         public PerfilBE Perfil { get; set; }
+        public int? EmpresaId { get; set; }
 
     }
 }

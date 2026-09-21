@@ -65,6 +65,11 @@
                                 <label class="form-label">Nombre del Perfil</label>
                                 <asp:TextBox ID="txtNombrePerfil" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
+      
+                            <div class="mb-2 form-check">
+                                <asp:CheckBox ID="chkAsignablePorEmpresa" runat="server" CssClass="form-check-input" />
+                                    <label class="form-check-label">La Empresa puede asignar este Perfil a sus empleados</label>
+                            </div>
 
                             <label class="form-label">Familias asignadas</label>
                             <div class="row">
