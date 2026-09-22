@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<appSettings>
+	<add key="JwtClaveSecreta" value="poné-acá-una-clave-nueva-larga-random" />
+	<add key="SmtpHost" value="smtp.gmail.com" />
+	<add key="SmtpPort" value="587" />
+	<add key="SmtpUser" value="appdoverie@gmail.com" />
+	<add key="SmtpPassword" value="tu-nueva-contraseña-de-aplicación" />
+	<add key="SmtpFromName" value="Doverie" />
+</appSettings>
