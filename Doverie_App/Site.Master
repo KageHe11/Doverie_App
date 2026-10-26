@@ -53,24 +53,15 @@
                             </li>
                         </asp:Panel>
 
-                        <asp:Panel ID="pnlEmpresa" runat="server" CssClass="d-flex" Visible="false">
-                            <li class="nav-item me-2">
-                                <a class="nav-link disabled d-flex align-items-center" href="#">
-                                    <%: Traductor.T("nav.documentos") %>
-                                    <span class="badge bg-secondary ms-2"><%: Traductor.T("nav.proximamente") %></span>
-                                </a>
-                            </li>
+                        <asp:Panel ID="pnlDocumentos" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
-                                 <a class="nav-link" href="/EmpleadosEmpresa.aspx"><%: Traductor.T("nav.usuarios") %></a>
+                                <a class="nav-link" href="/Documentos.aspx"><%: Traductor.T("nav.documentos") %></a>
                             </li>
                         </asp:Panel>
 
-                        <asp:Panel ID="pnlEmpleadoOFreelance" runat="server" CssClass="d-flex" Visible="false">
+                        <asp:Panel ID="pnlEmpresa" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
-                                <a class="nav-link disabled d-flex align-items-center" href="#">
-                                    <%: Traductor.T("nav.documentos") %>
-                                    <span class="badge bg-secondary ms-2"><%: Traductor.T("nav.proximamente") %></span>
-                                </a>
+                                 <a class="nav-link" href="/EmpleadosEmpresa.aspx"><%: Traductor.T("nav.usuarios") %></a>
                             </li>
                         </asp:Panel>
 

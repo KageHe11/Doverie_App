@@ -43,16 +43,20 @@
   <ItemGroup>
     <Compile Include="BitacoraBE.cs" />
     <Compile Include="ComponentePermiso.cs" />
+    <Compile Include="DocumentoBE.cs" />
     <Compile Include="FamiliaBE.cs" />
     <Compile Include="IdiomaBE.cs" />
     <Compile Include="PerfilBE.cs" />
     <Compile Include="PermisoBE.cs" />
+    <Compile Include="ResultadoDocumento.cs" />
     <Compile Include="ResultadoIdioma.cs" />
     <Compile Include="ResultadoModificarPerfil.cs" />
     <Compile Include="ResultadoRecuperacion.cs" />
     <Compile Include="ResultadoRegistro.cs" />
     <Compile Include="ResultadoRestablecimiento.cs" />
+    <Compile Include="SelloBlockchainBE.cs" />
     <Compile Include="UsuarioBE.cs" />
+    <Compile Include="VerificacionDocumentoBE.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

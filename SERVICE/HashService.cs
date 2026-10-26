@@ -22,5 +22,22 @@ namespace SERVICE
         {
             return BCrypt.Net.BCrypt.Verify(contrasenaPlano, hashAlmacenado);
         }
+        // Huella digital de un documento: SHA-256 del contenido, en
+        // hexadecimal. A diferencia de BCrypt, es determinístico (mismo
+        // archivo -> mismo hash), que es justo lo que se necesita para
+        // verificar la integridad comparando contra la blockchain.
+        public string CalcularHashArchivo(byte[] contenido)
+        {
+            using (System.Security.Cryptography.SHA256 Sha = System.Security.Cryptography.SHA256.Create())
+            {
+                return AHexadecimal(Sha.ComputeHash(contenido));
+            }
+        }
+        public static string AHexadecimal(byte[] bytes)
+        {
+            StringBuilder Hex = new StringBuilder(bytes.Length * 2);
+            foreach (byte B in bytes) Hex.Append(B.ToString("x2"));
+            return Hex.ToString();
+        }
     }
 }

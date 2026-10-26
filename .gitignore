@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 Doverie_App/AppSettings.config
+
+# Archivos subidos y registro de blockchain local (datos, no código)
+Doverie_App/App_Data/Documentos/
+Doverie_App/App_Data/Blockchain/

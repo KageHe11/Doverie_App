@@ -17,9 +17,9 @@ public partial class Site : MasterPage
             litSaludo.Text = ArmarSaludo(Usuario);
             pnlAdmin.Visible = TienePermiso(Usuario, "VerMenuAdmin");
             pnlIdiomas.Visible = TienePermiso(Usuario, "VerIdiomas");
+            pnlDocumentos.Visible = TienePermiso(Usuario, "VerDocumentos");
             pnlEmpresa.Visible = Usuario.Empresa;
             pnlMiPerfil.Visible = !Usuario.Empleado;
-            pnlEmpleadoOFreelance.Visible = Usuario.Empleado || Usuario.Independiente;
         }
         else
         {
@@ -27,8 +27,8 @@ public partial class Site : MasterPage
             pnlNoLogueado.Visible = true;
             pnlAdmin.Visible = false;
             pnlIdiomas.Visible = false;
+            pnlDocumentos.Visible = false;
             pnlEmpresa.Visible = false;
-            pnlEmpleadoOFreelance.Visible = false;
         }
     }
     /// Arma el texto de bienvenida según el tipo de cuenta. El orden de

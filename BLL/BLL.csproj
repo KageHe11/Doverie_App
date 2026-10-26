@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitacoraBLL.cs" />
+    <Compile Include="DocumentoBLL.cs" />
     <Compile Include="FamiliaBLL.cs" />
     <Compile Include="IdiomaBLL.cs" />
     <Compile Include="PerfilBLL.cs" />

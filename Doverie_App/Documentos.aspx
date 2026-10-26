@@ -1,0 +1,107 @@
+<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Documentos.aspx.cs" Inherits="Documentos" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <%-- Sin UpdatePanel a propósito: la subida y la descarga de archivos
+         necesitan postbacks completos. --%>
+
+    <h2 class="mb-3"><%: Traductor.T("doc.titulo") %></h2>
+
+    <%-- Sin ViewState: cada mensaje se muestra una sola vez y no queda
+         pegado en los postbacks siguientes (filtrar, verificar...). --%>
+    <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
+    <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
+
+    <%-- CU-001-002 Subir Documento --%>
+    <asp:Panel ID="pnlSubir" runat="server" CssClass="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title"><%: Traductor.T("doc.subirTitulo") %></h5>
+            <div class="row g-2 align-items-end">
+                <div class="col-md-9">
+                    <asp:FileUpload ID="fuArchivo" runat="server" CssClass="form-control" />
+                    <div class="form-text"><asp:Literal ID="litAyudaArchivo" runat="server" Mode="Encode" /></div>
+                </div>
+                <div class="col-md-3 align-self-start">
+                    <asp:Button ID="btnSubir" runat="server" CssClass="btn btn-primary w-100" OnClick="btnSubir_Click" />
+                </div>
+            </div>
+        </div>
+    </asp:Panel>
+
+    <%-- CU-001-006 Verificar Integridad: resultado --%>
+    <asp:Panel ID="pnlVerificacion" runat="server" CssClass="card mb-3" Visible="false">
+        <div class="card-body">
+            <h5 class="card-title"><%: Traductor.T("doc.verificacionTitulo") %>: <asp:Literal ID="litVerificacionNombre" runat="server" Mode="Encode" /></h5>
+            <asp:Label ID="lblVerificacionResultado" runat="server" CssClass="alert d-block"></asp:Label>
+            <table class="table table-sm small mb-3">
+                <tr><th style="width: 30%"><%: Traductor.T("doc.hashRegistrado") %></th><td class="font-monospace text-break"><asp:Literal ID="litHashRegistrado" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.hashActual") %></th><td class="font-monospace text-break"><asp:Literal ID="litHashActual" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.fechaSellado") %></th><td><asp:Literal ID="litFechaSellado" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.transaccion") %></th><td class="font-monospace text-break"><asp:Literal ID="litTransaccion" runat="server" Mode="Encode" /></td></tr>
+            </table>
+            <h6><%: Traductor.T("doc.historial") %></h6>
+            <asp:GridView ID="gvHistorial" runat="server" CssClass="table table-sm table-striped small" AutoGenerateColumns="false">
+                <Columns>
+                    <asp:BoundField DataField="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <asp:BoundField DataField="Accion" />
+                    <asp:BoundField DataField="NombreUsuario" />
+                </Columns>
+            </asp:GridView>
+        </div>
+    </asp:Panel>
+
+    <%-- CU-001-012 Ver Listado de Documentos: filtros --%>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label"><%: Traductor.T("comun.nombre") %></label>
+                    <asp:TextBox ID="txtFiltroNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><%: Traductor.T("doc.tipo") %></label>
+                    <asp:DropDownList ID="ddlTipo" runat="server" CssClass="form-select">
+                        <asp:ListItem Value="" />
+                    </asp:DropDownList>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><%: Traductor.T("bitacora.desde") %></label>
+                    <asp:TextBox ID="txtDesde" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><%: Traductor.T("bitacora.hasta") %></label>
+                    <asp:TextBox ID="txtHasta" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                </div>
+                <div class="col-md-2">
+                    <asp:Button ID="btnFiltrar" runat="server" CssClass="btn btn-outline-primary w-100" OnClick="btnFiltrar_Click" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <asp:Label ID="lblSinResultados" runat="server" CssClass="alert alert-info d-block" Visible="false"></asp:Label>
+
+    <asp:GridView ID="gvDocumentos" runat="server" CssClass="table table-striped table-hover align-middle"
+        AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvDocumentos_RowCommand" OnRowDataBound="gvDocumentos_RowDataBound">
+        <Columns>
+            <asp:BoundField DataField="Nombre" />
+            <asp:BoundField DataField="Tipo" />
+            <asp:BoundField DataField="NombreUsuario" />
+            <asp:BoundField DataField="FechaSubida" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:LinkButton ID="btnDescargar" runat="server" CssClass="btn btn-sm btn-outline-secondary"
+                        CommandName="Descargar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.descargar") %>' />
+                    <asp:LinkButton ID="btnVerificar" runat="server" CssClass="btn btn-sm btn-outline-primary"
+                        CommandName="Verificar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.verificar") %>' />
+                    <asp:LinkButton ID="btnEliminar" runat="server" CssClass="btn btn-sm btn-outline-danger"
+                        CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.eliminar") %>'
+                        OnClientClick='<%# Traductor.Confirmar("doc.confirmarEliminar") %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
+        </Columns>
+    </asp:GridView>
+
+</asp:Content>

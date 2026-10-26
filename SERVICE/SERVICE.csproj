@@ -103,12 +103,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlmacenamientoLocal.cs" />
     <Compile Include="BitacoraArchivoService.cs" />
     <Compile Include="ContextoIdioma.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="HashService.cs" />
+    <Compile Include="IAlmacenamientoArchivos.cs" />
+    <Compile Include="IRegistroBlockchain.cs" />
     <Compile Include="ITraduccion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProveedorServicios.cs" />
+    <Compile Include="RegistroBlockchainLocal.cs" />
     <Compile Include="ResultadoLogin.cs" />
     <Compile Include="TokenService.cs" />
     <Compile Include="TraduccionJson.cs" />

@@ -6,4 +6,10 @@
 	<add key="SmtpUser" value="appdoverie@gmail.com" />
 	<add key="SmtpPassword" value="tu-nueva-contraseña-de-aplicación" />
 	<add key="SmtpFromName" value="Doverie" />
+	<!-- Documentos (opcionales). Implementación: "Local" (por ahora la única).
+	     Sin las rutas, se usan App_Data/Documentos y App_Data/Blockchain/registro.jsonl. -->
+	<add key="Almacenamiento" value="Local" />
+	<add key="Blockchain" value="Local" />
+	<!-- <add key="DocumentosRuta" value="C:\DoverieDatos\Documentos" /> -->
+	<!-- <add key="BlockchainLocalRuta" value="C:\DoverieDatos\Blockchain\registro.jsonl" /> -->
 </appSettings>
