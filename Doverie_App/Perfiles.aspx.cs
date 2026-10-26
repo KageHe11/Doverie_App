@@ -25,6 +25,7 @@ public partial class Perfiles : PaginaBase
     {
         hdnId.Value = "0";
         txtNombrePerfil.Text = "";
+        chkAsignablePorEmpresa.Checked = false;
         litTituloModal.Text = "Agregar Perfil";
         lblErrorModal.Visible = false;
         CargarListasFamilias(new List<int>());
@@ -39,6 +40,9 @@ public partial class Perfiles : PaginaBase
             PerfilBE Perfil = PerfilBll.ObtenerDatos(Id);
             hdnId.Value = Perfil.Id.ToString();
             txtNombrePerfil.Text = Perfil.NombrePerfil;
+            // Sin esto, guardar la edición pisaba AsignablePorEmpresa con
+            // lo que hubiera quedado tildado de la última vez.
+            chkAsignablePorEmpresa.Checked = Perfil.AsignablePorEmpresa;
             litTituloModal.Text = "Editar Perfil";
             lblErrorModal.Visible = false;
             List<int> IdsSeleccionados = new List<int>();

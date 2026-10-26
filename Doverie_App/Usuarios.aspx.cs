@@ -108,7 +108,6 @@ public partial class Usuarios : PaginaBase
         {
             // --- ALTA ---
             // La contraseña es obligatoria al crear un usuario nuevo.
-            HashService Hasheo = new HashService();
             if (UsuarioBll.ExistePorNombreUsuario(txtNombreUsuario.Text))
             {
                 lblErrorModal.Text = "Ya existe un usuario con ese nombre de usuario.";
@@ -123,13 +122,12 @@ public partial class Usuarios : PaginaBase
                 AbrirModal();
                 return;
             }
-            string ContrasenaHash = Hasheo.HashearContrasena(txtContrasena.Text);
             UsuarioBE NuevoUsuario = new UsuarioBE
             {
                 Nombre = txtNombre.Text,
                 Apellido = txtApellido.Text,
                 NombreUsuario = txtNombreUsuario.Text,
-                Contrasena = ContrasenaHash, // texto plano: se hashea dentro de UsuarioBll.Registrar()
+                Contrasena = txtContrasena.Text, // texto plano: se hashea dentro de UsuarioBll.Registrar()
                 Gmail = txtGmail.Text,
                 Dni = txtDni.Text,
                 Telefono = txtTelefono.Text,
