@@ -44,7 +44,14 @@ public partial class Login : System.Web.UI.Page
                 Response.Redirect("Default.aspx");
                 break;
             case ResultadoLogin.UsuarioBloqueado:
-                lblError.Text = "Tu cuenta se encuentra bloqueada.";
+                // [ERROR-002] Bloqueo automático por intentos fallidos.
+                lblError.Text = "Tu cuenta se encuentra bloqueada. Recuperá tu contraseña para desbloquearla.";
+                lblError.Visible = true;
+                break;
+            case ResultadoLogin.UsuarioSuspendido:
+                // Suspensión manual (Administrador o Empresa): recuperar la
+                // contraseña no la levanta.
+                lblError.Text = "Tu cuenta se encuentra suspendida. Contactá al administrador.";
                 lblError.Visible = true;
                 break;
             case ResultadoLogin.CredencialesInvalidas:

@@ -10,6 +10,7 @@ namespace SERVICE
     {
         Exitoso,
         CredencialesInvalidas,
-        UsuarioBloqueado
+        UsuarioBloqueado,
+        UsuarioSuspendido
     }
 }

@@ -75,6 +75,18 @@ namespace DAL
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarEstado", Parametros, CommandType.StoredProcedure);
         }
+        public void ActualizarBloqueo(UsuarioBE Pusuario)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Id", Pusuario.Id },
+                { "@Intentos", Pusuario.Intentos },
+                { "@Suspendido", Pusuario.Suspendido },
+                { "@Motivo", (object)Pusuario.Motivo ?? DBNull.Value }
+            };
+            Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarBloqueo", Parametros, CommandType.StoredProcedure);
+        }
         public int ContarActivos()
         {
             DAO Dao = new DAO();

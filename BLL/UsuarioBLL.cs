@@ -13,6 +13,13 @@ namespace BLL
 {
     public class UsuarioBLL
     {
+        // Política de bloqueo de cuenta: al llegar a esta cantidad de
+        // intentos fallidos consecutivos, la cuenta se bloquea [ERROR-002].
+        public const int MaxIntentosFallidos = 3;
+        // Motivo que distingue un bloqueo automático por intentos de una
+        // suspensión manual del Administrador o la Empresa: solo el primero
+        // se levanta al recuperar la contraseña.
+        public const string MotivoBloqueoIntentos = "Bloqueo por intentos fallidos";
         public void Registrar(UsuarioBE Pusuario)
         {
             HashService HashServ = new HashService();
@@ -28,6 +35,15 @@ namespace BLL
         public void ActualizarEstado(UsuarioBE Pusuario)
         {
             UsuarioDAL UsuarioDal = new UsuarioDAL();
+            if (!Pusuario.Suspendido)
+            {
+                // Al reactivar se reinicia el contador: si no, un Usuario
+                // bloqueado por intentos volvería a bloquearse con el
+                // primer error.
+                Pusuario.Intentos = 0;
+                UsuarioDal.ActualizarBloqueo(Pusuario);
+                return;
+            }
             UsuarioDal.ActualizarEstado(Pusuario);
         }
         public void ActualizarDatos(UsuarioBE Pusuario)
@@ -54,11 +70,36 @@ namespace BLL
         {
             return Pusuario.Suspendido;
         }
+        public bool EstaBloqueadoPorIntentos(UsuarioBE Pusuario)
+        {
+            return Pusuario.Suspendido && Pusuario.Motivo == MotivoBloqueoIntentos;
+        }
         public void ReiniciarIntentos(UsuarioBE Pusuario)
         {
+            if (Pusuario.Intentos == 0) return;
             Pusuario.Intentos = 0;
             UsuarioDAL UsuarioDal = new UsuarioDAL();
-            UsuarioDal.ActualizarDatos(Pusuario);
+            UsuarioDal.ActualizarBloqueo(Pusuario);
+        }
+        /// Suma un intento fallido y, si se alcanzó el máximo, bloquea la
+        /// cuenta. Devuelve true si este intento provocó el bloqueo.
+        public bool RegistrarIntentoFallido(UsuarioBE Pusuario)
+        {
+            Pusuario.Intentos += 1;
+            bool Bloquear = Pusuario.Intentos >= MaxIntentosFallidos;
+            if (Bloquear)
+            {
+                Pusuario.Suspendido = true;
+                Pusuario.Motivo = MotivoBloqueoIntentos;
+            }
+            UsuarioDAL UsuarioDal = new UsuarioDAL();
+            UsuarioDal.ActualizarBloqueo(Pusuario);
+            if (Bloquear)
+            {
+                BitacoraBLL BitacoraBll = new BitacoraBLL();
+                BitacoraBll.Registrar("Bloqueo Cuenta", "Usuario: " + Pusuario.NombreUsuario + " (" + Pusuario.Intentos + " intentos fallidos)", Pusuario.Id);
+            }
+            return Bloquear;
         }
         public List<UsuarioBE> ListarPorEmpresa(int empresaId)
         {
@@ -115,8 +156,23 @@ namespace BLL
             }
             HashService HashServ = new HashService();
             Usuario.Contrasena = HashServ.HashearContrasena(nuevaContrasena);
+            // Recuperar la contraseña desbloquea la cuenta [ERROR-002], pero
+            // solo si el bloqueo fue por intentos fallidos: una suspensión
+            // manual sigue vigente hasta que la levante quien la aplicó.
+            bool Desbloquear = EstaBloqueadoPorIntentos(Usuario);
+            if (Desbloquear)
+            {
+                Usuario.Suspendido = false;
+                Usuario.Motivo = null;
+            }
+            Usuario.Intentos = 0;
             UsuarioDAL UsuarioDal = new UsuarioDAL();
             UsuarioDal.ActualizarDatos(Usuario);
+            if (Desbloquear)
+            {
+                BitacoraBLL BitacoraBll = new BitacoraBLL();
+                BitacoraBll.Registrar("Desbloqueo Cuenta", "Usuario: " + Usuario.NombreUsuario + " (recuperación de contraseña)", Usuario.Id);
+            }
             return ResultadoRestablecimiento.Exitoso;
         }
         public ResultadoModificarPerfil ModificarDatosPropios(int idUsuario, string nombre, string apellido, string gmail, string nuevaContrasena)
@@ -207,7 +263,9 @@ namespace BLL
             }
             if (EstaBloqueado(Usuario))
             {
-                return ResultadoLogin.UsuarioBloqueado;
+                // Bloqueo automático (se levanta recuperando la contraseña)
+                // vs. suspensión manual (solo la levanta un Administrador).
+                return EstaBloqueadoPorIntentos(Usuario) ? ResultadoLogin.UsuarioBloqueado : ResultadoLogin.UsuarioSuspendido;
             }
             // La contraseña se compara hasheada, nunca en texto plano. BCrypt
             // internamente extrae el salt guardado en el hash y recalcula para
@@ -215,6 +273,12 @@ namespace BLL
             HashService Hasheo = new HashService();
             if (!Hasheo.VerificarContrasena(Pcontrasena, Usuario.Contrasena))
             {
+                // Contraseña incorrecta: se suma el intento fallido. Si con
+                // este se llega al máximo, la cuenta queda bloqueada.
+                if (RegistrarIntentoFallido(Usuario))
+                {
+                    return ResultadoLogin.UsuarioBloqueado;
+                }
                 return ResultadoLogin.CredencialesInvalidas;
             }
             // Login exitoso: se resetea el contador de intentos fallidos.
