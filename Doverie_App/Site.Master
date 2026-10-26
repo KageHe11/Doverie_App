@@ -1,4 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.Master.cs" Inherits="Site" %>
+<%@ Register Src="~/SelectorIdioma.ascx" TagPrefix="uc" TagName="SelectorIdioma" %>
 
 <!DOCTYPE html>
 <html>
@@ -29,40 +30,46 @@
 
                         <asp:Panel ID="pnlAdmin" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
-                                <a class="nav-link" href="/Usuarios.aspx">Usuarios</a>
+                                <a class="nav-link" href="/Usuarios.aspx"><%: Traductor.T("nav.usuarios") %></a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    Credenciales
+                                    <%: Traductor.T("nav.credenciales") %>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" href="/Perfiles.aspx">Perfiles</a></li>
-                                    <li><a class="dropdown-item" href="/Familias.aspx">Familias</a></li>
-                                    <li><a class="dropdown-item" href="/Permisos.aspx">Permisos</a></li>
+                                    <li><a class="dropdown-item" href="/Perfiles.aspx"><%: Traductor.T("nav.perfiles") %></a></li>
+                                    <li><a class="dropdown-item" href="/Familias.aspx"><%: Traductor.T("nav.familias") %></a></li>
+                                    <li><a class="dropdown-item" href="/Permisos.aspx"><%: Traductor.T("nav.permisos") %></a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/Bitacora.aspx">Bitácora</a>
+                                <a class="nav-link" href="/Bitacora.aspx"><%: Traductor.T("nav.bitacora") %></a>
+                            </li>
+                        </asp:Panel>
+
+                        <asp:Panel ID="pnlIdiomas" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Idiomas.aspx"><%: Traductor.T("nav.idiomas") %></a>
                             </li>
                         </asp:Panel>
 
                         <asp:Panel ID="pnlEmpresa" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item me-2">
                                 <a class="nav-link disabled d-flex align-items-center" href="#">
-                                    Documentos
-                                    <span class="badge bg-secondary ms-2">Próximamente</span>
+                                    <%: Traductor.T("nav.documentos") %>
+                                    <span class="badge bg-secondary ms-2"><%: Traductor.T("nav.proximamente") %></span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                 <a class="nav-link" href="/EmpleadosEmpresa.aspx">Usuarios</a>
+                                 <a class="nav-link" href="/EmpleadosEmpresa.aspx"><%: Traductor.T("nav.usuarios") %></a>
                             </li>
                         </asp:Panel>
 
                         <asp:Panel ID="pnlEmpleadoOFreelance" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
                                 <a class="nav-link disabled d-flex align-items-center" href="#">
-                                    Documentos
-                                    <span class="badge bg-secondary ms-2">Próximamente</span>
+                                    <%: Traductor.T("nav.documentos") %>
+                                    <span class="badge bg-secondary ms-2"><%: Traductor.T("nav.proximamente") %></span>
                                 </a>
                             </li>
                         </asp:Panel>
@@ -70,17 +77,16 @@
                     </ul>
 
                     <div class="d-flex align-items-center">
+                        <uc:SelectorIdioma ID="SelectorIdioma1" runat="server" />
                         <asp:Panel ID="pnlNoLogueado" runat="server">
-                            <a class="btn btn-outline-light btn-sm" href="/Login.aspx">Iniciar sesión</a>
+                            <a class="btn btn-outline-light btn-sm" href="/Login.aspx"><%: Traductor.T("nav.iniciarSesion") %></a>
                         </asp:Panel>
                         <asp:Panel ID="pnlLogueado" runat="server" CssClass="d-flex align-items-center" Visible="false">
-                            <span class="text-light me-3"><asp:Literal ID="litSaludo" runat="server" /></span>
+                            <span class="text-light me-3"><asp:Literal ID="litSaludo" runat="server" Mode="Encode" /></span>
                                 <asp:Panel ID="pnlMiPerfil" runat="server" CssClass="me-2">
-                                    <a class="btn btn-outline-light btn-sm" href="/MiPerfil.aspx">Mi Perfil</a>
+                                    <a class="btn btn-outline-light btn-sm" href="/MiPerfil.aspx"><%: Traductor.T("nav.miPerfil") %></a>
                                 </asp:Panel>
-                                <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-outline-light btn-sm" OnClick="btnCerrarSesion_Click">
-                                Cerrar sesión
-                                </asp:LinkButton>
+                                <asp:LinkButton ID="btnCerrarSesion" runat="server" CssClass="btn btn-outline-light btn-sm" OnClick="btnCerrarSesion_Click" />
                         </asp:Panel>
                     </div>
                 </div>

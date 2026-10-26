@@ -35,7 +35,7 @@ namespace DAL
                 { "@Local", Pusuario.Local },
                 { "@PerfilId", Pusuario.Perfil.Id },
                 { "@EmpresaId", Pusuario.EmpresaId.HasValue ? (object)Pusuario.EmpresaId.Value : DBNull.Value },
-                { "@IdiomaId", DBNull.Value },
+                { "@IdiomaId", Pusuario.IdiomaId.HasValue ? (object)Pusuario.IdiomaId.Value : DBNull.Value },
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_Registrar", Parametros, CommandType.StoredProcedure);
         }
@@ -60,7 +60,7 @@ namespace DAL
                 { "@Intentos", Pusuario.Intentos },
                 { "@PerfilId", Pusuario.Perfil.Id },
                 { "@EmpresaId", Pusuario.EmpresaId.HasValue ? (object)Pusuario.EmpresaId.Value : DBNull.Value },
-                { "@IdiomaId", DBNull.Value }
+                { "@IdiomaId", Pusuario.IdiomaId.HasValue ? (object)Pusuario.IdiomaId.Value : DBNull.Value }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarDatos", Parametros, CommandType.StoredProcedure);
         }
@@ -86,6 +86,16 @@ namespace DAL
                 { "@Motivo", (object)Pusuario.Motivo ?? DBNull.Value }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarBloqueo", Parametros, CommandType.StoredProcedure);
+        }
+        public void ActualizarIdioma(int Pid, int? PidiomaId)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Id", Pid },
+                { "@IdiomaId", PidiomaId.HasValue ? (object)PidiomaId.Value : DBNull.Value }
+            };
+            Dao.ExecuteNonQueryStoredProcedure("SP_Usuario_ActualizarIdioma", Parametros, CommandType.StoredProcedure);
         }
         public int ContarActivos()
         {
@@ -200,6 +210,7 @@ namespace DAL
                 Intentos = Convert.ToInt32(Fila["Intentos"]),
                 Perfil = Fila["PerfilId"] == DBNull.Value ? null : new PerfilBE { Id = Convert.ToInt32(Fila["PerfilId"]) },
                 EmpresaId = Fila["EmpresaId"] == DBNull.Value ? (int?)null : Convert.ToInt32(Fila["EmpresaId"]),
+                IdiomaId = !Fila.Table.Columns.Contains("IdiomaId") || Fila["IdiomaId"] == DBNull.Value ? (int?)null : Convert.ToInt32(Fila["IdiomaId"]),
             };
         }
     }

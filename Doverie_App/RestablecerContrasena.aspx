@@ -9,21 +9,21 @@
             <div class="card shadow-sm">
                 <div class="card-body p-4">
 
-                    <h2 class="mb-3 text-center">Elegir nueva contraseña</h2>
+                    <h2 class="mb-3 text-center"><%: Traductor.T("restablecer.titulo") %></h2>
 
                     <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
 
                     <asp:Panel ID="pnlFormulario" runat="server">
                         <div class="mb-3">
-                            <label class="form-label">Nueva contraseña</label>
+                            <label class="form-label"><%: Traductor.T("comun.nuevaContrasena") %></label>
                             <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Confirmar contraseña</label>
+                            <label class="form-label"><%: Traductor.T("comun.confirmarContrasena") %></label>
                             <asp:TextBox ID="txtConfirmar" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
                         </div>
                         <div class="d-grid">
-                            <asp:Button ID="btnRestablecer" runat="server" Text="Restablecer contraseña" CssClass="btn btn-primary" OnClick="btnRestablecer_Click" />
+                            <asp:Button ID="btnRestablecer" runat="server" CssClass="btn btn-primary" OnClick="btnRestablecer_Click" />
                         </div>
                     </asp:Panel>
 

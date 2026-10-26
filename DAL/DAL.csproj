@@ -46,6 +46,7 @@
     <Compile Include="DAO.cs" />
     <Compile Include="FamiliaDAL.cs" />
     <Compile Include="IDAO.cs" />
+    <Compile Include="IdiomaDAL.cs" />
     <Compile Include="PerfilDAL.cs" />
     <Compile Include="PermisoDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

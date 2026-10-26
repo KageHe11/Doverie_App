@@ -8,8 +8,18 @@ using BLL;
 public partial class Perfiles : PaginaBase
 {
     protected override string PermisoRequerido { get { return "VerMenuAdmin"; } }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvPerfiles.Columns[0].HeaderText = Traductor.T("comun.nombre");
+        gvPerfiles.Columns[1].HeaderText = Traductor.T("comun.estado");
+        gvPerfiles.Columns[2].HeaderText = Traductor.T("comun.acciones");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnAgregar.Text = Traductor.T("perfiles.agregar");
+        btnGuardar.Text = Traductor.T("comun.guardar");
         if (!IsPostBack)
         {
             CargarGrilla();
@@ -26,7 +36,7 @@ public partial class Perfiles : PaginaBase
         hdnId.Value = "0";
         txtNombrePerfil.Text = "";
         chkAsignablePorEmpresa.Checked = false;
-        litTituloModal.Text = "Agregar Perfil";
+        litTituloModal.Text = Traductor.T("perfiles.tituloAgregar");
         lblErrorModal.Visible = false;
         CargarListasFamilias(new List<int>());
         AbrirModal();
@@ -43,7 +53,7 @@ public partial class Perfiles : PaginaBase
             // Sin esto, guardar la edición pisaba AsignablePorEmpresa con
             // lo que hubiera quedado tildado de la última vez.
             chkAsignablePorEmpresa.Checked = Perfil.AsignablePorEmpresa;
-            litTituloModal.Text = "Editar Perfil";
+            litTituloModal.Text = Traductor.T("perfiles.tituloEditar");
             lblErrorModal.Visible = false;
             List<int> IdsSeleccionados = new List<int>();
             foreach (FamiliaBE Familia in Perfil.Familias)
@@ -106,7 +116,7 @@ public partial class Perfiles : PaginaBase
         PerfilBLL PerfilBll = new PerfilBLL();
         if (string.IsNullOrWhiteSpace(txtNombrePerfil.Text))
         {
-            lblErrorModal.Text = "El nombre del perfil es obligatorio.";
+            lblErrorModal.Text = Traductor.T("comun.nombreObligatorio");
             lblErrorModal.Visible = true;
             AbrirModal();
             return;

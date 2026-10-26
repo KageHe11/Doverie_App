@@ -12,8 +12,21 @@ using System.Web.UI.WebControls;
 public partial class Usuarios : PaginaBase
 {
     protected override string PermisoRequerido { get { return "VerUsuarios"; } }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvUsuarios.Columns[0].HeaderText = Traductor.T("comun.nombre");
+        gvUsuarios.Columns[1].HeaderText = Traductor.T("comun.apellido");
+        gvUsuarios.Columns[2].HeaderText = Traductor.T("comun.usuario");
+        gvUsuarios.Columns[3].HeaderText = Traductor.T("comun.email");
+        gvUsuarios.Columns[4].HeaderText = Traductor.T("comun.estado");
+        gvUsuarios.Columns[5].HeaderText = Traductor.T("comun.acciones");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnAgregar.Text = Traductor.T("usuarios.agregar");
+        btnGuardar.Text = Traductor.T("comun.guardar");
         // Solo la primera carga (no en cada postback, para no perder
         // selecciones/estado del formulario innecesariamente).
         if (!IsPostBack)
@@ -41,7 +54,7 @@ public partial class Usuarios : PaginaBase
     protected void btnAgregar_Click(object sender, EventArgs e)
     {
         LimpiarFormulario();
-        litTituloModal.Text = "Agregar Usuario";
+        litTituloModal.Text = Traductor.T("usuarios.tituloAgregar");
         AbrirModal();
     }
     /// Maneja los dos botones de acción de cada fila de la grilla:
@@ -54,7 +67,7 @@ public partial class Usuarios : PaginaBase
         if (e.CommandName == "Editar")
         {
             CargarFormulario(Id);
-            litTituloModal.Text = "Editar Usuario";
+            litTituloModal.Text = Traductor.T("usuarios.tituloEditar");
             AbrirModal();
         }
         else if (e.CommandName == "ToggleEstado")
@@ -110,14 +123,14 @@ public partial class Usuarios : PaginaBase
             // La contraseña es obligatoria al crear un usuario nuevo.
             if (UsuarioBll.ExistePorNombreUsuario(txtNombreUsuario.Text))
             {
-                lblErrorModal.Text = "Ya existe un usuario con ese nombre de usuario.";
+                lblErrorModal.Text = Traductor.T("usuarios.errorYaExiste");
                 lblErrorModal.Visible = true;
                 AbrirModal();
                 return;
             }
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
             {
-                lblErrorModal.Text = "La contraseña es obligatoria para un usuario nuevo.";
+                lblErrorModal.Text = Traductor.T("usuarios.errorContrasenaObligatoria");
                 lblErrorModal.Visible = true;
                 AbrirModal();
                 return;

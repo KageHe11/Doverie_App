@@ -9,8 +9,17 @@ using System.Web.UI.WebControls;
 public partial class Familias : PaginaBase
 {
     protected override string PermisoRequerido { get { return "VerMenuAdmin"; } }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvFamilias.Columns[0].HeaderText = Traductor.T("comun.nombre");
+        gvFamilias.Columns[1].HeaderText = Traductor.T("comun.acciones");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnAgregar.Text = Traductor.T("familias.agregar");
+        btnGuardar.Text = Traductor.T("comun.guardar");
         if (!IsPostBack)
         {
             CargarGrilla();
@@ -28,7 +37,7 @@ public partial class Familias : PaginaBase
     {
         hdnId.Value = "0";
         txtNombre.Text = "";
-        litTituloModal.Text = "Agregar Familia";
+        litTituloModal.Text = Traductor.T("familias.tituloAgregar");
         lblErrorModal.Visible = false;
         CargarListas(idFamiliaActual: 0, idsSeleccionados: new List<string>());
         AbrirModal();
@@ -42,7 +51,7 @@ public partial class Familias : PaginaBase
             FamiliaBE Familia = FamiliaBll.ObtenerDatos(Id);
             hdnId.Value = Familia.Id.ToString();
             txtNombre.Text = Familia.Nombre;
-            litTituloModal.Text = "Editar Familia";
+            litTituloModal.Text = Traductor.T("familias.tituloEditar");
             lblErrorModal.Visible = false;
             List<string> Seleccionados = new List<string>();
             foreach (ComponentePermiso Hijo in Familia.Hijos)
@@ -70,7 +79,7 @@ public partial class Familias : PaginaBase
         foreach (PermisoBE Permiso in PermisoBll.Listar())
         {
             string Valor = "P|" + Permiso.Id;
-            ListItem Item = new ListItem("[Permiso] " + Permiso.Nombre, Valor);
+            ListItem Item = new ListItem("[" + Traductor.T("familias.tipoPermiso") + "] " + Permiso.Nombre, Valor);
             if (idsSeleccionados.Contains(Valor))
                 lstSeleccionados.Items.Add(Item);
             else
@@ -81,7 +90,7 @@ public partial class Familias : PaginaBase
         {
             if (Familia.Id == idFamiliaActual) continue; // evita autorreferencia directa
             string Valor = "F|" + Familia.Id;
-            ListItem Item = new ListItem("[Familia] " + Familia.Nombre, Valor);
+            ListItem Item = new ListItem("[" + Traductor.T("familias.tipoFamilia") + "] " + Familia.Nombre, Valor);
             if (idsSeleccionados.Contains(Valor))
                 lstSeleccionados.Items.Add(Item);
             else
@@ -115,7 +124,7 @@ public partial class Familias : PaginaBase
         int Id = Convert.ToInt32(hdnId.Value);
         if (string.IsNullOrWhiteSpace(txtNombre.Text))
         {
-            lblErrorModal.Text = "El nombre es obligatorio.";
+            lblErrorModal.Text = Traductor.T("comun.nombreObligatorio");
             lblErrorModal.Visible = true;
             AbrirModal();
             return;
@@ -137,7 +146,8 @@ public partial class Familias : PaginaBase
             string NombreConflicto = FamiliaBll.ValidarSinCiclos(Familia);
             if (NombreConflicto != null)
             {
-                lblErrorModal.Text = "No se puede agregar '" + NombreConflicto + "' porque generaría una referencia circular.";
+                // [ERROR-046] Referencia circular en la jerarquía de Familias.
+                lblErrorModal.Text = Traductor.T("familias.errorCiclo", NombreConflicto);
                 lblErrorModal.Visible = true;
                 AbrirModal();
                 return;

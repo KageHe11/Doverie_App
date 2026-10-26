@@ -7,10 +7,8 @@
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Gestionar Permisos</h2>
-        <asp:LinkButton ID="btnAgregar" runat="server" CssClass="btn btn-primary" OnClick="btnAgregar_Click">
-            + Agregar Permiso
-        </asp:LinkButton>
+        <h2><%: Traductor.T("permisos.titulo") %></h2>
+        <asp:LinkButton ID="btnAgregar" runat="server" CssClass="btn btn-primary" OnClick="btnAgregar_Click" />
     </div>
 
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
@@ -18,17 +16,16 @@
             <asp:GridView ID="gvPermisos" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvPermisos_RowCommand">
                 <Columns>
-                    <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-                    <asp:BoundField DataField="Descripcion" HeaderText="Descripción" />
-                    <asp:TemplateField HeaderText="Acciones">
+                    <asp:BoundField DataField="Nombre" />
+                    <asp:BoundField DataField="Descripcion" />
+                    <asp:TemplateField>
                         <ItemTemplate>
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
-                                CommandName="Editar" CommandArgument='<%# Eval("Id") %>'>Editar</asp:LinkButton>
+                                CommandName="Editar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.editar") %>' />
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger"
                                 CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick="return confirm('¿Eliminar este permiso? Esta acción no se puede deshacer.');">
-                                Eliminar
-                            </asp:LinkButton>
+                                OnClientClick='<%# Traductor.Confirmar("permisos.confirmarEliminar") %>'
+                                Text='<%# Traductor.T("comun.eliminar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -42,23 +39,23 @@
                 <asp:UpdatePanel ID="UpdatePanelModal" runat="server">
                     <ContentTemplate>
                         <div class="modal-header">
-                            <h5 class="modal-title"><asp:Literal ID="litTituloModal" runat="server" Text="Agregar Permiso" /></h5>
+                            <h5 class="modal-title"><asp:Literal ID="litTituloModal" runat="server" /></h5>
                         </div>
                         <div class="modal-body">
                             <asp:HiddenField ID="hdnId" runat="server" Value="0" />
                             <asp:Label ID="lblErrorModal" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
                             <div class="mb-2">
-                                <label class="form-label">Nombre</label>
+                                <label class="form-label"><%: Traductor.T("comun.nombre") %></label>
                                 <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Descripción</label>
+                                <label class="form-label"><%: Traductor.T("comun.descripcion") %></label>
                                 <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3"></asp:TextBox>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
+                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

@@ -12,8 +12,21 @@ public partial class EmpleadosEmpresa : PaginaBase
     {
         get { return Session["Usuario"] as UsuarioBE; }
     }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvEmpleados.Columns[0].HeaderText = Traductor.T("comun.nombre");
+        gvEmpleados.Columns[1].HeaderText = Traductor.T("comun.apellido");
+        gvEmpleados.Columns[2].HeaderText = Traductor.T("comun.usuario");
+        gvEmpleados.Columns[3].HeaderText = Traductor.T("comun.email");
+        gvEmpleados.Columns[4].HeaderText = Traductor.T("comun.estado");
+        gvEmpleados.Columns[5].HeaderText = Traductor.T("comun.acciones");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnAgregar.Text = Traductor.T("empleados.agregar");
+        btnGuardar.Text = Traductor.T("comun.guardar");
         if (!IsPostBack)
         {
             CargarPerfiles();
@@ -35,7 +48,7 @@ public partial class EmpleadosEmpresa : PaginaBase
     protected void btnAgregar_Click(object sender, EventArgs e)
     {
         LimpiarFormulario();
-        litTituloModal.Text = "Agregar Empleado";
+        litTituloModal.Text = Traductor.T("empleados.tituloAgregar");
         AbrirModal();
     }
     protected void gvEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -63,7 +76,7 @@ public partial class EmpleadosEmpresa : PaginaBase
             ddlPerfil.SelectedValue = Empleado.Perfil.Id.ToString();
             txtDni.Text = Empleado.Dni;
             txtTelefono.Text = Empleado.Telefono;
-            litTituloModal.Text = "Editar Empleado";
+            litTituloModal.Text = Traductor.T("empleados.tituloEditar");
             lblErrorModal.Visible = false;
             AbrirModal();
         }
@@ -95,7 +108,7 @@ public partial class EmpleadosEmpresa : PaginaBase
         {
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
             {
-                lblErrorModal.Text = "La contraseña es obligatoria para un empleado nuevo.";
+                lblErrorModal.Text = Traductor.T("empleados.errorContrasenaObligatoria");
                 lblErrorModal.Visible = true;
                 AbrirModal();
                 return;

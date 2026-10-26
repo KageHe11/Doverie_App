@@ -101,6 +101,13 @@ namespace BLL
             }
             return Bloquear;
         }
+        /// Guarda el idioma preferido elegido desde el SelectorIdioma.
+        public void ActualizarIdioma(UsuarioBE Pusuario, int? idiomaId)
+        {
+            UsuarioDAL UsuarioDal = new UsuarioDAL();
+            UsuarioDal.ActualizarIdioma(Pusuario.Id, idiomaId);
+            Pusuario.IdiomaId = idiomaId;
+        }
         public List<UsuarioBE> ListarPorEmpresa(int empresaId)
         {
             UsuarioDAL UsuarioDal = new UsuarioDAL();
@@ -250,10 +257,11 @@ namespace BLL
         /// esté bloqueado, verifica la contraseña, reinicia el contador de
         /// intentos fallidos, carga su Perfil completo (con el árbol de permisos)
         /// y genera el token de sesión.
-        public ResultadoLogin LogIn(string PnombreUsuario, string Pcontrasena, out UsuarioBE UsuarioLogueado, out string Token)
+        public ResultadoLogin LogIn(string PnombreUsuario, string Pcontrasena, out UsuarioBE UsuarioLogueado, out string Token, out ContextoIdioma Idioma)
         {
             UsuarioLogueado = null;
             Token = null;
+            Idioma = null;
             UsuarioBE Usuario = ObtenerPorNombreUsuario(PnombreUsuario);
             if (Usuario == null)
             {
@@ -292,6 +300,10 @@ namespace BLL
             // Se genera el JWT que va a viajar en la cookie de sesión.
             TokenService ServioToken = new TokenService();
             Token = ServioToken.GenerarToken(Usuario);
+            // RC-004 Traducir: se establece el idioma preferido del Usuario
+            // (o el predeterminado) mediante ContextoIdioma (patrón Strategy).
+            IdiomaBLL IdiomaBll = new IdiomaBLL();
+            Idioma = IdiomaBll.CrearContexto(Usuario.IdiomaId);
             UsuarioLogueado = Usuario;
             return ResultadoLogin.Exitoso;
         }

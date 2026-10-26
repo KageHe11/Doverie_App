@@ -10,16 +10,17 @@ public partial class RestablecerContrasena : System.Web.UI.Page
     }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnRestablecer.Text = Traductor.T("restablecer.boton");
         if (string.IsNullOrWhiteSpace(Token))
         {
-            MostrarError("El link de recuperación no es válido.");
+            MostrarError(Traductor.T("restablecer.linkInvalido"));
         }
     }
     protected void btnRestablecer_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(txtContrasena.Text) || string.IsNullOrWhiteSpace(txtConfirmar.Text))
         {
-            lblError.Text = "Completá ambos campos.";
+            lblError.Text = Traductor.T("comun.completarAmbos");
             lblError.Visible = true;
             return;
         }
@@ -31,11 +32,11 @@ public partial class RestablecerContrasena : System.Web.UI.Page
                 Response.Redirect("~/Login.aspx?restablecido=1");
                 break;
             case ResultadoRestablecimiento.ContrasenasNoCoinciden:
-                lblError.Text = "Las contraseñas no coinciden.";
+                lblError.Text = Traductor.T("comun.contrasenasNoCoinciden");
                 lblError.Visible = true;
                 break;
             case ResultadoRestablecimiento.TokenInvalido:
-                MostrarError("El link es inválido o ya expiró. Solicitá uno nuevo.");
+                MostrarError(Traductor.T("restablecer.linkExpirado"));
                 break;
         }
     }

@@ -6,7 +6,7 @@
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
-    <h2 class="mb-3">Bitácora del Sistema</h2>
+    <h2 class="mb-3"><%: Traductor.T("bitacora.titulo") %></h2>
 
     <asp:UpdatePanel ID="UpdatePanelBitacora" runat="server">
         <ContentTemplate>
@@ -15,46 +15,46 @@
                 <div class="card-body">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
-                            <label class="form-label">Usuario</label>
+                            <label class="form-label"><%: Traductor.T("comun.usuario") %></label>
                             <asp:DropDownList ID="ddlUsuario" runat="server" CssClass="form-select">
-                                <asp:ListItem Text="-- Todos --" Value="" />
+                                <asp:ListItem Value="" />
                             </asp:DropDownList>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Tipo de evento</label>
+                            <label class="form-label"><%: Traductor.T("bitacora.tipoEvento") %></label>
                             <asp:DropDownList ID="ddlAccion" runat="server" CssClass="form-select">
-                                <asp:ListItem Text="-- Todos --" Value="" />
+                                <asp:ListItem Value="" />
                             </asp:DropDownList>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Desde</label>
+                            <label class="form-label"><%: Traductor.T("bitacora.desde") %></label>
                             <asp:TextBox ID="txtDesde" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label">Hasta</label>
+                            <label class="form-label"><%: Traductor.T("bitacora.hasta") %></label>
                             <asp:TextBox ID="txtHasta" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
                         </div>
                         <div class="col-md-2">
-                            <asp:Button ID="btnFiltrar" runat="server" Text="Filtrar" CssClass="btn btn-primary w-100" OnClick="btnFiltrar_Click" />
+                            <asp:Button ID="btnFiltrar" runat="server" CssClass="btn btn-primary w-100" OnClick="btnFiltrar_Click" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <asp:Label ID="lblSinResultados" runat="server" CssClass="alert alert-info" Visible="false" Text="No se encontraron eventos con ese filtro."></asp:Label>
+            <asp:Label ID="lblSinResultados" runat="server" CssClass="alert alert-info" Visible="false"></asp:Label>
 
             <asp:GridView ID="gvBitacora" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false">
                 <Columns>
-                    <asp:BoundField DataField="Fecha" HeaderText="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
-                    <asp:BoundField DataField="Accion" HeaderText="Evento" />
-                    <asp:BoundField DataField="NombreUsuario" HeaderText="Usuario" />
-                    <asp:BoundField DataField="Detalle" HeaderText="Detalle" />
+                    <asp:BoundField DataField="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <asp:BoundField DataField="Accion" />
+                    <asp:BoundField DataField="NombreUsuario" />
+                    <asp:BoundField DataField="Detalle" />
                 </Columns>
             </asp:GridView>
 
             <div class="text-center mt-3">
-                <asp:Button ID="btnCargarMas" runat="server" Text="Cargar más" CssClass="btn btn-outline-secondary" OnClick="btnCargarMas_Click" />
+                <asp:Button ID="btnCargarMas" runat="server" CssClass="btn btn-outline-secondary" OnClick="btnCargarMas_Click" />
                 <asp:HiddenField ID="hdnHistorialCompleto" runat="server" Value="0" />
             </div>
 

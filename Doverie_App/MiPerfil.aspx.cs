@@ -17,6 +17,7 @@ public partial class MiPerfil : PaginaBase
             Response.Redirect("~/AccesoDenegado.aspx");
             return;
         }
+        btnGuardar.Text = Traductor.T("miPerfil.guardarCambios");
         if (!IsPostBack)
         {
             txtNombreUsuario.Text = UsuarioLogueado.NombreUsuario;
@@ -42,14 +43,14 @@ public partial class MiPerfil : PaginaBase
                 Session["Usuario"] = Actualizado;
                 txtContrasena.Text = "";
                 lblError.Visible = false;
-                lblExito.Text = "Tus datos se actualizaron correctamente.";
+                lblExito.Text = Traductor.T("miPerfil.exito");
                 lblExito.Visible = true;
                 break;
             case ResultadoModificarPerfil.DatosInvalidos:
-                MostrarError("Completá todos los campos con un formato válido.");
+                MostrarError(Traductor.T("miPerfil.errorDatos"));
                 break;
             case ResultadoModificarPerfil.EmailYaRegistrado:
-                MostrarError("Ese email ya está en uso por otra cuenta.");
+                MostrarError(Traductor.T("miPerfil.errorEmail"));
                 break;
         }
     }

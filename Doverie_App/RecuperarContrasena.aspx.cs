@@ -5,12 +5,13 @@ public partial class RecuperarContrasena : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnEnviar.Text = Traductor.T("recuperar.enviar");
     }
     protected void btnEnviar_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(txtNombreUsuario.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
         {
-            lblError.Text = "Completá ambos campos.";
+            lblError.Text = Traductor.T("comun.completarAmbos");
             lblError.Visible = true;
             return;
         }
@@ -21,7 +22,7 @@ public partial class RecuperarContrasena : System.Web.UI.Page
         // seguridad (no confirmamos ni negamos si el usuario/email existe).
         lblError.Visible = false;
         pnlFormulario.Visible = false;
-        lblExito.Text = "Si los datos son correctos, vas a recibir un email con el link de recuperación en los próximos minutos.";
+        lblExito.Text = Traductor.T("recuperar.exito");
         lblExito.Visible = true;
     }
 }

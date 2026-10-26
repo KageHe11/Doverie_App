@@ -7,10 +7,8 @@
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Mis Empleados</h2>
-        <asp:LinkButton ID="btnAgregar" runat="server" CssClass="btn btn-primary" OnClick="btnAgregar_Click">
-            + Agregar Empleado
-        </asp:LinkButton>
+        <h2><%: Traductor.T("empleados.titulo") %></h2>
+        <asp:LinkButton ID="btnAgregar" runat="server" CssClass="btn btn-primary" OnClick="btnAgregar_Click" />
     </div>
 
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
@@ -19,27 +17,26 @@
             <asp:GridView ID="gvEmpleados" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvEmpleados_RowCommand">
                 <Columns>
-                    <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-                    <asp:BoundField DataField="Apellido" HeaderText="Apellido" />
-                    <asp:BoundField DataField="NombreUsuario" HeaderText="Usuario" />
-                    <asp:BoundField DataField="Gmail" HeaderText="Email" />
-                    <asp:TemplateField HeaderText="Estado">
+                    <asp:BoundField DataField="Nombre" />
+                    <asp:BoundField DataField="Apellido" />
+                    <asp:BoundField DataField="NombreUsuario" />
+                    <asp:BoundField DataField="Gmail" />
+                    <asp:TemplateField>
                         <ItemTemplate>
                             <span class='<%# (bool)Eval("Suspendido") ? "badge bg-danger" : "badge bg-success" %>'>
-                                <%# (bool)Eval("Suspendido") ? "Suspendido" : "Activo" %>
+                                <%# (bool)Eval("Suspendido") ? Traductor.T("comun.suspendido") : Traductor.T("comun.activo") %>
                             </span>
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Acciones">
+                    <asp:TemplateField>
                         <ItemTemplate>
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
-                                CommandName="Editar" CommandArgument='<%# Eval("Id") %>'>Editar</asp:LinkButton>
+                                CommandName="Editar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.editar") %>' />
 
                             <asp:LinkButton runat="server" CssClass='<%# (bool)Eval("Suspendido") ? "btn btn-sm btn-outline-success" : "btn btn-sm btn-outline-danger" %>'
                                 CommandName="ToggleEstado" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick="return confirm('¿Confirmás esta acción?');">
-                                <%# (bool)Eval("Suspendido") ? "Reactivar" : "Eliminar" %>
-                            </asp:LinkButton>
+                                OnClientClick='<%# Traductor.Confirmar("comun.confirmarAccion") %>'
+                                Text='<%# (bool)Eval("Suspendido") ? Traductor.T("comun.reactivar") : Traductor.T("comun.eliminar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -54,7 +51,7 @@
                 <asp:UpdatePanel ID="UpdatePanelModal" runat="server">
                     <ContentTemplate>
                         <div class="modal-header">
-                            <h5 class="modal-title"><asp:Literal ID="litTituloModal" runat="server" Text="Agregar Empleado" /></h5>
+                            <h5 class="modal-title"><asp:Literal ID="litTituloModal" runat="server" /></h5>
                         </div>
                         <div class="modal-body">
 
@@ -62,44 +59,44 @@
                             <asp:Label ID="lblErrorModal" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
 
                             <div class="mb-2">
-                                <label class="form-label">Nombre</label>
+                                <label class="form-label"><%: Traductor.T("comun.nombre") %></label>
                                 <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Apellido</label>
+                                <label class="form-label"><%: Traductor.T("comun.apellido") %></label>
                                 <asp:TextBox ID="txtApellido" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Nombre de usuario</label>
+                                <label class="form-label"><%: Traductor.T("comun.nombreUsuario") %></label>
                                 <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Contraseña</label>
+                                <label class="form-label"><%: Traductor.T("comun.contrasena") %></label>
                                 <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
-                                <small class="text-muted">Dejar vacío al editar si no se quiere cambiar.</small>
+                                <small class="text-muted"><%: Traductor.T("comun.ayudaContrasenaEditar") %></small>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Email</label>
+                                <label class="form-label"><%: Traductor.T("comun.email") %></label>
                                 <asp:TextBox ID="txtGmail" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">DNI</label>
+                                <label class="form-label"><%: Traductor.T("comun.dni") %></label>
                                 <asp:TextBox ID="txtDni" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
                             <div class="mb-2">
-                                <label class="form-label">Teléfono</label>
+                                <label class="form-label"><%: Traductor.T("comun.telefono") %></label>
                                 <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control"></asp:TextBox>
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label">Perfil de permisos</label>
+                                <label class="form-label"><%: Traductor.T("empleados.perfil") %></label>
                                 <asp:DropDownList ID="ddlPerfil" runat="server" CssClass="form-select" DataTextField="NombrePerfil" DataValueField="Id"></asp:DropDownList>
                             </div>
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <asp:Button ID="btnGuardar" runat="server" Text="Guardar" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
+                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

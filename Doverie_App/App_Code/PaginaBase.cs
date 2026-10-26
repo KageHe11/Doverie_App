@@ -58,6 +58,18 @@ public class PaginaBase : Page
             return;
         }
     }
+    /// Usuario de la sesión actual (ya validado en OnInit).
+    protected UsuarioBE UsuarioActual
+    {
+        get { return Session["Usuario"] as UsuarioBE; }
+    }
+    /// Para que cada página habilite u oculte acciones puntuales (ej: el
+    /// botón "Eliminar") según un Permiso, además del PermisoRequerido.
+    protected bool TienePermiso(string nombrePermiso)
+    {
+        UsuarioBE Usuario = UsuarioActual;
+        return Usuario != null && TienePermiso(Usuario, nombrePermiso);
+    }
     /// Busca el Permiso por nombre y chequea si el árbol de Familias del
     /// Perfil del Usuario lo contiene (recorrido recursivo vía el
     /// patrón Composite armado en BE).

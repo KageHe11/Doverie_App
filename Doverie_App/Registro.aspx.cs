@@ -11,12 +11,15 @@ public partial class Registro : System.Web.UI.Page
         {
             Response.Redirect("~/Default.aspx");
         }
+        rblTipo.Items[0].Text = Traductor.T("registro.usuarioIndividual");
+        rblTipo.Items[1].Text = Traductor.T("registro.empresa");
+        btnRegistrar.Text = Traductor.T("registro.boton");
     }
     protected void btnRegistrar_Click(object sender, EventArgs e)
     {
         if (txtContrasena.Text != txtConfirmar.Text)
         {
-            MostrarError("Las contraseñas no coinciden.");
+            MostrarError(Traductor.T("comun.contrasenasNoCoinciden"));
             return;
         }
         bool EsEmpresa = rblTipo.SelectedValue == "Empresa";
@@ -41,14 +44,14 @@ public partial class Registro : System.Web.UI.Page
         {
             case ResultadoRegistro.Exitoso:
                 pnlFormulario.Visible = false;
-                lblExito.Text = "¡Registro exitoso! Ya podés iniciar sesión.";
+                lblExito.Text = Traductor.T("registro.exito");
                 lblExito.Visible = true;
                 break;
             case ResultadoRegistro.DatosInvalidos:
-                MostrarError("Completá todos los campos obligatorios.");
+                MostrarError(Traductor.T("registro.errorDatos"));
                 break;
             case ResultadoRegistro.YaRegistrado:
-                MostrarError("Ya existe una cuenta con ese nombre de usuario o email.");
+                MostrarError(Traductor.T("registro.errorYaRegistrado"));
                 break;
         }
     }

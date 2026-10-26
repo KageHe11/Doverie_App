@@ -44,8 +44,10 @@
     <Compile Include="BitacoraBE.cs" />
     <Compile Include="ComponentePermiso.cs" />
     <Compile Include="FamiliaBE.cs" />
+    <Compile Include="IdiomaBE.cs" />
     <Compile Include="PerfilBE.cs" />
     <Compile Include="PermisoBE.cs" />
+    <Compile Include="ResultadoIdioma.cs" />
     <Compile Include="ResultadoModificarPerfil.cs" />
     <Compile Include="ResultadoRecuperacion.cs" />
     <Compile Include="ResultadoRegistro.cs" />

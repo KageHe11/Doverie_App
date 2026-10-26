@@ -7,8 +7,18 @@ using BLL;
 public partial class Permisos : PaginaBase
 {
     protected override string PermisoRequerido { get { return "VerMenuAdmin"; } }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvPermisos.Columns[0].HeaderText = Traductor.T("comun.nombre");
+        gvPermisos.Columns[1].HeaderText = Traductor.T("comun.descripcion");
+        gvPermisos.Columns[2].HeaderText = Traductor.T("comun.acciones");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        btnAgregar.Text = Traductor.T("permisos.agregar");
+        btnGuardar.Text = Traductor.T("comun.guardar");
         if (!IsPostBack)
         {
             CargarGrilla();
@@ -25,7 +35,7 @@ public partial class Permisos : PaginaBase
         hdnId.Value = "0";
         txtNombre.Text = "";
         txtDescripcion.Text = "";
-        litTituloModal.Text = "Agregar Permiso";
+        litTituloModal.Text = Traductor.T("permisos.tituloAgregar");
         lblErrorModal.Visible = false;
         AbrirModal();
     }
@@ -39,7 +49,7 @@ public partial class Permisos : PaginaBase
             hdnId.Value = Permiso.Id.ToString();
             txtNombre.Text = Permiso.Nombre;
             txtDescripcion.Text = Permiso.Descripcion;
-            litTituloModal.Text = "Editar Permiso";
+            litTituloModal.Text = Traductor.T("permisos.tituloEditar");
             lblErrorModal.Visible = false;
             AbrirModal();
         }
@@ -55,7 +65,7 @@ public partial class Permisos : PaginaBase
         PermisoBLL PermisoBll = new PermisoBLL();
         if (string.IsNullOrWhiteSpace(txtNombre.Text))
         {
-            lblErrorModal.Text = "El nombre es obligatorio.";
+            lblErrorModal.Text = Traductor.T("comun.nombreObligatorio");
             lblErrorModal.Visible = true;
             AbrirModal();
             return;

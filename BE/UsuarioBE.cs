@@ -25,6 +25,8 @@ namespace BE
         public int Intentos { get; set; }
         public PerfilBE Perfil { get; set; }
         public int? EmpresaId { get; set; }
+        /// Idioma preferido. Null = se usa el idioma predeterminado.
+        public int? IdiomaId { get; set; }
 
     }
 }

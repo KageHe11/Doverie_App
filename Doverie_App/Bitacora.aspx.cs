@@ -7,8 +7,22 @@ using BLL;
 public partial class Bitacora : PaginaBase
 {
     protected override string PermisoRequerido { get { return "VerBitacora"; } }
+    /// Los encabezados de la grilla se traducen en Init, antes de que la
+    /// grilla se reconstruya desde el ViewState en los postbacks.
+    protected void Page_Init(object sender, EventArgs e)
+    {
+        gvBitacora.Columns[0].HeaderText = Traductor.T("bitacora.fecha");
+        gvBitacora.Columns[1].HeaderText = Traductor.T("bitacora.evento");
+        gvBitacora.Columns[2].HeaderText = Traductor.T("comun.usuario");
+        gvBitacora.Columns[3].HeaderText = Traductor.T("bitacora.detalle");
+    }
     protected void Page_Load(object sender, EventArgs e)
     {
+        ddlUsuario.Items[0].Text = Traductor.T("comun.todos");
+        ddlAccion.Items[0].Text = Traductor.T("comun.todos");
+        btnFiltrar.Text = Traductor.T("bitacora.filtrar");
+        btnCargarMas.Text = Traductor.T("bitacora.cargarMas");
+        lblSinResultados.Text = Traductor.T("bitacora.sinResultados");
         if (!IsPostBack)
         {
             CargarFiltros();
