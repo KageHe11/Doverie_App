@@ -14,6 +14,27 @@ public partial class Login : System.Web.UI.Page
     {
         btnIngresar.Text = Traductor.T("login.ingresar");
     }
+    /// Identificador de este navegador: un valor aleatorio en una cookie de
+    /// larga duración. Si no existe todavía, se crea. Sirve para detectar
+    /// inicios de sesión desde un dispositivo nuevo.
+    private string TokenDispositivo()
+    {
+        HttpCookie Cookie = Request.Cookies["DispositivoDoverie"];
+        if (Cookie != null && !string.IsNullOrWhiteSpace(Cookie.Value)) return Cookie.Value;
+        string Token = Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        HttpCookie Nueva = new HttpCookie("DispositivoDoverie", Token);
+        Nueva.HttpOnly = true;
+        Nueva.Expires = DateTime.Now.AddYears(1);
+        Response.Cookies.Add(Nueva);
+        return Token;
+    }
+    /// Descripción legible del dispositivo, para el aviso: navegador,
+    /// sistema operativo y dirección IP.
+    private string DescribirDispositivo()
+    {
+        HttpBrowserCapabilities Navegador = Request.Browser;
+        return Navegador.Browser + " " + Navegador.Version + " / " + Navegador.Platform + " (" + Request.UserHostAddress + ")";
+    }
     //delega toda la lógica real en UsuarioBLL.LogIn(),
     // y acá solo se ocupa de la parte "web" (cookie, Session, redirección).
     protected void btnIngresar_Click(object sender, EventArgs e)
@@ -44,6 +65,7 @@ public partial class Login : System.Web.UI.Page
                 Response.Cookies.Add(Cookie);
                 // Queda registro del evento en la Bitácora del sistema.
                 new BitacoraBLL().Registrar("Login", null, Usuario.Id);
+                BllUsuario.RegistrarDispositivo(Usuario, TokenDispositivo(), DescribirDispositivo());
                 Response.Redirect("Default.aspx");
                 break;
             case ResultadoLogin.UsuarioBloqueado:

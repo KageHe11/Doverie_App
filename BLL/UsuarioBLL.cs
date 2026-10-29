@@ -42,9 +42,33 @@ namespace BLL
                 // primer error.
                 Pusuario.Intentos = 0;
                 UsuarioDal.ActualizarBloqueo(Pusuario);
+                // CU-002-011 paso 8: se avisa al titular de la cuenta, si
+                // está suscripto al evento.
+                GestorEventos.Notificar(CatalogoEventos.CuentaReactivada, Pusuario.Id, null);
                 return;
             }
             UsuarioDal.ActualizarEstado(Pusuario);
+        }
+        /// Registra el dispositivo desde el que el Usuario inició sesión. Si
+        /// es nuevo y el Usuario ya tenía otros dispositivos registrados, se
+        /// dispara "inicio de sesión desde un nuevo dispositivo". El primer
+        /// dispositivo se registra sin avisar.
+        /// tokenDispositivo es el valor de la cookie del navegador; se
+        /// guarda solo su SHA-256.
+        public void RegistrarDispositivo(UsuarioBE usuario, string tokenDispositivo, string descripcion)
+        {
+            if (string.IsNullOrWhiteSpace(tokenDispositivo)) return;
+            HashService HashServ = new HashService();
+            string Identificador = HashServ.CalcularHashArchivo(Encoding.UTF8.GetBytes(tokenDispositivo));
+            DispositivoDAL DispositivoDal = new DispositivoDAL();
+            if (DispositivoDal.Existe(usuario.Id, Identificador)) return;
+            bool TeniaOtros = DispositivoDal.Contar(usuario.Id) > 0;
+            if (descripcion != null && descripcion.Length > 200) descripcion = descripcion.Substring(0, 200);
+            DispositivoDal.Registrar(usuario.Id, Identificador, descripcion);
+            if (TeniaOtros)
+            {
+                GestorEventos.Notificar(CatalogoEventos.InicioSesionNuevoDispositivo, usuario.Id, descripcion);
+            }
         }
         public void ActualizarDatos(UsuarioBE Pusuario)
         {

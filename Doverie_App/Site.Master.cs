@@ -20,6 +20,7 @@ public partial class Site : MasterPage
             pnlDocumentos.Visible = TienePermiso(Usuario, "VerDocumentos");
             pnlEmpresa.Visible = Usuario.Empresa;
             pnlMiPerfil.Visible = !Usuario.Empleado;
+            pnlCampana.Visible = TienePermiso(Usuario, "VerNotificaciones");
         }
         else
         {
@@ -29,7 +30,19 @@ public partial class Site : MasterPage
             pnlIdiomas.Visible = false;
             pnlDocumentos.Visible = false;
             pnlEmpresa.Visible = false;
+            pnlCampana.Visible = false;
         }
+    }
+    /// El contador de la campana se calcula al final del ciclo de la página,
+    /// después de los eventos: así refleja lo que la página haya hecho en
+    /// este mismo request (ej: Notificaciones.aspx marca todo como leído).
+    protected void Page_PreRender(object sender, EventArgs e)
+    {
+        UsuarioBE Usuario = Session["Usuario"] as UsuarioBE;
+        if (Usuario == null || !pnlCampana.Visible) return;
+        int NoLeidas = new NotificacionBLL().ContarNoLeidas(Usuario.Id);
+        lblNoLeidas.Visible = NoLeidas > 0;
+        lblNoLeidas.Text = NoLeidas > 99 ? "99+" : NoLeidas.ToString();
     }
     /// Arma el texto de bienvenida según el tipo de cuenta. El orden de
     private string ArmarSaludo(UsuarioBE usuario)

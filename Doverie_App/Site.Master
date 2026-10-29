@@ -47,6 +47,7 @@
                             </li>
                         </asp:Panel>
 
+
                         <asp:Panel ID="pnlIdiomas" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
                                 <a class="nav-link" href="/Idiomas.aspx"><%: Traductor.T("nav.idiomas") %></a>
@@ -74,6 +75,12 @@
                         </asp:Panel>
                         <asp:Panel ID="pnlLogueado" runat="server" CssClass="d-flex align-items-center" Visible="false">
                             <span class="text-light me-3"><asp:Literal ID="litSaludo" runat="server" Mode="Encode" /></span>
+                                <asp:Panel ID="pnlCampana" runat="server" CssClass="me-2">
+                                    <a class="btn btn-outline-light btn-sm position-relative" href="/Notificaciones.aspx" title="<%: Traductor.T("notif.titulo") %>">
+                                        &#128276;
+                                        <asp:Label ID="lblNoLeidas" runat="server" CssClass="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" Visible="false" />
+                                    </a>
+                                </asp:Panel>
                                 <asp:Panel ID="pnlMiPerfil" runat="server" CssClass="me-2">
                                     <a class="btn btn-outline-light btn-sm" href="/MiPerfil.aspx"><%: Traductor.T("nav.miPerfil") %></a>
                                 </asp:Panel>

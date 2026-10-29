@@ -104,6 +104,9 @@ namespace BLL
                 return ResultadoDocumento.ErrorAlmacenamiento;
             }
             RegistrarEvento("Subir Documento", documento, null, usuario.Id);
+            // Se avisa al titular de la cuenta (la Empresa, si quien subió
+            // es un empleado, o el propio Usuario independiente).
+            GestorEventos.Notificar(CatalogoEventos.DocumentoSubido, CuentaDe(usuario), documento.Nombre);
             return ResultadoDocumento.Exitoso;
         }
         /// CU-001-003 Descargar Documento.
@@ -122,6 +125,12 @@ namespace BLL
                 return ResultadoDocumento.ErrorObtener;
             }
             RegistrarEvento("Descargar Documento", documento, null, usuario.Id);
+            // Acceso de otro Usuario de la cuenta (ej: un empleado) a un
+            // documento: se avisa al titular. El titular no se avisa a sí mismo.
+            if (usuario.Id != documento.CuentaId)
+            {
+                GestorEventos.Notificar(CatalogoEventos.DocumentoAccedido, documento.CuentaId, documento.Nombre + " (" + usuario.NombreUsuario + ")");
+            }
             return ResultadoDocumento.Exitoso;
         }
         /// CU-001-004 Eliminar Documento. El archivo se borra del
@@ -185,6 +194,10 @@ namespace BLL
                 Integro = string.Equals(HashActual, Sello.Hash, StringComparison.OrdinalIgnoreCase)
             };
             RegistrarEvento("Verificar Integridad", documento, verificacion.Integro ? "íntegro" : "MODIFICADO", usuario.Id);
+            if (!verificacion.Integro)
+            {
+                GestorEventos.Notificar(CatalogoEventos.ModificacionDetectada, documento.CuentaId, documento.Nombre);
+            }
             return verificacion.Integro ? ResultadoDocumento.Exitoso : ResultadoDocumento.Modificado;
         }
         /// Historial de accesos y modificaciones de un documento (CU-001-006

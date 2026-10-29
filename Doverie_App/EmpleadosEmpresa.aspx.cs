@@ -156,6 +156,8 @@ public partial class EmpleadosEmpresa : PaginaBase
             if (CambioPermisos)
             {
                 new BitacoraBLL().Registrar("Modificar Permisos Usuario Empresa", "Empleado Id: " + Empleado.Id, UsuarioLogueado.Id);
+                // Se avisa al empleado de su nuevo perfil de permisos.
+                GestorEventos.Notificar(CatalogoEventos.PermisosModificados, Empleado.Id, ddlPerfil.SelectedItem.Text);
             }
         }
         CargarGrilla();
