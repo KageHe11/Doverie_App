@@ -1,4 +1,10 @@
-﻿-- ========================================
+﻿-- Igual que SSMS: los SPs que modifican tablas con índices filtrados (ej.
+-- UQ_Usuario_Gmail) tienen que crearse con QUOTED_IDENTIFIER ON.
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
+-- ========================================
 -- Idiomas: CU-002-018 Alta / CU-002-019 Modificar / CU-002-020 Baja
 -- y RC-004 Traducir (patrón Strategy).
 -- El script se puede ejecutar más de una vez sin duplicar nada.

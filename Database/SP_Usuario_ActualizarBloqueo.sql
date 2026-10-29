@@ -1,3 +1,9 @@
+﻿-- Igual que SSMS: los SPs que modifican tablas con índices filtrados (ej.
+-- UQ_Usuario_Gmail) tienen que crearse con QUOTED_IDENTIFIER ON.
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 -- ========================================
 -- SP_Usuario_ActualizarBloqueo
 -- Usado por ActualizarBloqueo(UsuarioBE Pusuario) -> CU-002-001 Login
