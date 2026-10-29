@@ -13,6 +13,8 @@
 
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
         <ContentTemplate>
+            <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
+            <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
             <asp:GridView ID="gvUsuarios" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvUsuarios_RowCommand">
@@ -23,7 +25,8 @@
                     <asp:BoundField DataField="Gmail" />
                     <asp:TemplateField>
                         <ItemTemplate>
-                            <span class='<%# (bool)Eval("Suspendido") ? "badge bg-danger" : "badge bg-success" %>'>
+                            <%-- El motivo de la suspensión aparece al pasar el mouse. --%>
+                            <span class='<%# (bool)Eval("Suspendido") ? "badge bg-danger" : "badge bg-success" %>' title='<%#: Eval("Motivo") %>'>
                                 <%# (bool)Eval("Suspendido") ? Traductor.T("comun.suspendido") : Traductor.T("comun.activo") %>
                             </span>
                         </ItemTemplate>
@@ -33,10 +36,11 @@
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
                                 CommandName="Editar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.editar") %>' />
 
+                            <%-- Suspender abre el modal del motivo; Reactivar pide confirmación. --%>
                             <asp:LinkButton runat="server" CssClass='<%# (bool)Eval("Suspendido") ? "btn btn-sm btn-outline-success" : "btn btn-sm btn-outline-danger" %>'
                                 CommandName="ToggleEstado" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# Traductor.Confirmar("comun.confirmarAccion") %>'
-                                Text='<%# (bool)Eval("Suspendido") ? Traductor.T("comun.reactivar") : Traductor.T("comun.eliminar") %>' />
+                                OnClientClick='<%# (bool)Eval("Suspendido") ? Traductor.Confirmar("usuarios.confirmarReactivar") : "" %>'
+                                Text='<%# (bool)Eval("Suspendido") ? Traductor.T("comun.reactivar") : Traductor.T("usuarios.suspender") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -101,6 +105,32 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
                             <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                        </div>
+                    </ContentTemplate>
+                </asp:UpdatePanel>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Suspender (CU-002-010): motivo obligatorio -->
+    <div class="modal fade" id="modalSuspender" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <asp:UpdatePanel ID="UpdatePanelSuspender" runat="server">
+                    <ContentTemplate>
+                        <div class="modal-header">
+                            <h5 class="modal-title"><%: Traductor.T("usuarios.tituloSuspender") %>: <asp:Literal ID="litSuspenderNombre" runat="server" Mode="Encode" /></h5>
+                        </div>
+                        <div class="modal-body">
+                            <asp:HiddenField ID="hdnSuspenderId" runat="server" />
+                            <asp:Label ID="lblErrorSuspender" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
+                            <label class="form-label"><%: Traductor.T("usuarios.motivo") %></label>
+                            <asp:TextBox ID="txtMotivo" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                            <small class="text-muted"><%: Traductor.T("usuarios.motivoAyuda") %></small>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
+                            <asp:Button ID="btnConfirmarSuspension" runat="server" CssClass="btn btn-danger" OnClick="btnConfirmarSuspension_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

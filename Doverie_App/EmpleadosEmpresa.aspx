@@ -13,6 +13,8 @@
 
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
         <ContentTemplate>
+            <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
+            <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
             <asp:GridView ID="gvEmpleados" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvEmpleados_RowCommand">
@@ -33,10 +35,11 @@
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-secondary"
                                 CommandName="Editar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.editar") %>' />
 
-                            <asp:LinkButton runat="server" CssClass='<%# (bool)Eval("Suspendido") ? "btn btn-sm btn-outline-success" : "btn btn-sm btn-outline-danger" %>'
-                                CommandName="ToggleEstado" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# Traductor.Confirmar("comun.confirmarAccion") %>'
-                                Text='<%# (bool)Eval("Suspendido") ? Traductor.T("comun.reactivar") : Traductor.T("comun.eliminar") %>' />
+                            <%-- CU-001-016: la baja es permanente; el empleado deja de listarse. --%>
+                            <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger"
+                                CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'
+                                OnClientClick='<%# Traductor.Confirmar("empleados.confirmarEliminar") %>'
+                                Text='<%# Traductor.T("comun.eliminar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

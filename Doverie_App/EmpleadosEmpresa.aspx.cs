@@ -80,11 +80,21 @@ public partial class EmpleadosEmpresa : PaginaBase
             lblErrorModal.Visible = false;
             AbrirModal();
         }
-        else if (e.CommandName == "ToggleEstado")
+        else if (e.CommandName == "Eliminar")
         {
-            Empleado.Suspendido = !Empleado.Suspendido;
-            Empleado.Motivo = Empleado.Suspendido ? "Dado de baja por la Empresa" : null;
-            UsuarioBll.ActualizarEstado(Empleado);
+            // CU-001-016: baja permanente del empleado (la confirmación se
+            // pide en el navegador) [ERROR-037].
+            ResultadoEstadoUsuario Resultado = UsuarioBll.RevocarAccesoEmpleado(Empleado.Id, UsuarioLogueado.Id);
+            if (Resultado == ResultadoEstadoUsuario.Exitoso)
+            {
+                lblMensaje.Text = System.Web.HttpUtility.HtmlEncode(Traductor.T("empleados.eliminado", Empleado.NombreUsuario));
+                lblMensaje.Visible = true;
+            }
+            else
+            {
+                lblError.Text = System.Web.HttpUtility.HtmlEncode(Traductor.T("error.037"));
+                lblError.Visible = true;
+            }
             CargarGrilla();
         }
     }
@@ -104,6 +114,7 @@ public partial class EmpleadosEmpresa : PaginaBase
     {
         int Id = Convert.ToInt32(hdnId.Value);
         UsuarioBLL UsuarioBll = new UsuarioBLL();
+        ResultadoRegistro Resultado;
         if (Id == 0)
         {
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
@@ -129,8 +140,8 @@ public partial class EmpleadosEmpresa : PaginaBase
                 Perfil = new PerfilBE { Id = Convert.ToInt32(ddlPerfil.SelectedValue) },
                 EmpresaId = UsuarioLogueado.Id
             };
-            UsuarioBll.Registrar(NuevoEmpleado);
-            new BitacoraBLL().Registrar("Alta Empleado Empresa", "Empleado: " + NuevoEmpleado.NombreUsuario, UsuarioLogueado.Id);
+            // CU-001-010: validación de datos [ERROR-004] y duplicados [ERROR-005].
+            Resultado = UsuarioBll.RegistrarDesdeGestion(NuevoEmpleado, UsuarioLogueado.Id, "Alta Empleado Empresa");
         }
         else
         {
@@ -147,18 +158,20 @@ public partial class EmpleadosEmpresa : PaginaBase
             Empleado.Dni = txtDni.Text;
             Empleado.Telefono = txtTelefono.Text;
             Empleado.Perfil = new PerfilBE { Id = Convert.ToInt32(ddlPerfil.SelectedValue) };
-            if (!string.IsNullOrWhiteSpace(txtContrasena.Text))
-            {
-                HashService HashServ = new HashService();
-                Empleado.Contrasena = HashServ.HashearContrasena(txtContrasena.Text);
-            }
-            UsuarioBll.ActualizarDatos(Empleado);
-            if (CambioPermisos)
+            Resultado = UsuarioBll.ModificarDesdeGestion(Empleado, txtContrasena.Text, UsuarioLogueado.Id, "Modificar Empleado Empresa");
+            if (Resultado == ResultadoRegistro.Exitoso && CambioPermisos)
             {
                 new BitacoraBLL().Registrar("Modificar Permisos Usuario Empresa", "Empleado Id: " + Empleado.Id, UsuarioLogueado.Id);
                 // Se avisa al empleado de su nuevo perfil de permisos.
                 GestorEventos.Notificar(CatalogoEventos.PermisosModificados, Empleado.Id, ddlPerfil.SelectedItem.Text);
             }
+        }
+        if (Resultado != ResultadoRegistro.Exitoso)
+        {
+            lblErrorModal.Text = Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
+            lblErrorModal.Visible = true;
+            AbrirModal();
+            return;
         }
         CargarGrilla();
         CerrarModal();

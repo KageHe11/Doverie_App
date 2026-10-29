@@ -55,30 +55,39 @@ public partial class Permisos : PaginaBase
         }
         else if (e.CommandName == "Eliminar")
         {
-            PermisoBll.Eliminar(Id);
+            ResultadoAbm Resultado = PermisoBll.Eliminar(Id);
+            if (Resultado == ResultadoAbm.EnUso)
+            {
+                // [ERROR-023] con el motivo: alguna Familia lo contiene.
+                MostrarError(Traductor.T("error.023") + " " + Traductor.T("permisos.enUso"));
+            }
+            else if (Resultado != ResultadoAbm.Exitoso)
+            {
+                MostrarError(Traductor.T("error.023"));
+            }
             CargarGrilla();
         }
+    }
+    private void MostrarError(string mensaje)
+    {
+        lblError.Text = System.Web.HttpUtility.HtmlEncode(mensaje);
+        lblError.Visible = true;
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
         int Id = Convert.ToInt32(hdnId.Value);
         PermisoBLL PermisoBll = new PermisoBLL();
-        if (string.IsNullOrWhiteSpace(txtNombre.Text))
+        PermisoBE Permiso = new PermisoBE { Id = Id, Nombre = txtNombre.Text, Descripcion = txtDescripcion.Text };
+        ResultadoAbm Resultado = Id == 0 ? PermisoBll.Registrar(Permiso) : PermisoBll.ActualizarDatos(Permiso);
+        if (Resultado != ResultadoAbm.Exitoso)
         {
-            lblErrorModal.Text = Traductor.T("comun.nombreObligatorio");
+            // [ERROR-004] / [ERROR-022] / [ERROR-024]
+            string Clave = Resultado == ResultadoAbm.DatosInvalidos ? "comun.nombreObligatorio"
+                : Resultado == ResultadoAbm.Duplicado ? "error.022" : "error.024";
+            lblErrorModal.Text = Traductor.T(Clave);
             lblErrorModal.Visible = true;
             AbrirModal();
             return;
-        }
-        if (Id == 0)
-        {
-            PermisoBE Nuevo = new PermisoBE { Nombre = txtNombre.Text, Descripcion = txtDescripcion.Text };
-            PermisoBll.Registrar(Nuevo);
-        }
-        else
-        {
-            PermisoBE Permiso = new PermisoBE { Id = Id, Nombre = txtNombre.Text, Descripcion = txtDescripcion.Text };
-            PermisoBll.ActualizarDatos(Permiso);
         }
         CargarGrilla();
         CerrarModal();

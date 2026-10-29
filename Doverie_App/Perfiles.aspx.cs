@@ -67,7 +67,13 @@ public partial class Perfiles : PaginaBase
         {
             PerfilBE Perfil = PerfilBll.ObtenerDatos(Id);
             Perfil.Activo = !Perfil.Activo;
-            PerfilBll.ActualizarEstado(Perfil);
+            ResultadoAbm Resultado = PerfilBll.ActualizarEstado(Perfil);
+            if (Resultado != ResultadoAbm.Exitoso)
+            {
+                // [ERROR-027] asignado a usuarios activos / [ERROR-028] no se pudo
+                lblError.Text = System.Web.HttpUtility.HtmlEncode(Traductor.T(Resultado == ResultadoAbm.EnUso ? "error.027" : "error.028"));
+                lblError.Visible = true;
+            }
             CargarGrilla();
         }
     }
@@ -114,42 +120,29 @@ public partial class Perfiles : PaginaBase
     {
         int Id = Convert.ToInt32(hdnId.Value);
         PerfilBLL PerfilBll = new PerfilBLL();
-        if (string.IsNullOrWhiteSpace(txtNombrePerfil.Text))
+        PerfilBE Perfil = new PerfilBE
         {
-            lblErrorModal.Text = Traductor.T("comun.nombreObligatorio");
+            Id = Id,
+            NombrePerfil = txtNombrePerfil.Text,
+            AsignablePorEmpresa = chkAsignablePorEmpresa.Checked
+        };
+        ResultadoAbm Resultado = Id == 0 ? PerfilBll.Registrar(Perfil) : PerfilBll.ActualizarDatos(Perfil);
+        if (Resultado != ResultadoAbm.Exitoso)
+        {
+            // [ERROR-004] / [ERROR-025] repetido / [ERROR-026] alta / [ERROR-029] modificación
+            string Clave = Resultado == ResultadoAbm.DatosInvalidos ? "comun.nombreObligatorio"
+                : Resultado == ResultadoAbm.Duplicado ? "error.025"
+                : Id == 0 ? "error.026" : "error.029";
+            lblErrorModal.Text = Traductor.T(Clave);
             lblErrorModal.Visible = true;
             AbrirModal();
             return;
         }
-        if (Id == 0)
+        foreach (ListItem Item in lstFamiliasSeleccionadas.Items)
         {
-            PerfilBE NuevoPerfil = new PerfilBE
-            {
-                NombrePerfil = txtNombrePerfil.Text,
-                AsignablePorEmpresa = chkAsignablePorEmpresa.Checked
-            };
-            PerfilBll.Registrar(NuevoPerfil);
-            foreach (ListItem Item in lstFamiliasSeleccionadas.Items)
-            {
-                NuevoPerfil.Familias.Add(new FamiliaBE { Id = Convert.ToInt32(Item.Value) });
-            }
-            PerfilBll.ActualizarPermisos(NuevoPerfil);
+            Perfil.Familias.Add(new FamiliaBE { Id = Convert.ToInt32(Item.Value) });
         }
-        else
-        {
-            PerfilBE Perfil = new PerfilBE
-            {
-                Id = Id,
-                NombrePerfil = txtNombrePerfil.Text,
-                AsignablePorEmpresa = chkAsignablePorEmpresa.Checked
-            };
-            PerfilBll.ActualizarDatos(Perfil);
-            foreach (ListItem Item in lstFamiliasSeleccionadas.Items)
-            {
-                Perfil.Familias.Add(new FamiliaBE { Id = Convert.ToInt32(Item.Value) });
-            }
-            PerfilBll.ActualizarPermisos(Perfil);
-        }
+        PerfilBll.ActualizarPermisos(Perfil);
         CargarGrilla();
         CerrarModal();
     }

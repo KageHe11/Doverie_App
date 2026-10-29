@@ -27,6 +27,7 @@ public partial class Usuarios : PaginaBase
     {
         btnAgregar.Text = Traductor.T("usuarios.agregar");
         btnGuardar.Text = Traductor.T("comun.guardar");
+        btnConfirmarSuspension.Text = Traductor.T("usuarios.suspender");
         // Solo la primera carga (no en cada postback, para no perder
         // selecciones/estado del formulario innecesariamente).
         if (!IsPostBack)
@@ -72,16 +73,58 @@ public partial class Usuarios : PaginaBase
         }
         else if (e.CommandName == "ToggleEstado")
         {
-            // Suspender/Reactivar reutiliza el mismo campo Suspendido:
-            // si estaba activo, lo suspende (y guarda un motivo genérico);
-            // si estaba suspendido, lo reactiva (y limpia el motivo).
             UsuarioBLL UsuarioBll = new UsuarioBLL();
             UsuarioBE Usuario = UsuarioBll.ObtenerDatos(Id);
-            Usuario.Suspendido = !Usuario.Suspendido;
-            Usuario.Motivo = Usuario.Suspendido ? "Suspendido desde panel de administración" : null;
-            UsuarioBll.ActualizarEstado(Usuario);
+            if (Usuario == null) { CargarGrilla(); return; }
+            if (!Usuario.Suspendido)
+            {
+                // CU-002-010 paso 5: se pide el motivo de la suspensión.
+                hdnSuspenderId.Value = Usuario.Id.ToString();
+                litSuspenderNombre.Text = Usuario.NombreUsuario;
+                txtMotivo.Text = "";
+                lblErrorSuspender.Visible = false;
+                AbrirModalSuspender();
+                return;
+            }
+            // CU-002-011 Reactivar (la confirmación se pide en el navegador).
+            ResultadoEstadoUsuario Resultado = UsuarioBll.Reactivar(Id, UsuarioActual.Id);
+            if (Resultado == ResultadoEstadoUsuario.Exitoso) MostrarMensaje(Traductor.T("usuarios.reactivado", Usuario.NombreUsuario));
+            else MostrarError(Traductor.T(Resultado == ResultadoEstadoUsuario.NoSuspendido ? "error.039" : "error.038"));
             CargarGrilla();
         }
+    }
+    /// CU-002-010 pasos 6 y 7: motivo obligatorio [ERROR-004] y suspensión
+    /// [ERROR-038].
+    protected void btnConfirmarSuspension_Click(object sender, EventArgs e)
+    {
+        UsuarioBLL UsuarioBll = new UsuarioBLL();
+        ResultadoEstadoUsuario Resultado = UsuarioBll.Suspender(Convert.ToInt32(hdnSuspenderId.Value), txtMotivo.Text, UsuarioActual.Id);
+        if (Resultado == ResultadoEstadoUsuario.MotivoInvalido)
+        {
+            lblErrorSuspender.Text = Traductor.T("error.004") + " " + Traductor.T("usuarios.motivoAyuda");
+            lblErrorSuspender.Visible = true;
+            AbrirModalSuspender();
+            return;
+        }
+        if (Resultado == ResultadoEstadoUsuario.Exitoso) MostrarMensaje(Traductor.T("usuarios.suspendido", litSuspenderNombre.Text));
+        else MostrarError(Traductor.T("error.038"));
+        CargarGrilla();
+        CerrarModal("modalSuspender");
+    }
+    private void MostrarMensaje(string mensaje)
+    {
+        lblMensaje.Text = System.Web.HttpUtility.HtmlEncode(mensaje);
+        lblMensaje.Visible = true;
+    }
+    private void MostrarError(string mensaje)
+    {
+        lblError.Text = System.Web.HttpUtility.HtmlEncode(mensaje);
+        lblError.Visible = true;
+    }
+    private void AbrirModalSuspender()
+    {
+        ScriptManager.RegisterStartupScript(this, GetType(), "abrirModalSuspender",
+            "var m = new bootstrap.Modal(document.getElementById('modalSuspender')); m.show();", true);
     }
     ///Trae un usuario existente y precarga sus datos en los campos del modal.
     private void CargarFormulario(int id)
@@ -117,17 +160,11 @@ public partial class Usuarios : PaginaBase
     {
         int Id = Convert.ToInt32(hdnId.Value);
         UsuarioBLL UsuarioBll = new UsuarioBLL();
+        ResultadoRegistro Resultado;
         if (Id == 0)
         {
             // --- ALTA ---
             // La contraseña es obligatoria al crear un usuario nuevo.
-            if (UsuarioBll.ExistePorNombreUsuario(txtNombreUsuario.Text))
-            {
-                lblErrorModal.Text = Traductor.T("usuarios.errorYaExiste");
-                lblErrorModal.Visible = true;
-                AbrirModal();
-                return;
-            }
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
             {
                 lblErrorModal.Text = Traductor.T("usuarios.errorContrasenaObligatoria");
@@ -147,7 +184,7 @@ public partial class Usuarios : PaginaBase
                 Perfil = new PerfilBE { Id = Convert.ToInt32(ddlPerfil.SelectedValue) },
                 Local = true
             };
-            UsuarioBll.Registrar(NuevoUsuario);
+            Resultado = UsuarioBll.RegistrarDesdeGestion(NuevoUsuario, UsuarioActual.Id, "Alta Usuario");
         }
         else
         {
@@ -163,12 +200,16 @@ public partial class Usuarios : PaginaBase
             Usuario.Perfil = new PerfilBE { Id = Convert.ToInt32(ddlPerfil.SelectedValue) };
             // La contraseña solo se toca si el admin escribió una nueva;
             // si el campo quedó vacío, se conserva el hash actual.
-            if (!string.IsNullOrWhiteSpace(txtContrasena.Text))
-            {
-                HashService HashServ = new HashService();
-                Usuario.Contrasena = HashServ.HashearContrasena(txtContrasena.Text);
-            }
-            UsuarioBll.ActualizarDatos(Usuario);
+            Resultado = UsuarioBll.ModificarDesdeGestion(Usuario, txtContrasena.Text, UsuarioActual.Id, "Modificar Usuario");
+        }
+        if (Resultado != ResultadoRegistro.Exitoso)
+        {
+            // [ERROR-004] datos o formato; ya registrado: [ERROR-005] en el
+            // alta, [ERROR-021] email de otro usuario en la edición.
+            lblErrorModal.Text = Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
+            lblErrorModal.Visible = true;
+            AbrirModal();
+            return;
         }
         CargarGrilla();
         CerrarModal();
@@ -180,10 +221,10 @@ public partial class Usuarios : PaginaBase
             "var m = new bootstrap.Modal(document.getElementById('modalUsuario')); m.show();", true);
     }
     ///Le pide al navegador (vía JS) que cierre el modal de Bootstrap.
-    private void CerrarModal()
+    private void CerrarModal(string idModal = "modalUsuario")
     {
         ScriptManager.RegisterStartupScript(this, GetType(), "cerrarModal",
-            @"var m = bootstrap.Modal.getInstance(document.getElementById('modalUsuario'));
+            @"var m = bootstrap.Modal.getInstance(document.getElementById('" + idModal + @"'));
           if (m) m.hide();
           document.body.classList.remove('modal-open');
           document.body.style.removeProperty('padding-right');

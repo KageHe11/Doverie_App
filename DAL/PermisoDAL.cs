@@ -73,6 +73,23 @@ namespace DAL
             object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Permiso_ExistePorNombre", Parametros, CommandType.StoredProcedure);
             return Convert.ToInt32(Resultado) > 0;
         }
+        /// Familias que contienen el Permiso.
+        public int ContarUsos(int Pid)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Permiso_ContarUsos", Parametros, CommandType.StoredProcedure));
+        }
+        public bool ExistePorNombreExcluyendo(string Pnombre, int PidExcluir)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Nombre", Pnombre },
+                { "@IdExcluir", PidExcluir }
+            };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Permiso_ExistePorNombreExcluyendo", Parametros, CommandType.StoredProcedure)) > 0;
+        }
         private PermisoBE MapearFila(DataRow Fila)
         {
             return new PermisoBE

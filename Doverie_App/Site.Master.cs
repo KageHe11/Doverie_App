@@ -64,6 +64,9 @@ public partial class Site : MasterPage
     }
     protected void btnCerrarSesion_Click(object sender, EventArgs e)
     {
+        // CU-002-002 Logout (RC-002 Guardar en Bitácora).
+        UsuarioBE Usuario = Session["Usuario"] as UsuarioBE;
+        if (Usuario != null) new BitacoraBLL().Registrar("Logout", null, Usuario.Id);
         Session.Clear();
 
         HttpCookie Cookie = new HttpCookie("TokenSesion", "");

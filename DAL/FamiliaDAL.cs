@@ -63,6 +63,23 @@ namespace DAL
                 }
             }
         }
+        /// Perfiles que tienen asignada la Familia + Familias que la contienen.
+        public int ContarUsos(int Pid)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Familia_ContarUsos", Parametros, CommandType.StoredProcedure));
+        }
+        public bool ExistePorNombre(string Pnombre, int PidExcluir)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Nombre", Pnombre },
+                { "@IdExcluir", PidExcluir }
+            };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Familia_ExistePorNombre", Parametros, CommandType.StoredProcedure)) > 0;
+        }
         public void Eliminar(int Pid)
         {
             DAO Dao = new DAO();

@@ -13,6 +13,7 @@
 
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
         <ContentTemplate>
+            <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
             <asp:GridView ID="gvPerfiles" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvPerfiles_RowCommand">

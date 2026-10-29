@@ -48,6 +48,22 @@ namespace DAL
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Perfil_ActualizarEstado", Parametros, CommandType.StoredProcedure);
         }
+        public bool ExistePorNombre(string Pnombre, int PidExcluir)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Nombre", Pnombre },
+                { "@IdExcluir", PidExcluir }
+            };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Perfil_ExistePorNombre", Parametros, CommandType.StoredProcedure)) > 0;
+        }
+        public int ContarUsuariosActivos(int Pid)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Perfil_ContarUsuariosActivos", Parametros, CommandType.StoredProcedure));
+        }
         public PerfilBE ObtenerDatos(int Pid)
         {
             DAO Dao = new DAO();

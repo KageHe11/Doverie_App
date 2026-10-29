@@ -27,6 +27,125 @@ namespace BLL
             UsuarioDAL UsuarioDal = new UsuarioDAL();
             UsuarioDal.Registrar(Pusuario);
         }
+        /// Motivo con el que SP_Usuario_RevocarAcceso marca a un empleado
+        /// eliminado por su Empresa (CU-001-016): baja permanente.
+        public const string MotivoRevocado = "Acceso revocado por la empresa";
+
+        /// Validaciones de datos de un Usuario, compartidas por el Registro
+        /// público, la gestión del Administrador y la de la Empresa:
+        /// obligatorios, formato de email y DNI [ERROR-004], y nombre de
+        /// usuario o email ya registrados [ERROR-005 / ERROR-021].
+        public ResultadoRegistro ValidarDatos(UsuarioBE usuario, bool esAlta)
+        {
+            usuario.Nombre = (usuario.Nombre ?? "").Trim();
+            usuario.Apellido = (usuario.Apellido ?? "").Trim();
+            usuario.NombreUsuario = (usuario.NombreUsuario ?? "").Trim();
+            usuario.Gmail = (usuario.Gmail ?? "").Trim();
+            usuario.Dni = (usuario.Dni ?? "").Trim();
+            usuario.Telefono = string.IsNullOrWhiteSpace(usuario.Telefono) ? null : usuario.Telefono.Trim();
+            if (usuario.Nombre.Length == 0 || usuario.Apellido.Length == 0 || usuario.Gmail.Length == 0 || usuario.Dni.Length == 0 ||
+                usuario.Nombre.Length > 50 || usuario.Apellido.Length > 50 || usuario.Gmail.Length > 50 ||
+                (esAlta && (usuario.NombreUsuario.Length == 0 || usuario.NombreUsuario.Length > 50 || string.IsNullOrWhiteSpace(usuario.Contrasena))) ||
+                !Regex.IsMatch(usuario.Gmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$") ||
+                !Regex.IsMatch(usuario.Dni, @"^\d{7,8}$") ||
+                (usuario.Telefono != null && !Regex.IsMatch(usuario.Telefono, @"^[0-9+\-\s()]{6,20}$")))
+            {
+                return ResultadoRegistro.DatosInvalidos;
+            }
+            UsuarioDAL UsuarioDal = new UsuarioDAL();
+            bool Repetido = esAlta
+                ? UsuarioDal.ExistePorNombreUsuario(usuario.NombreUsuario) || UsuarioDal.ExistePorGmail(usuario.Gmail)
+                : UsuarioDal.ExistePorGmailExcluyendo(usuario.Gmail, usuario.Id);
+            return Repetido ? ResultadoRegistro.YaRegistrado : ResultadoRegistro.Exitoso;
+        }
+        /// Alta de un Usuario desde la gestión del Administrador o de una
+        /// Empresa (CU-001-010). accionBitacora distingue quién la hizo.
+        public ResultadoRegistro RegistrarDesdeGestion(UsuarioBE usuario, int actorId, string accionBitacora)
+        {
+            ResultadoRegistro Validacion = ValidarDatos(usuario, true);
+            if (Validacion != ResultadoRegistro.Exitoso) return Validacion;
+            Registrar(usuario);
+            new BitacoraBLL().Registrar(accionBitacora, "Usuario: " + usuario.NombreUsuario, actorId);
+            return ResultadoRegistro.Exitoso;
+        }
+        /// Modificación de un Usuario desde la gestión. nuevaContrasena vacía
+        /// conserva la actual.
+        public ResultadoRegistro ModificarDesdeGestion(UsuarioBE usuario, string nuevaContrasena, int actorId, string accionBitacora)
+        {
+            ResultadoRegistro Validacion = ValidarDatos(usuario, false);
+            if (Validacion != ResultadoRegistro.Exitoso) return Validacion;
+            if (!string.IsNullOrWhiteSpace(nuevaContrasena))
+            {
+                usuario.Contrasena = new HashService().HashearContrasena(nuevaContrasena);
+            }
+            new UsuarioDAL().ActualizarDatos(usuario);
+            new BitacoraBLL().Registrar(accionBitacora, "Usuario: " + usuario.NombreUsuario, actorId);
+            return ResultadoRegistro.Exitoso;
+        }
+        /// CU-002-010 Suspender Usuario: el motivo es obligatorio [ERROR-004]
+        /// (hasta 50 caracteres, el largo de la columna).
+        public ResultadoEstadoUsuario Suspender(int usuarioId, string motivo, int actorId)
+        {
+            motivo = (motivo ?? "").Trim();
+            if (motivo.Length == 0 || motivo.Length > 50) return ResultadoEstadoUsuario.MotivoInvalido;
+            UsuarioBE Usuario = ObtenerDatos(usuarioId);
+            if (Usuario == null) return ResultadoEstadoUsuario.SinAcceso;
+            try
+            {
+                Usuario.Suspendido = true;
+                Usuario.Motivo = motivo;
+                new UsuarioDAL().ActualizarEstado(Usuario);
+            }
+            catch (Exception)
+            {
+                return ResultadoEstadoUsuario.Error;
+            }
+            new BitacoraBLL().Registrar("Suspender Usuario", "Usuario: " + Usuario.NombreUsuario + " | Motivo: " + motivo, actorId);
+            return ResultadoEstadoUsuario.Exitoso;
+        }
+        /// CU-002-011 Reactivar Usuario: tiene que estar suspendido
+        /// [ERROR-039]. Reinicia los intentos y avisa al titular (ver
+        /// ActualizarEstado).
+        public ResultadoEstadoUsuario Reactivar(int usuarioId, int actorId)
+        {
+            UsuarioBE Usuario = ObtenerDatos(usuarioId);
+            if (Usuario == null) return ResultadoEstadoUsuario.SinAcceso;
+            if (!Usuario.Suspendido) return ResultadoEstadoUsuario.NoSuspendido;
+            try
+            {
+                Usuario.Suspendido = false;
+                Usuario.Motivo = null;
+                ActualizarEstado(Usuario);
+            }
+            catch (Exception)
+            {
+                return ResultadoEstadoUsuario.Error;
+            }
+            new BitacoraBLL().Registrar("Reactivar Usuario", "Usuario: " + Usuario.NombreUsuario, actorId);
+            return ResultadoEstadoUsuario.Exitoso;
+        }
+        /// CU-001-016 Eliminar Usuario Empresa: revoca el acceso del
+        /// empleado de forma permanente [ERROR-037]. Solo sobre empleados de
+        /// la propia Empresa.
+        public ResultadoEstadoUsuario RevocarAccesoEmpleado(int empleadoId, int empresaId)
+        {
+            UsuarioBE Empleado = ObtenerDatos(empleadoId);
+            if (Empleado == null || Empleado.EmpresaId != empresaId) return ResultadoEstadoUsuario.SinAcceso;
+            try
+            {
+                new UsuarioDAL().RevocarAcceso(empleadoId);
+            }
+            catch (Exception)
+            {
+                return ResultadoEstadoUsuario.Error;
+            }
+            new BitacoraBLL().Registrar("Eliminar Usuario Empresa", "Empleado: " + Empleado.NombreUsuario, empresaId);
+            return ResultadoEstadoUsuario.Exitoso;
+        }
+        public bool EstaRevocado(UsuarioBE usuario)
+        {
+            return usuario.Suspendido && usuario.Motivo == MotivoRevocado;
+        }
         public bool ExistePorNombreUsuario(string nombreUsuario)
         {
             UsuarioDAL UsuarioDal = new UsuarioDAL();
@@ -132,10 +251,12 @@ namespace BLL
             UsuarioDal.ActualizarIdioma(Pusuario.Id, idiomaId);
             Pusuario.IdiomaId = idiomaId;
         }
+        /// Empleados de una Empresa. Los eliminados (CU-001-016, acceso
+        /// revocado) ya no forman parte de la cuenta y no se listan.
         public List<UsuarioBE> ListarPorEmpresa(int empresaId)
         {
             UsuarioDAL UsuarioDal = new UsuarioDAL();
-            return UsuarioDal.ListarPorEmpresa(empresaId);
+            return UsuarioDal.ListarPorEmpresa(empresaId).Where(U => !EstaRevocado(U)).ToList();
         }
         public ResultadoRecuperacion EnviarRecuperacion(string email, string nombreUsuario, string urlBase)
         {
@@ -146,8 +267,11 @@ namespace BLL
             if (Usuario == null || string.IsNullOrWhiteSpace(Usuario.Gmail) ||
                 !Usuario.Gmail.Equals(email, StringComparison.OrdinalIgnoreCase))
             {
+                // Queda registro del intento (sin decir cuál dato estaba mal).
+                new BitacoraBLL().Registrar("Recuperar Contraseña (datos inválidos)", "Usuario ingresado: " + (nombreUsuario ?? "").Trim(), Usuario != null ? (int?)Usuario.Id : null);
                 return ResultadoRecuperacion.DatosInvalidos;
             }
+            new BitacoraBLL().Registrar("Recuperar Contraseña", "Link de recuperación generado para " + Usuario.Gmail, Usuario.Id);
 
             TokenService TokenServ = new TokenService();
             string Token = TokenServ.GenerarTokenRecuperacion(Usuario);
@@ -159,8 +283,18 @@ namespace BLL
                             "<p>Este enlace vence en 30 minutos. Si no fuiste vos, podés ignorar este email.</p>";
 
             EmailService EmailServ = new EmailService();
-            EmailServ.EnviarEmail(Usuario.Gmail, "Recuperar contraseña - Doverie", Cuerpo);
-
+            try
+            {
+                EmailServ.EnviarEmail(Usuario.Gmail, "Recuperar contraseña - Doverie", Cuerpo);
+            }
+            catch (Exception)
+            {
+                // Si el servidor de correo falla, la pantalla igual muestra el
+                // mensaje neutro de siempre: avisar del error confirmaría que
+                // el usuario y el email son correctos. La falla queda en la
+                // Bitácora para que la vea el Administrador.
+                new BitacoraBLL().Registrar("Error Envío Email", "Recuperación de contraseña de " + Usuario.NombreUsuario, Usuario.Id);
+            }
             return ResultadoRecuperacion.Exitoso;
         }
 
@@ -204,6 +338,7 @@ namespace BLL
                 BitacoraBLL BitacoraBll = new BitacoraBLL();
                 BitacoraBll.Registrar("Desbloqueo Cuenta", "Usuario: " + Usuario.NombreUsuario + " (recuperación de contraseña)", Usuario.Id);
             }
+            new BitacoraBLL().Registrar("Restablecer Contraseña", "Usuario: " + Usuario.NombreUsuario, Usuario.Id);
             return ResultadoRestablecimiento.Exitoso;
         }
         public ResultadoModificarPerfil ModificarDatosPropios(int idUsuario, string nombre, string apellido, string gmail, string nuevaContrasena)
@@ -239,33 +374,11 @@ namespace BLL
         }
         public ResultadoRegistro RegistrarPublico(UsuarioBE nuevoUsuario, string nombrePerfil)
         {
-            // 7. Validación de campos obligatorios [ERROR-004]
-            if (string.IsNullOrWhiteSpace(nuevoUsuario.Nombre) ||
-                string.IsNullOrWhiteSpace(nuevoUsuario.Apellido) ||
-                string.IsNullOrWhiteSpace(nuevoUsuario.NombreUsuario) ||
-                string.IsNullOrWhiteSpace(nuevoUsuario.Contrasena) ||
-                string.IsNullOrWhiteSpace(nuevoUsuario.Gmail) ||
-                string.IsNullOrWhiteSpace(nuevoUsuario.Dni))
-            {
-                return ResultadoRegistro.DatosInvalidos;
-            }
-            // 7. Validación de formato: email válido
-            if (!Regex.IsMatch(nuevoUsuario.Gmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-            {
-                return ResultadoRegistro.DatosInvalidos;
-            }
-            // 7. Validación de formato: DNI solo números, entre 7 y 8 dígitos
-            if (!Regex.IsMatch(nuevoUsuario.Dni, @"^\d{7,8}$"))
-            {
-                return ResultadoRegistro.DatosInvalidos;
-            }
+            // 7. Validación de campos y formatos [ERROR-004] y 8. que no esté
+            // registrado previamente [ERROR-005]
+            ResultadoRegistro Validacion = ValidarDatos(nuevoUsuario, true);
+            if (Validacion != ResultadoRegistro.Exitoso) return Validacion;
             UsuarioDAL UsuarioDal = new UsuarioDAL();
-            // 8. Verificar que no esté registrado previamente [ERROR-005]
-            if (UsuarioDal.ExistePorNombreUsuario(nuevoUsuario.NombreUsuario) ||
-                UsuarioDal.ExistePorGmail(nuevoUsuario.Gmail))
-            {
-                return ResultadoRegistro.YaRegistrado;
-            }
             // 9. Encriptar la contraseña
             HashService HashServ = new HashService();
             nuevoUsuario.Contrasena = HashServ.HashearContrasena(nuevoUsuario.Contrasena);

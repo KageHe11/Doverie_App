@@ -63,8 +63,16 @@ public partial class Familias : PaginaBase
         }
         else if (e.CommandName == "Eliminar")
         {
-            FamiliaBll.Eliminar(Id);
+            ResultadoAbm Resultado = FamiliaBll.Eliminar(Id);
+            if (Resultado != ResultadoAbm.Exitoso)
+            {
+                // [ERROR-048] asignada a Perfiles o contenida en otra Familia;
+                // [ERROR-049] no se pudo eliminar.
+                lblError.Text = System.Web.HttpUtility.HtmlEncode(Traductor.T(Resultado == ResultadoAbm.EnUso ? "error.048" : "error.049"));
+                lblError.Visible = true;
+            }
             CargarGrilla();
+            CargarArbol();
         }
     }
     /// Llena las dos listas (Disponibles/Seleccionados) a partir de todos
@@ -153,13 +161,17 @@ public partial class Familias : PaginaBase
                 return;
             }
         }
-        if (Id == 0)
+        ResultadoAbm Resultado = Id == 0 ? FamiliaBll.Registrar(Familia) : FamiliaBll.ActualizarDatos(Familia);
+        if (Resultado != ResultadoAbm.Exitoso)
         {
-            FamiliaBll.Registrar(Familia);
-        }
-        else
-        {
-            FamiliaBll.ActualizarDatos(Familia);
+            // [ERROR-004]; nombre repetido o falla: [ERROR-045] alta / [ERROR-047] modificación.
+            string Mensaje = Resultado == ResultadoAbm.DatosInvalidos
+                ? Traductor.T("comun.nombreObligatorio")
+                : Traductor.T(Id == 0 ? "error.045" : "error.047") + (Resultado == ResultadoAbm.Duplicado ? " " + Traductor.T("familias.nombreRepetido") : "");
+            lblErrorModal.Text = System.Web.HttpUtility.HtmlEncode(Mensaje);
+            lblErrorModal.Visible = true;
+            AbrirModal();
+            return;
         }
         CargarGrilla();
         CargarArbol();

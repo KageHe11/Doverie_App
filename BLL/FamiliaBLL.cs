@@ -24,20 +24,61 @@ namespace BLL
             if (!Arbol.ContainsKey(id)) return null;
             return Arbol[id] as FamiliaBE;
         }
-        public void Registrar(FamiliaBE familia)
+        /// CU-002-015 Alta Familia: nombre obligatorio [ERROR-004] y sin
+        /// repetir [ERROR-045].
+        public ResultadoAbm Registrar(FamiliaBE familia)
         {
-            DAL.FamiliaDAL FamiliaDal = new DAL.FamiliaDAL();
-            FamiliaDal.Registrar(familia);
+            ResultadoAbm Validacion = ValidarNombre(familia);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new DAL.FamiliaDAL().Registrar(familia);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void ActualizarDatos(FamiliaBE familia)
+        /// CU-002-016 Modificar Familia [ERROR-004 / ERROR-047]. Las
+        /// referencias circulares [ERROR-046] se validan con ValidarSinCiclos.
+        public ResultadoAbm ActualizarDatos(FamiliaBE familia)
         {
-            DAL.FamiliaDAL FamiliaDal = new DAL.FamiliaDAL();
-            FamiliaDal.ActualizarDatos(familia);
+            ResultadoAbm Validacion = ValidarNombre(familia);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new DAL.FamiliaDAL().ActualizarDatos(familia);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void Eliminar(int id)
+        /// CU-002-017 Baja Familia. No se puede eliminar si está asignada a
+        /// algún Perfil o contenida en otra Familia [ERROR-048]: dejaría
+        /// referencias rotas en el árbol de permisos.
+        public ResultadoAbm Eliminar(int id)
         {
             DAL.FamiliaDAL FamiliaDal = new DAL.FamiliaDAL();
-            FamiliaDal.Eliminar(id);
+            if (FamiliaDal.ContarUsos(id) > 0) return ResultadoAbm.EnUso;
+            try
+            {
+                FamiliaDal.Eliminar(id);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
+        }
+        private static ResultadoAbm ValidarNombre(FamiliaBE familia)
+        {
+            familia.Nombre = (familia.Nombre ?? "").Trim();
+            if (familia.Nombre.Length == 0 || familia.Nombre.Length > 50) return ResultadoAbm.DatosInvalidos;
+            if (new DAL.FamiliaDAL().ExistePorNombre(familia.Nombre, familia.Id)) return ResultadoAbm.Duplicado;
+            return ResultadoAbm.Exitoso;
         }
         /// Devuelve el árbol completo (todas las Familias y Permisos, ya
         /// enlazados entre sí). Lo usan, por ejemplo, las pantallas donde

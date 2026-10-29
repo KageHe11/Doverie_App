@@ -19,6 +19,8 @@ namespace BE
         }
         public bool TienePermiso(int idPermiso)
         {
+            // Un Perfil dado de baja (CU-002-008) no otorga ningún permiso.
+            if (!Activo) return false;
             foreach (FamiliaBE Familia in Familias)
             {
                 if (Familia.TienePermiso(idPermiso))

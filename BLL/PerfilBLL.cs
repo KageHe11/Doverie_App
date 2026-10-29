@@ -15,20 +15,58 @@ namespace BLL
             PerfilDAL Dal = new PerfilDAL();
             return Dal.Listar();
         }
-        public void Registrar(PerfilBE perfil)
+        /// CU-002-007 Alta Perfil [ERROR-004 / ERROR-025 / ERROR-026].
+        public ResultadoAbm Registrar(PerfilBE perfil)
         {
-            PerfilDAL Dal = new PerfilDAL();
-            Dal.Registrar(perfil);
+            ResultadoAbm Validacion = ValidarNombre(perfil);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new PerfilDAL().Registrar(perfil);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void ActualizarDatos(PerfilBE perfil)
+        /// CU-002-009 Modificar Perfil [ERROR-004 / ERROR-025 / ERROR-029].
+        public ResultadoAbm ActualizarDatos(PerfilBE perfil)
         {
-            PerfilDAL Dal = new PerfilDAL();
-            Dal.ActualizarDatos(perfil);
+            ResultadoAbm Validacion = ValidarNombre(perfil);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new PerfilDAL().ActualizarDatos(perfil);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void ActualizarEstado(PerfilBE perfil)
+        /// CU-002-008 Baja Perfil (y su reactivación). No se puede dar de
+        /// baja un Perfil asignado a usuarios activos [ERROR-027].
+        public ResultadoAbm ActualizarEstado(PerfilBE perfil)
         {
             PerfilDAL Dal = new PerfilDAL();
-            Dal.ActualizarEstado(perfil);
+            if (!perfil.Activo && Dal.ContarUsuariosActivos(perfil.Id) > 0) return ResultadoAbm.EnUso;
+            try
+            {
+                Dal.ActualizarEstado(perfil);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
+        }
+        private static ResultadoAbm ValidarNombre(PerfilBE perfil)
+        {
+            perfil.NombrePerfil = (perfil.NombrePerfil ?? "").Trim();
+            if (perfil.NombrePerfil.Length == 0 || perfil.NombrePerfil.Length > 50) return ResultadoAbm.DatosInvalidos;
+            if (new PerfilDAL().ExistePorNombre(perfil.NombrePerfil, perfil.Id)) return ResultadoAbm.Duplicado;
+            return ResultadoAbm.Exitoso;
         }
         public List<PerfilBE> ListarAsignablesPorEmpresa()
         {

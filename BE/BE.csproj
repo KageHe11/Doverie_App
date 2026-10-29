@@ -55,7 +55,9 @@
     <Compile Include="PermisoBE.cs" />
     <Compile Include="PlanBE.cs" />
     <Compile Include="PreferenciaNotificacionBE.cs" />
+    <Compile Include="ResultadoAbm.cs" />
     <Compile Include="ResultadoDocumento.cs" />
+    <Compile Include="ResultadoEstadoUsuario.cs" />
     <Compile Include="ResultadoIdioma.cs" />
     <Compile Include="ResultadoModificarPerfil.cs" />
     <Compile Include="ResultadoRecuperacion.cs" />

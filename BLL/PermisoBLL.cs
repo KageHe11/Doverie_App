@@ -25,20 +25,60 @@ namespace BLL
             DAL.PermisoDAL PermisoDal = new DAL.PermisoDAL();
             return PermisoDal.ObtenerDatos(id);
         }
-        public void Registrar(PermisoBE permiso)
+        /// CU-002-004 Alta Permiso: nombre obligatorio [ERROR-004] y sin
+        /// repetir [ERROR-022].
+        public ResultadoAbm Registrar(PermisoBE permiso)
         {
-            DAL.PermisoDAL PermisoDal = new DAL.PermisoDAL();
-            PermisoDal.Registrar(permiso);
+            ResultadoAbm Validacion = ValidarNombre(permiso);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new DAL.PermisoDAL().Registrar(permiso);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void ActualizarDatos(PermisoBE permiso)
+        /// CU-002-006 Modificar Permiso [ERROR-004 / ERROR-022 / ERROR-024].
+        public ResultadoAbm ActualizarDatos(PermisoBE permiso)
         {
-            DAL.PermisoDAL PermisoDal = new DAL.PermisoDAL();
-            PermisoDal.ActualizarDatos(permiso);
+            ResultadoAbm Validacion = ValidarNombre(permiso);
+            if (Validacion != ResultadoAbm.Exitoso) return Validacion;
+            try
+            {
+                new DAL.PermisoDAL().ActualizarDatos(permiso);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
         }
-        public void Eliminar(int id)
+        /// CU-002-005 Baja Permiso [ERROR-023]. No se puede eliminar un
+        /// Permiso que alguna Familia contiene: dejaría el árbol de permisos
+        /// con referencias rotas.
+        public ResultadoAbm Eliminar(int id)
         {
             DAL.PermisoDAL PermisoDal = new DAL.PermisoDAL();
-            PermisoDal.Eliminar(id);
+            if (PermisoDal.ContarUsos(id) > 0) return ResultadoAbm.EnUso;
+            try
+            {
+                PermisoDal.Eliminar(id);
+                return ResultadoAbm.Exitoso;
+            }
+            catch (Exception)
+            {
+                return ResultadoAbm.Error;
+            }
+        }
+        private static ResultadoAbm ValidarNombre(PermisoBE permiso)
+        {
+            permiso.Nombre = (permiso.Nombre ?? "").Trim();
+            if (permiso.Nombre.Length == 0 || permiso.Nombre.Length > 50) return ResultadoAbm.DatosInvalidos;
+            if (new DAL.PermisoDAL().ExistePorNombreExcluyendo(permiso.Nombre, permiso.Id)) return ResultadoAbm.Duplicado;
+            return ResultadoAbm.Exitoso;
         }
         public bool ExistePorNombre(string nombre)
         {
