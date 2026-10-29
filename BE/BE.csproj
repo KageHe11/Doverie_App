@@ -47,11 +47,13 @@
     <Compile Include="DatosEventoBE.cs" />
     <Compile Include="DocumentoBE.cs" />
     <Compile Include="DocumentoCompartidoBE.cs" />
+    <Compile Include="EstadisticasBE.cs" />
     <Compile Include="FamiliaBE.cs" />
     <Compile Include="IdiomaBE.cs" />
     <Compile Include="NotificacionRecibidaBE.cs" />
     <Compile Include="PerfilBE.cs" />
     <Compile Include="PermisoBE.cs" />
+    <Compile Include="PlanBE.cs" />
     <Compile Include="PreferenciaNotificacionBE.cs" />
     <Compile Include="ResultadoDocumento.cs" />
     <Compile Include="ResultadoIdioma.cs" />

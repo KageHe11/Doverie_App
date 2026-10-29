@@ -41,6 +41,18 @@ namespace DAL
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Documento_ActualizarEstado", Parametros, CommandType.StoredProcedure);
         }
+        /// Deja registro de una verificación de integridad (para estadísticas).
+        public void RegistrarVerificacion(int PdocumentoId, int PusuarioId, bool Pintegro)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@DocumentoId", PdocumentoId },
+                { "@UsuarioId", PusuarioId },
+                { "@Integro", Pintegro }
+            };
+            Dao.ExecuteNonQueryStoredProcedure("SP_VerificacionDocumento_Registrar", Parametros, CommandType.StoredProcedure);
+        }
         public List<DocumentoBE> ListarPorCuenta(int PcuentaId)
         {
             DAO Dao = new DAO();

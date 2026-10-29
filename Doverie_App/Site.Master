@@ -47,6 +47,11 @@
                             </li>
                         </asp:Panel>
 
+                        <asp:Panel ID="pnlEstadisticas" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Estadisticas.aspx"><%: Traductor.T("nav.estadisticas") %></a>
+                            </li>
+                        </asp:Panel>
 
                         <asp:Panel ID="pnlIdiomas" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">

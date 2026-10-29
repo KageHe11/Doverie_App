@@ -194,6 +194,7 @@ namespace BLL
                 Integro = string.Equals(HashActual, Sello.Hash, StringComparison.OrdinalIgnoreCase)
             };
             RegistrarEvento("Verificar Integridad", documento, verificacion.Integro ? "íntegro" : "MODIFICADO", usuario.Id);
+            new DocumentoDAL().RegistrarVerificacion(documento.Id, usuario.Id, verificacion.Integro);
             if (!verificacion.Integro)
             {
                 GestorEventos.Notificar(CatalogoEventos.ModificacionDetectada, documento.CuentaId, documento.Nombre);

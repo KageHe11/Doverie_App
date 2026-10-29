@@ -47,6 +47,7 @@
     <Compile Include="DispositivoDAL.cs" />
     <Compile Include="DocumentoCompartidoDAL.cs" />
     <Compile Include="DocumentoDAL.cs" />
+    <Compile Include="EstadisticaDAL.cs" />
     <Compile Include="FamiliaDAL.cs" />
     <Compile Include="IDAO.cs" />
     <Compile Include="IdiomaDAL.cs" />

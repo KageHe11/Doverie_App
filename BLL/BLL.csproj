@@ -44,6 +44,7 @@
     <Compile Include="BitacoraBLL.cs" />
     <Compile Include="DocumentoBLL.cs" />
     <Compile Include="DocumentoCompartidoBLL.cs" />
+    <Compile Include="EstadisticaBLL.cs" />
     <Compile Include="FamiliaBLL.cs" />
     <Compile Include="GestorEventos.cs" />
     <Compile Include="IdiomaBLL.cs" />

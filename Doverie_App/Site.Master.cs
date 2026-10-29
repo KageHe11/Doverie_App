@@ -17,6 +17,7 @@ public partial class Site : MasterPage
             litSaludo.Text = ArmarSaludo(Usuario);
             pnlAdmin.Visible = TienePermiso(Usuario, "VerMenuAdmin");
             pnlIdiomas.Visible = TienePermiso(Usuario, "VerIdiomas");
+            pnlEstadisticas.Visible = TienePermiso(Usuario, "VerEstadisticas");
             pnlDocumentos.Visible = TienePermiso(Usuario, "VerDocumentos");
             pnlEmpresa.Visible = Usuario.Empresa;
             pnlMiPerfil.Visible = !Usuario.Empleado;
@@ -28,6 +29,7 @@ public partial class Site : MasterPage
             pnlNoLogueado.Visible = true;
             pnlAdmin.Visible = false;
             pnlIdiomas.Visible = false;
+            pnlEstadisticas.Visible = false;
             pnlDocumentos.Visible = false;
             pnlEmpresa.Visible = false;
             pnlCampana.Visible = false;
