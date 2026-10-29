@@ -213,7 +213,7 @@ namespace BLL
         /// Trae el documento solo si pertenece a la cuenta del Usuario y
         /// sigue activo. Un documento de otra cuenta se informa igual que
         /// uno inexistente, para no revelar que existe.
-        private ResultadoDocumento ObtenerAccesible(UsuarioBE usuario, int id, out DocumentoBE documento)
+        public ResultadoDocumento ObtenerAccesible(UsuarioBE usuario, int id, out DocumentoBE documento)
         {
             DocumentoDAL DocumentoDal = new DocumentoDAL();
             documento = DocumentoDal.ObtenerDatos(id);
@@ -236,7 +236,10 @@ namespace BLL
         {
             return "Documento #" + id + ":";
         }
-        private static void RegistrarEvento(string accion, DocumentoBE documento, string resultado, int usuarioId)
+        /// Registra en la Bitácora un evento sobre un documento, con el
+        /// prefijo que usa Historial() para encontrarlo. usuarioId es null
+        /// cuando quien accede no es un Usuario (enlace compartido).
+        internal static void RegistrarEvento(string accion, DocumentoBE documento, string resultado, int? usuarioId)
         {
             string Detalle = PrefijoBitacora(documento.Id) + " " + documento.Nombre + (resultado != null ? " (" + resultado + ")" : "");
             BitacoraBLL BitacoraBll = new BitacoraBLL();

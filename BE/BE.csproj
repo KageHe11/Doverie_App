@@ -46,6 +46,7 @@
     <Compile Include="ComponentePermiso.cs" />
     <Compile Include="DatosEventoBE.cs" />
     <Compile Include="DocumentoBE.cs" />
+    <Compile Include="DocumentoCompartidoBE.cs" />
     <Compile Include="FamiliaBE.cs" />
     <Compile Include="IdiomaBE.cs" />
     <Compile Include="NotificacionRecibidaBE.cs" />

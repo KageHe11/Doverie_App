@@ -110,6 +110,19 @@ namespace SERVICE
                 return false;
             }
         }
+        /// Token para un enlace de documento compartido: 32 bytes de un
+        /// generador criptográficamente seguro, en Base64 apto para URL. No
+        /// es un JWT: no lleva datos adentro, se valida contra su hash en la
+        /// base (y así se puede revocar).
+        public string GenerarTokenEnlace()
+        {
+            byte[] Bytes = new byte[32];
+            using (System.Security.Cryptography.RandomNumberGenerator Generador = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                Generador.GetBytes(Bytes);
+            }
+            return Convert.ToBase64String(Bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        }
         /// corta del hash de contraseña actual. Sirve para detectar si
         /// el link de recuperación ya fue usado: si la contraseña cambió desde
         /// que se generó el token, la huella guardada en el token ya no

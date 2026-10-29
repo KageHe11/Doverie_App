@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Documentos.aspx.cs" Inherits="Documentos" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Documentos.aspx.cs" Inherits="Documentos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -52,6 +52,67 @@
         </div>
     </asp:Panel>
 
+    <%-- CU-001-005 Compartir Documento --%>
+    <asp:Panel ID="pnlCompartir" runat="server" CssClass="card mb-3 border-primary" Visible="false">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title"><%: Traductor.T("compartir.titulo") %>: <asp:Literal ID="litCompartirNombre" runat="server" Mode="Encode" /></h5>
+                <asp:LinkButton ID="btnCerrarCompartir" runat="server" CssClass="btn-close" OnClick="btnCerrarCompartir_Click" />
+            </div>
+            <asp:HiddenField ID="hdnCompartirDocumentoId" runat="server" />
+            <asp:Label ID="lblCompartirMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
+            <asp:Label ID="lblCompartirError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
+            <%-- Si el email no se pudo enviar, el enlace se muestra para copiarlo a mano. --%>
+            <asp:Panel ID="pnlEnlace" runat="server" CssClass="alert alert-warning" Visible="false" EnableViewState="false">
+                <div class="mb-2"><%: Traductor.T("compartir.copiarAyuda") %></div>
+                <div class="input-group">
+                    <asp:TextBox ID="txtEnlace" runat="server" CssClass="form-control font-monospace small" ReadOnly="true" EnableViewState="false" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="copiarEnlace(this)"><%: Traductor.T("compartir.copiar") %></button>
+                </div>
+            </asp:Panel>
+            <div class="row g-2 align-items-end mb-3">
+                <div class="col-md-6">
+                    <label class="form-label"><%: Traductor.T("compartir.emailDestinatario") %></label>
+                    <asp:TextBox ID="txtEmailDestinatario" runat="server" CssClass="form-control" TextMode="Email" MaxLength="100"></asp:TextBox>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><%: Traductor.T("compartir.vigencia") %></label>
+                    <asp:DropDownList ID="ddlVigencia" runat="server" CssClass="form-select" />
+                </div>
+                <div class="col-md-3">
+                    <asp:Button ID="btnCompartir" runat="server" CssClass="btn btn-primary w-100" OnClick="btnCompartir_Click" />
+                </div>
+            </div>
+            <h6><%: Traductor.T("compartir.enlaces") %></h6>
+            <asp:Label ID="lblSinEnlaces" runat="server" CssClass="text-muted small d-block" Visible="false"></asp:Label>
+            <asp:GridView ID="gvCompartidos" runat="server" CssClass="table table-sm small align-middle" AutoGenerateColumns="false"
+                OnRowDataBound="gvCompartidos_RowDataBound" OnRowCommand="gvCompartidos_RowCommand">
+                <Columns>
+                    <asp:BoundField DataField="EmailDestinatario" />
+                    <asp:BoundField DataField="NombreUsuario" />
+                    <asp:BoundField DataField="FechaCreacion" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <asp:BoundField DataField="FechaVencimiento" DataFormatString="{0:dd/MM/yyyy HH:mm}" />
+                    <asp:BoundField DataField="CantidadAccesos" />
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                            <asp:Label ID="lblEstadoEnlace" runat="server" />
+                            <asp:LinkButton ID="btnRevocar" runat="server" CssClass="btn btn-sm btn-outline-danger ms-1"
+                                CommandName="Revocar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("compartir.revocar") %>'
+                                OnClientClick='<%# Traductor.Confirmar("compartir.confirmarRevocar") %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                </Columns>
+            </asp:GridView>
+        </div>
+    </asp:Panel>
+    <script>
+        function copiarEnlace(boton) {
+            var campo = boton.parentNode.querySelector('input');
+            campo.select();
+            if (navigator.clipboard) { navigator.clipboard.writeText(campo.value); } else { document.execCommand('copy'); }
+        }
+    </script>
+
     <%-- CU-001-012 Ver Listado de Documentos: filtros --%>
     <div class="card mb-3">
         <div class="card-body">
@@ -96,6 +157,8 @@
                         CommandName="Descargar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.descargar") %>' />
                     <asp:LinkButton ID="btnVerificar" runat="server" CssClass="btn btn-sm btn-outline-primary"
                         CommandName="Verificar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.verificar") %>' />
+                    <asp:LinkButton ID="btnCompartirFila" runat="server" CssClass="btn btn-sm btn-outline-success"
+                        CommandName="Compartir" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("compartir.boton") %>' />
                     <asp:LinkButton ID="btnEliminar" runat="server" CssClass="btn btn-sm btn-outline-danger"
                         CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.eliminar") %>'
                         OnClientClick='<%# Traductor.Confirmar("doc.confirmarEliminar") %>' />
