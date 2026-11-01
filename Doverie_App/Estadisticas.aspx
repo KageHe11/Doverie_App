@@ -105,7 +105,8 @@
                             if (tipo === 'plan') {
                                 // Plan nulo: xsi:nil="true" o sin elementos hijos.
                                 var nombre = raiz.getElementsByTagName('Nombre')[0];
-                                valor.textContent = nombre ? nombre.textContent : textos.sinPlan;
+                                var modalidad = raiz.getElementsByTagName('Tipo')[0];
+                                valor.textContent = nombre ? nombre.textContent + (modalidad ? ' - ' + modalidad.textContent : '') : textos.sinPlan;
                                 if (!nombre) valor.classList.add('fs-6', 'text-muted');
                             } else {
                                 valor.textContent = raiz.textContent;

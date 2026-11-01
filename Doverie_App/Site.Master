@@ -65,6 +65,20 @@
                             </li>
                         </asp:Panel>
 
+                        <asp:Panel ID="pnlSuscripcion" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <%: Traductor.T("nav.suscripcion") %>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item" href="/Suscripcion.aspx"><%: Traductor.T("nav.miPlan") %></a></li>
+                                    <asp:PlaceHolder ID="phFacturacion" runat="server">
+                                        <li><a class="dropdown-item" href="/Facturacion.aspx"><%: Traductor.T("fact.titulo") %></a></li>
+                                    </asp:PlaceHolder>
+                                </ul>
+                            </li>
+                        </asp:Panel>
+
                         <asp:Panel ID="pnlEmpresa" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
                                  <a class="nav-link" href="/EmpleadosEmpresa.aspx"><%: Traductor.T("nav.usuarios") %></a>

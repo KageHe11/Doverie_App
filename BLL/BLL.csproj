@@ -54,6 +54,7 @@
     <Compile Include="NotificadorPush.cs" />
     <Compile Include="PerfilBLL.cs" />
     <Compile Include="PermisoBLL.cs" />
+    <Compile Include="SuscripcionBLL.cs" />
     <Compile Include="UsuarioBLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

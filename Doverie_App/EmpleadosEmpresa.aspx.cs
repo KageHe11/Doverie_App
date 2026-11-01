@@ -47,6 +47,13 @@ public partial class EmpleadosEmpresa : PaginaBase
     }
     protected void btnAgregar_Click(object sender, EventArgs e)
     {
+        string ErrorPlan = ValidarCupoPlan();
+        if (ErrorPlan != null)
+        {
+            lblError.Text = System.Web.HttpUtility.HtmlEncode(ErrorPlan);
+            lblError.Visible = true;
+            return;
+        }
         LimpiarFormulario();
         litTituloModal.Text = Traductor.T("empleados.tituloAgregar");
         AbrirModal();
@@ -98,6 +105,19 @@ public partial class EmpleadosEmpresa : PaginaBase
             CargarGrilla();
         }
     }
+    /// Los usuarios de la cuenta dependen del plan de la Empresa: devuelve
+    /// el mensaje a mostrar si no puede sumar un empleado, o null.
+    private string ValidarCupoPlan()
+    {
+        SuscripcionBLL SuscripcionBll = new SuscripcionBLL();
+        SuscripcionBE Suscripcion = SuscripcionBll.ObtenerVigente(UsuarioLogueado);
+        if (Suscripcion == null) return Traductor.T("susc.requeridaEmpleados");
+        if (!SuscripcionBll.PuedeAgregarUsuario(UsuarioLogueado))
+        {
+            return Traductor.T("susc.limiteUsuarios", Suscripcion.Plan.MaxUsuarios, Traductor.T("plan.nivel." + Suscripcion.Plan.Nombre));
+        }
+        return null;
+    }
     private void LimpiarFormulario()
     {
         hdnId.Value = "0";
@@ -120,6 +140,14 @@ public partial class EmpleadosEmpresa : PaginaBase
             if (string.IsNullOrWhiteSpace(txtContrasena.Text))
             {
                 lblErrorModal.Text = Traductor.T("empleados.errorContrasenaObligatoria");
+                lblErrorModal.Visible = true;
+                AbrirModal();
+                return;
+            }
+            string ErrorPlan = ValidarCupoPlan();
+            if (ErrorPlan != null)
+            {
+                lblErrorModal.Text = ErrorPlan;
                 lblErrorModal.Visible = true;
                 AbrirModal();
                 return;

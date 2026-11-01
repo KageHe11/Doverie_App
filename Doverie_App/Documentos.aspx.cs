@@ -342,6 +342,7 @@ public partial class Documentos : PaginaBase
             case ResultadoDocumento.ErrorObtener: return Traductor.T("error.017");
             case ResultadoDocumento.Modificado: return Traductor.T("error.018");
             case ResultadoDocumento.ErrorEliminar: return Traductor.T("error.006");
+            case ResultadoDocumento.SinSuscripcion: return Traductor.T(UsuarioActual.EmpresaId == null ? "susc.requerida" : "susc.requeridaEmpresa");
             default: return Traductor.T("error.056");
         }
     }

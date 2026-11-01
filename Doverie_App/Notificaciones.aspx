@@ -68,7 +68,6 @@
                                         <td>
                                             <asp:HiddenField ID="hdnEvento" runat="server" Value='<%# Eval("Evento") %>' />
                                             <asp:Literal ID="litEvento" runat="server" Mode="Encode" />
-                                            <asp:Label ID="lblProximamente" runat="server" CssClass="badge bg-secondary ms-1" Visible="false" />
                                         </td>
                                         <td class="text-center"><asp:CheckBox ID="chkHabilitado" runat="server" Checked='<%# Eval("Habilitado") %>' /></td>
                                         <td class="text-center"><asp:CheckBox ID="chkEmail" runat="server" Checked='<%# Eval("Email") %>' /></td>

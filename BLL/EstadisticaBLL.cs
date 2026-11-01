@@ -28,13 +28,12 @@ namespace BLL
             ValidarPeriodo(desde, hasta);
             return new EstadisticaDAL().ObtenerUsuariosPorPeriodo(desde.Date, hasta.Date.AddDays(1));
         }
-        /// Todavía no hay suscripciones (CU-001-008/017): no hay plan más
-        /// contratado. Cuando existan las tablas Plan y Suscripcion, se
-        /// resuelve con un SP_Estadistica_ObtenerPlanMasContratado.
+        /// Plan (nivel y modalidad) con más suscripciones pagadas que
+        /// empezaron en el período, o null si no hubo ninguna.
         public PlanBE ObtenerPlanMasContratado(DateTime desde, DateTime hasta)
         {
             ValidarPeriodo(desde, hasta);
-            return null;
+            return new EstadisticaDAL().ObtenerPlanMasContratado(desde.Date, hasta.Date.AddDays(1));
         }
         public int ObtenerOperacionesPorPeriodo(DateTime desde, DateTime hasta)
         {

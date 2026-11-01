@@ -47,6 +47,9 @@ namespace BLL
         public ResultadoDocumento Subir(UsuarioBE usuario, string nombreArchivo, byte[] contenido, out DocumentoBE documento)
         {
             documento = null;
+            // Subir documentos es parte del plan: la cuenta (la Empresa, para
+            // sus empleados) necesita una suscripción vigente.
+            if (new SuscripcionBLL().ObtenerVigente(usuario) == null) return ResultadoDocumento.SinSuscripcion;
             // 4. Validar el archivo [ERROR-010]
             string Nombre = Path.GetFileName(nombreArchivo ?? "");
             if (contenido == null || contenido.Length == 0 || contenido.Length > TamanoMaximoBytes ||

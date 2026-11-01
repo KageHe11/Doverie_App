@@ -32,6 +32,19 @@ namespace DAL
         {
             return ContarPorPeriodo("SP_Estadistica_ObtenerUsuariosPorPeriodo", Pdesde, Phasta, null);
         }
+        /// Plan con más suscripciones contratadas en el período, o null.
+        public PlanBE ObtenerPlanMasContratado(DateTime Pdesde, DateTime Phasta)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Desde", Pdesde },
+                { "@Hasta", Phasta }
+            };
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Estadistica_ObtenerPlanMasContratado", Parametros, CommandType.StoredProcedure);
+            if (Ds.Tables[0].Rows.Count == 0) return null;
+            return PlanDAL.MapearFila(Ds.Tables[0].Rows[0]);
+        }
         public int ObtenerOperacionesPorPeriodo(DateTime Pdesde, DateTime Phasta)
         {
             return ContarPorPeriodo("SP_Estadistica_ObtenerOperacionesPorPeriodo", Pdesde, Phasta, null);

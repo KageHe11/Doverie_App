@@ -16,6 +16,7 @@ namespace BE
         DatosInvalidos,       // [ERROR-004]
         ErrorEnlace,          // [ERROR-013]: no se pudo generar el enlace
         EnlaceNoEnviado,      // [ERROR-013]: el enlace se generó pero el email falló
-        EnlaceInvalido        // [ERROR-044]: el token no existe, venció o fue revocado
+        EnlaceInvalido,       // [ERROR-044]: el token no existe, venció o fue revocado
+        SinSuscripcion        // la cuenta no tiene una suscripción vigente
     }
 }

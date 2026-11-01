@@ -107,10 +107,13 @@
     <Compile Include="BitacoraArchivoService.cs" />
     <Compile Include="ContextoIdioma.cs" />
     <Compile Include="EmailService.cs" />
+    <Compile Include="GeneradorPdf.cs" />
     <Compile Include="HashService.cs" />
     <Compile Include="IAlmacenamientoArchivos.cs" />
+    <Compile Include="IPasarelaPago.cs" />
     <Compile Include="IRegistroBlockchain.cs" />
     <Compile Include="ITraduccion.cs" />
+    <Compile Include="PasarelaPagoLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProveedorServicios.cs" />
     <Compile Include="RegistroBlockchainLocal.cs" />

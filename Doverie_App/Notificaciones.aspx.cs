@@ -55,14 +55,6 @@ public partial class Notificaciones : PaginaBase
             CategoriaAnterior = Preferencia.Categoria;
         }
         ((Literal)e.Item.FindControl("litEvento")).Text = Traductor.T("notif.evento." + Preferencia.Evento);
-        // Los eventos de suscripción todavía no se disparan (no hay
-        // suscripciones): se pueden configurar, pero se aclara.
-        if (Preferencia.Categoria == CatalogoEventos.CategoriaSuscripcion)
-        {
-            Label Proximamente = (Label)e.Item.FindControl("lblProximamente");
-            Proximamente.Text = Traductor.T("nav.proximamente");
-            Proximamente.Visible = true;
-        }
     }
     /// Los atributos que usa el script de la página (data-rol, data-canal)
     /// no se guardan en el ViewState: se ponen en ItemCreated, que corre en
