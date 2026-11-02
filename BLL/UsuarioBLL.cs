@@ -434,6 +434,13 @@ namespace BLL
             // necesario para que el resto de la app pueda usar TienePermiso().
             PerfilBLL PerfilBll = new PerfilBLL();
             Usuario.Perfil = PerfilBll.ObtenerDatos(Usuario.Perfil.Id);
+            // Dígitos verificadores: con la base inconsistente solo entra quien
+            // puede gestionar la integridad (el Administrador), para recalcular
+            // los dígitos o restaurar un backup.
+            if (new DigitoVerificadorBLL().Verificar().Count > 0 && !TienePermiso(Usuario, DigitoVerificadorBLL.PermisoGestion))
+            {
+                return ResultadoLogin.BaseInconsistente;
+            }
             // Se genera el JWT que va a viajar en la cookie de sesión.
             TokenService ServioToken = new TokenService();
             Token = ServioToken.GenerarToken(Usuario);
@@ -443,6 +450,14 @@ namespace BLL
             Idioma = IdiomaBll.CrearContexto(Usuario.IdiomaId);
             UsuarioLogueado = Usuario;
             return ResultadoLogin.Exitoso;
+        }
+        /// Si el árbol de Familias del Perfil del Usuario (ya cargado) contiene
+        /// el Permiso.
+        public static bool TienePermiso(UsuarioBE usuario, string nombrePermiso)
+        {
+            if (usuario.Perfil == null) return false;
+            PermisoBE Permiso = new PermisoBLL().ObtenerPorNombre(nombrePermiso);
+            return Permiso != null && usuario.Perfil.TienePermiso(Permiso.Id);
         }
     }
 }

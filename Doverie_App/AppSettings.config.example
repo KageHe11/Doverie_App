@@ -36,4 +36,6 @@
 	<add key="PasarelaPago" value="Local" />
 	<add key="MercadoPagoAccessToken" value="APP_USR-access-token-de-la-aplicacion" />
 	<!-- <add key="MercadoPagoSandbox" value="true" /> (con credenciales de prueba: checkout sandbox) -->
+	<!-- Clave de los dígitos verificadores (HMAC). Si cambia, hay que recalcularlos. -->
+	<add key="DigitoVerificadorClave" value="poné-acá-una-clave-larga-random-distinta-de-la-JWT" />
 </appSettings>

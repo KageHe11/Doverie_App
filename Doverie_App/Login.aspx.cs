@@ -66,7 +66,13 @@ public partial class Login : System.Web.UI.Page
                 // Queda registro del evento en la Bitácora del sistema.
                 new BitacoraBLL().Registrar("Login", null, Usuario.Id);
                 BllUsuario.RegistrarDispositivo(Usuario, TokenDispositivo(), DescribirDispositivo());
-                Response.Redirect("Default.aspx");
+                // Con la base inconsistente solo llega hasta acá el
+                // Administrador: se lo lleva directo a revisar la integridad.
+                Response.Redirect(DigitoVerificadorBLL.BaseComprometida ? "Integridad.aspx" : "Default.aspx");
+                break;
+            case ResultadoLogin.BaseInconsistente:
+                lblError.Text = Traductor.T("login.baseInconsistente");
+                lblError.Visible = true;
                 break;
             case ResultadoLogin.UsuarioBloqueado:
                 // [ERROR-002] Bloqueo automático por intentos fallidos.

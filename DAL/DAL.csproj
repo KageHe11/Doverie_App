@@ -46,6 +46,7 @@
     <Compile Include="BitacoraDAL.cs" />
     <Compile Include="DAO.cs" />
     <Compile Include="DispositivoDAL.cs" />
+    <Compile Include="DigitoVerificadorDAL.cs" />
     <Compile Include="DocumentoCompartidoDAL.cs" />
     <Compile Include="DocumentoDAL.cs" />
     <Compile Include="EstadisticaDAL.cs" />

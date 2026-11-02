@@ -42,6 +42,13 @@ public class PaginaBase : Page
             CerrarSesionYRedirigir();
             return;
         }
+        // Si se detectó una alteración de los dígitos verificadores, solo
+        // sigue adentro quien puede gestionar la integridad.
+        if (DigitoVerificadorBLL.BaseComprometida && !TienePermiso(Usuario, DigitoVerificadorBLL.PermisoGestion))
+        {
+            CerrarSesionYRedirigir();
+            return;
+        }
         // 4) Todo válido: renovamos el token (sesión, 30 min
         // más desde ahora), para que no expire mientras el Usuario
         // sigue navegando activamente.

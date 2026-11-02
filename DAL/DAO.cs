@@ -24,6 +24,8 @@ namespace DAL
         /// Tiempo máximo de cada comando, en segundos. Un backup o un restore
         /// tardan bastante más que una consulta.
         public int TiempoEspera { get; set; } = 30;
+        /// Conectado a master (ver Servidor()).
+        private bool EsServidor;
         /// Nombre de la base de la aplicación (Initial Catalog).
         public string NombreBase
         {
@@ -36,6 +38,7 @@ namespace DAL
             DAO Dao = new DAO();
             SqlConnectionStringBuilder Datos = new SqlConnectionStringBuilder(Dao.Con.ConnectionString) { InitialCatalog = "master" };
             Dao.Con = new SqlConnection(Datos.ConnectionString);
+            Dao.EsServidor = true;
             return Dao;
         }
         /// Descarta las conexiones del pool: después de un restore las que
@@ -44,7 +47,25 @@ namespace DAL
         {
             SqlConnection.ClearAllPools();
         }
+        /// Cada SP pasa por los dígitos verificadores (DigitoVerificadorDAL):
+        /// si escribe una tabla protegida, se verifica antes y se recalcula
+        /// después. Los de master (restore) no tocan tablas de la aplicación.
         public DataSet ExecuteDataSetStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
+        {
+            if (EsServidor) return EjecutarDataSet(Nombre, Parameters, TypeCommand);
+            return DigitoVerificadorDAL.Proteger(Nombre, () => EjecutarDataSet(Nombre, Parameters, TypeCommand));
+        }
+        public void ExecuteNonQueryStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
+        {
+            if (EsServidor) { EjecutarNonQuery(Nombre, Parameters, TypeCommand); return; }
+            DigitoVerificadorDAL.Proteger(Nombre, () => { EjecutarNonQuery(Nombre, Parameters, TypeCommand); return true; });
+        }
+        public object ExecuteScalarStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
+        {
+            if (EsServidor) return EjecutarScalar(Nombre, Parameters, TypeCommand);
+            return DigitoVerificadorDAL.Proteger(Nombre, () => EjecutarScalar(Nombre, Parameters, TypeCommand));
+        }
+        private DataSet EjecutarDataSet(string Nombre, Dictionary<string, object> Parameters, CommandType TypeCommand)
         {
             try
             {
@@ -73,7 +94,7 @@ namespace DAL
             }
         }
 
-        public void ExecuteNonQueryStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
+        private void EjecutarNonQuery(string Nombre, Dictionary<string, object> Parameters, CommandType TypeCommand)
         {
             try
             {
@@ -100,7 +121,7 @@ namespace DAL
             }
         }
 
-        public object ExecuteScalarStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
+        private object EjecutarScalar(string Nombre, Dictionary<string, object> Parameters, CommandType TypeCommand)
         {
             try
             {

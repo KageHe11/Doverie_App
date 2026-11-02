@@ -193,6 +193,9 @@ namespace BLL
                 new BitacoraBLL().Registrar("Generar Backup Manual", previo.Estado + " (antes del restore). " + previo.Detalle, previo.UsuarioId);
             }
             new BitacoraBLL().Registrar("Restaurar Backup", detalle + " Backup de seguridad previo: " + EtiquetaDe(previo.Fecha) + ".", administrador.Id);
+            // La base cambió entera: se vuelven a verificar los dígitos para
+            // que el acceso de los Usuarios refleje el estado restaurado.
+            new DigitoVerificadorBLL().Verificar();
         }
         private static ResultadoBackup Finalizar(BackupBE backup, ResultadoBackup resultado, string detalle)
         {
