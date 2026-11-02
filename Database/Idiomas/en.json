@@ -420,5 +420,21 @@
   "error.019": "The document already has a previously generated NFT.",
   "error.020": "Error generating the NFT on the blockchain network. Please try again.",
   "error.031": "Error: the document has no associated NFT.",
-  "error.032": "Error: the blockchain network cannot be queried."
+  "error.032": "Error: the blockchain network cannot be queried.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Manual backup",
+  "backup.descripcion": "Creates a full backup, outside the scheduled automatic backups:",
+  "backup.itemBase": "Database: SQL Server .bak file, compressed and verified.",
+  "backup.itemArchivos": "Document files: copied in AWS S3 together with the .bak, in a folder named after the backup date.",
+  "backup.generar": "Generate manual backup",
+  "backup.demora": "It may take a few seconds.",
+  "backup.confirmar": "Generate a backup of the database and the AWS S3 files now?",
+  "backup.exito": "The backup was generated successfully: the database and the files were copied.",
+  "backup.historial": "Backup history",
+  "backup.detalle": "Details",
+  "backup.sinBackups": "No backups have been generated yet.",
+  "backup.estado.Exitoso": "Successful",
+  "backup.estado.Fallido": "Failed",
+  "error.041": "The system cannot generate the database backup",
+  "error.042": "The system cannot generate the backup of the files stored in AWS S3"
 }

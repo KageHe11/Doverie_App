@@ -434,7 +434,23 @@ BEGIN
   "error.019": "El documento ya tiene un NFT generado previamente.",
   "error.020": "Error al generar el NFT en la red blockchain. Por favor intente nuevamente.",
   "error.031": "Error el documento no posee un NFT asociado generado.",
-  "error.032": "Error no se puede consultar la red blockchain."
+  "error.032": "Error no se puede consultar la red blockchain.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Backup manual",
+  "backup.descripcion": "Genera una copia de seguridad completa, fuera del esquema de backups periódicos automáticos:",
+  "backup.itemBase": "Base de datos: archivo .bak de SQL Server, comprimido y verificado.",
+  "backup.itemArchivos": "Archivos de los documentos: se copian en AWS S3 junto con el .bak, en una carpeta con la fecha del backup.",
+  "backup.generar": "Generar backup manual",
+  "backup.demora": "Puede tardar unos segundos.",
+  "backup.confirmar": "¿Generar ahora un backup de la base de datos y de los archivos en AWS S3?",
+  "backup.exito": "El backup se generó correctamente: la base de datos y los archivos quedaron copiados.",
+  "backup.historial": "Historial de backups",
+  "backup.detalle": "Detalle",
+  "backup.sinBackups": "Todavía no se generó ningún backup.",
+  "backup.estado.Exitoso": "Exitoso",
+  "backup.estado.Fallido": "Fallido",
+  "error.041": "El sistema no puede generar la copia de seguridad de la base de datos",
+  "error.042": "El sistema no puede generar la copia de seguridad de los archivos almacenados en AWS S3"
 }';
 END
 ELSE
@@ -860,7 +876,23 @@ ELSE
   "error.019": "El documento ya tiene un NFT generado previamente.",
   "error.020": "Error al generar el NFT en la red blockchain. Por favor intente nuevamente.",
   "error.031": "Error el documento no posee un NFT asociado generado.",
-  "error.032": "Error no se puede consultar la red blockchain."
+  "error.032": "Error no se puede consultar la red blockchain.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Backup manual",
+  "backup.descripcion": "Genera una copia de seguridad completa, fuera del esquema de backups periódicos automáticos:",
+  "backup.itemBase": "Base de datos: archivo .bak de SQL Server, comprimido y verificado.",
+  "backup.itemArchivos": "Archivos de los documentos: se copian en AWS S3 junto con el .bak, en una carpeta con la fecha del backup.",
+  "backup.generar": "Generar backup manual",
+  "backup.demora": "Puede tardar unos segundos.",
+  "backup.confirmar": "¿Generar ahora un backup de la base de datos y de los archivos en AWS S3?",
+  "backup.exito": "El backup se generó correctamente: la base de datos y los archivos quedaron copiados.",
+  "backup.historial": "Historial de backups",
+  "backup.detalle": "Detalle",
+  "backup.sinBackups": "Todavía no se generó ningún backup.",
+  "backup.estado.Exitoso": "Exitoso",
+  "backup.estado.Fallido": "Fallido",
+  "error.041": "El sistema no puede generar la copia de seguridad de la base de datos",
+  "error.042": "El sistema no puede generar la copia de seguridad de los archivos almacenados en AWS S3"
 }';
 
 -- English (en)
@@ -1290,7 +1322,23 @@ BEGIN
   "error.019": "The document already has a previously generated NFT.",
   "error.020": "Error generating the NFT on the blockchain network. Please try again.",
   "error.031": "Error: the document has no associated NFT.",
-  "error.032": "Error: the blockchain network cannot be queried."
+  "error.032": "Error: the blockchain network cannot be queried.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Manual backup",
+  "backup.descripcion": "Creates a full backup, outside the scheduled automatic backups:",
+  "backup.itemBase": "Database: SQL Server .bak file, compressed and verified.",
+  "backup.itemArchivos": "Document files: copied in AWS S3 together with the .bak, in a folder named after the backup date.",
+  "backup.generar": "Generate manual backup",
+  "backup.demora": "It may take a few seconds.",
+  "backup.confirmar": "Generate a backup of the database and the AWS S3 files now?",
+  "backup.exito": "The backup was generated successfully: the database and the files were copied.",
+  "backup.historial": "Backup history",
+  "backup.detalle": "Details",
+  "backup.sinBackups": "No backups have been generated yet.",
+  "backup.estado.Exitoso": "Successful",
+  "backup.estado.Fallido": "Failed",
+  "error.041": "The system cannot generate the database backup",
+  "error.042": "The system cannot generate the backup of the files stored in AWS S3"
 }';
 END
 ELSE
@@ -1716,7 +1764,23 @@ ELSE
   "error.019": "The document already has a previously generated NFT.",
   "error.020": "Error generating the NFT on the blockchain network. Please try again.",
   "error.031": "Error: the document has no associated NFT.",
-  "error.032": "Error: the blockchain network cannot be queried."
+  "error.032": "Error: the blockchain network cannot be queried.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Manual backup",
+  "backup.descripcion": "Creates a full backup, outside the scheduled automatic backups:",
+  "backup.itemBase": "Database: SQL Server .bak file, compressed and verified.",
+  "backup.itemArchivos": "Document files: copied in AWS S3 together with the .bak, in a folder named after the backup date.",
+  "backup.generar": "Generate manual backup",
+  "backup.demora": "It may take a few seconds.",
+  "backup.confirmar": "Generate a backup of the database and the AWS S3 files now?",
+  "backup.exito": "The backup was generated successfully: the database and the files were copied.",
+  "backup.historial": "Backup history",
+  "backup.detalle": "Details",
+  "backup.sinBackups": "No backups have been generated yet.",
+  "backup.estado.Exitoso": "Successful",
+  "backup.estado.Fallido": "Failed",
+  "error.041": "The system cannot generate the database backup",
+  "error.042": "The system cannot generate the backup of the files stored in AWS S3"
 }';
 
 -- Português (pt)
@@ -2146,7 +2210,23 @@ BEGIN
   "error.019": "O documento já tem um NFT gerado anteriormente.",
   "error.020": "Erro ao gerar o NFT na rede blockchain. Por favor, tente novamente.",
   "error.031": "Erro: o documento não possui um NFT associado.",
-  "error.032": "Erro: não é possível consultar a rede blockchain."
+  "error.032": "Erro: não é possível consultar a rede blockchain.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Backup manual",
+  "backup.descripcion": "Gera uma cópia de segurança completa, fora do esquema de backups periódicos automáticos:",
+  "backup.itemBase": "Banco de dados: arquivo .bak do SQL Server, compactado e verificado.",
+  "backup.itemArchivos": "Arquivos dos documentos: são copiados no AWS S3 junto com o .bak, em uma pasta com a data do backup.",
+  "backup.generar": "Gerar backup manual",
+  "backup.demora": "Pode levar alguns segundos.",
+  "backup.confirmar": "Gerar agora um backup do banco de dados e dos arquivos no AWS S3?",
+  "backup.exito": "O backup foi gerado com sucesso: o banco de dados e os arquivos foram copiados.",
+  "backup.historial": "Histórico de backups",
+  "backup.detalle": "Detalhe",
+  "backup.sinBackups": "Ainda não foi gerado nenhum backup.",
+  "backup.estado.Exitoso": "Bem-sucedido",
+  "backup.estado.Fallido": "Falhou",
+  "error.041": "O sistema não pode gerar a cópia de segurança do banco de dados",
+  "error.042": "O sistema não pode gerar a cópia de segurança dos arquivos armazenados no AWS S3"
 }';
 END
 ELSE
@@ -2572,6 +2652,22 @@ ELSE
   "error.019": "O documento já tem um NFT gerado anteriormente.",
   "error.020": "Erro ao gerar o NFT na rede blockchain. Por favor, tente novamente.",
   "error.031": "Erro: o documento não possui um NFT associado.",
-  "error.032": "Erro: não é possível consultar a rede blockchain."
+  "error.032": "Erro: não é possível consultar a rede blockchain.",
+  "nav.backup": "Backup",
+  "backup.titulo": "Backup manual",
+  "backup.descripcion": "Gera uma cópia de segurança completa, fora do esquema de backups periódicos automáticos:",
+  "backup.itemBase": "Banco de dados: arquivo .bak do SQL Server, compactado e verificado.",
+  "backup.itemArchivos": "Arquivos dos documentos: são copiados no AWS S3 junto com o .bak, em uma pasta com a data do backup.",
+  "backup.generar": "Gerar backup manual",
+  "backup.demora": "Pode levar alguns segundos.",
+  "backup.confirmar": "Gerar agora um backup do banco de dados e dos arquivos no AWS S3?",
+  "backup.exito": "O backup foi gerado com sucesso: o banco de dados e os arquivos foram copiados.",
+  "backup.historial": "Histórico de backups",
+  "backup.detalle": "Detalhe",
+  "backup.sinBackups": "Ainda não foi gerado nenhum backup.",
+  "backup.estado.Exitoso": "Bem-sucedido",
+  "backup.estado.Fallido": "Falhou",
+  "error.041": "O sistema não pode gerar a cópia de segurança do banco de dados",
+  "error.042": "O sistema não pode gerar a cópia de segurança dos arquivos armazenados no AWS S3"
 }';
 GO

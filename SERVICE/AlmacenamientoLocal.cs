@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
+using BE;
 
 namespace SERVICE
 {
@@ -29,6 +30,28 @@ namespace SERVICE
         {
             string Ruta = RutaCompleta(ubicacion);
             if (File.Exists(Ruta)) File.Delete(Ruta);
+        }
+        /// Copia los documentos a "<BackupsRuta>/<etiqueta>/documentos" (por
+        /// defecto App_Data/Backups) y el .bak de la base a "<etiqueta>".
+        public RespaldoArchivosBE Respaldar(string etiqueta, string archivoBaseDatos)
+        {
+            string Raiz = ConfigurationManager.AppSettings["BackupsRuta"];
+            if (string.IsNullOrWhiteSpace(Raiz)) Raiz = HostingEnvironment.MapPath("~/App_Data/Backups");
+            string Destino = Path.Combine(Raiz, etiqueta);
+            string DestinoDocumentos = Path.Combine(Destino, "documentos");
+            Directory.CreateDirectory(DestinoDocumentos);
+            RespaldoArchivosBE Respaldo = new RespaldoArchivosBE { Ubicacion = Destino };
+            foreach (string Archivo in Directory.GetFiles(Carpeta()))
+            {
+                File.Copy(Archivo, Path.Combine(DestinoDocumentos, Path.GetFileName(Archivo)));
+                Respaldo.CantidadArchivos++;
+                Respaldo.TamanoBytes += new FileInfo(Archivo).Length;
+            }
+            if (archivoBaseDatos != null)
+            {
+                File.Copy(archivoBaseDatos, Path.Combine(Destino, Path.GetFileName(archivoBaseDatos)));
+            }
+            return Respaldo;
         }
         private string RutaCompleta(string ubicacion)
         {

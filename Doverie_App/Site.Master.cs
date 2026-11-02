@@ -18,6 +18,7 @@ public partial class Site : MasterPage
             pnlAdmin.Visible = TienePermiso(Usuario, "VerMenuAdmin");
             pnlIdiomas.Visible = TienePermiso(Usuario, "VerIdiomas");
             pnlEstadisticas.Visible = TienePermiso(Usuario, "VerEstadisticas");
+            pnlBackup.Visible = TienePermiso(Usuario, "GenerarBackup");
             pnlDocumentos.Visible = TienePermiso(Usuario, "VerDocumentos");
             pnlSuscripcion.Visible = TienePermiso(Usuario, "Suscribirse");
             phFacturacion.Visible = TienePermiso(Usuario, "VerFacturacion");
@@ -32,6 +33,7 @@ public partial class Site : MasterPage
             pnlAdmin.Visible = false;
             pnlIdiomas.Visible = false;
             pnlEstadisticas.Visible = false;
+            pnlBackup.Visible = false;
             pnlDocumentos.Visible = false;
             pnlSuscripcion.Visible = false;
             pnlEmpresa.Visible = false;

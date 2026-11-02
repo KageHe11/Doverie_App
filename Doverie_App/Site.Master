@@ -53,6 +53,12 @@
                             </li>
                         </asp:Panel>
 
+                        <asp:Panel ID="pnlBackup" runat="server" CssClass="d-flex" Visible="false">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Backup.aspx"><%: Traductor.T("nav.backup") %></a>
+                            </li>
+                        </asp:Panel>
+
                         <asp:Panel ID="pnlIdiomas" runat="server" CssClass="d-flex" Visible="false">
                             <li class="nav-item">
                                 <a class="nav-link" href="/Idiomas.aspx"><%: Traductor.T("nav.idiomas") %></a>

@@ -7,6 +7,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using BE;
 
 namespace SERVICE
 {
@@ -57,6 +58,54 @@ namespace SERVICE
             {
                 Ejecutar(() => Cliente.DeleteObjectAsync(Configuracion("S3Bucket"), Clave(ubicacion)));
             }
+        }
+        /// Copia los documentos a "backups/<etiqueta>/documentos/" dentro del
+        /// mismo bucket, del lado de S3 (no pasan por el servidor de la app),
+        /// y sube el .bak de la base a "backups/<etiqueta>/".
+        public RespaldoArchivosBE Respaldar(string etiqueta, string archivoBaseDatos)
+        {
+            string Bucket = Configuracion("S3Bucket");
+            string Prefijo = ConfigurationManager.AppSettings["S3Prefijo"] ?? "documentos/";
+            string Destino = "backups/" + etiqueta + "/";
+            RespaldoArchivosBE Respaldo = new RespaldoArchivosBE { Ubicacion = "s3://" + Bucket + "/" + Destino };
+            using (AmazonS3Client Cliente = CrearCliente())
+            {
+                ListObjectsV2Request Pedido = new ListObjectsV2Request { BucketName = Bucket, Prefix = Prefijo };
+                ListObjectsV2Response Pagina;
+                do
+                {
+                    Pagina = Ejecutar(() => Cliente.ListObjectsV2Async(Pedido));
+                    foreach (S3Object Objeto in Pagina.S3Objects ?? new System.Collections.Generic.List<S3Object>())
+                    {
+                        CopyObjectRequest Copia = new CopyObjectRequest
+                        {
+                            SourceBucket = Bucket,
+                            SourceKey = Objeto.Key,
+                            DestinationBucket = Bucket,
+                            DestinationKey = Destino + "documentos/" + Objeto.Key.Substring(Prefijo.Length),
+                            ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
+                        };
+                        Ejecutar(() => Cliente.CopyObjectAsync(Copia));
+                        Respaldo.CantidadArchivos++;
+                        Respaldo.TamanoBytes += Objeto.Size ?? 0;
+                    }
+                    Pedido.ContinuationToken = Pagina.NextContinuationToken;
+                } while (Pagina.IsTruncated == true);
+
+                if (archivoBaseDatos != null)
+                {
+                    PutObjectRequest Subida = new PutObjectRequest
+                    {
+                        BucketName = Bucket,
+                        Key = Destino + Path.GetFileName(archivoBaseDatos),
+                        FilePath = archivoBaseDatos,
+                        ContentType = "application/octet-stream",
+                        ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
+                    };
+                    Ejecutar(() => Cliente.PutObjectAsync(Subida));
+                }
+            }
+            return Respaldo;
         }
         /// El SDK es asíncrono; se ejecuta fuera del contexto de ASP.NET para
         /// poder esperar el resultado sin bloquear el request.
