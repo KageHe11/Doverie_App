@@ -6,9 +6,17 @@
 	<add key="SmtpUser" value="appdoverie@gmail.com" />
 	<add key="SmtpPassword" value="tu-nueva-contraseña-de-aplicación" />
 	<add key="SmtpFromName" value="Doverie" />
-	<!-- Documentos (opcionales). Almacenamiento: "Local". Blockchain: "Local" (simulada) o "Nethereum" (Ethereum).
+	<!-- Documentos (opcionales). Almacenamiento: "Local" (disco) o "S3" (AWS). Blockchain: "Local" (simulada) o "Nethereum" (Ethereum).
 	     Sin las rutas, se usan App_Data/Documentos y App_Data/Blockchain/registro.jsonl. -->
 	<add key="Almacenamiento" value="Local" />
+	<!-- Almacenamiento="S3": bucket privado y usuario IAM con permiso solo sobre él.
+	     Los archivos que ya están en disco se suben con Database/MigrarDocumentosS3.ps1. -->
+	<add key="S3Bucket" value="nombre-del-bucket" />
+	<add key="S3Region" value="sa-east-1" />
+	<add key="S3AccessKey" value="access-key-del-usuario-iam" />
+	<add key="S3SecretKey" value="secret-key-del-usuario-iam" />
+	<!-- <add key="S3Prefijo" value="documentos/" /> -->
+	<!-- <add key="S3ServiceUrl" value="http://127.0.0.1:4566" /> (emulador de S3 para pruebas) -->
 	<add key="Blockchain" value="Local" />
 	<!-- Blockchain="Nethereum": red Ethereum y contrato DoverieRegistro (carpeta Blockchain).
 	     Sepolia: ChainId 11155111, URL de Alchemy. Red local de Hardhat: ChainId 31337,
