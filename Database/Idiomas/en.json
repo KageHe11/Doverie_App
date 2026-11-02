@@ -125,7 +125,7 @@
   "bitacora.fecha": "Date",
   "bitacora.evento": "Event",
   "bitacora.detalle": "Details",
-  "bitacora.cargarMas": "Load more",
+  "bitacora.cargarMas": "Also show the archived history",
   "acceso.titulo": "Access denied",
   "acceso.mensaje": "You don't have the permissions required to view this page.",
   "acceso.volver": "Back to home",
@@ -523,5 +523,15 @@
   "inicio.acc.backup": "Database and file backups, and restore.",
   "inicio.acc.integridad": "Check digit status.",
   "inicio.acc.idiomas": "Interface languages.",
-  "inicio.acc.miPerfil": "Your details and password."
+  "inicio.acc.miPerfil": "Your details and password.",
+  "bitacora.retencion": "Events from the last {0} days are shown. Older ones are moved to the archived history.",
+  "bitacora.incluirEliminados": "Also show deleted records",
+  "bitacora.eliminado": "Deleted",
+  "bitacora.eliminadoDetalle": "{0} by {1}",
+  "bitacora.archivado": "Archived",
+  "bitacora.restaurar": "Restore",
+  "bitacora.confirmarEliminar": "Delete this Log record? It is a logical deletion: it is hidden, who deleted it is recorded, and it can be restored.",
+  "bitacora.eliminadoOk": "Record #{0} was deleted. You can see it by checking \"Also show deleted records\".",
+  "bitacora.restauradoOk": "Record #{0} was restored.",
+  "bitacora.noDisponible": "That record is no longer available for this action."
 }

@@ -125,7 +125,7 @@
   "bitacora.fecha": "Fecha",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalle",
-  "bitacora.cargarMas": "Cargar más",
+  "bitacora.cargarMas": "Ver también el historial archivado",
   "acceso.titulo": "Acceso denegado",
   "acceso.mensaje": "No tenés los permisos necesarios para ver esta página.",
   "acceso.volver": "Volver al inicio",
@@ -523,5 +523,15 @@
   "inicio.acc.backup": "Copias de la base y los archivos, y restore.",
   "inicio.acc.integridad": "Estado de los dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas de la interfaz.",
-  "inicio.acc.miPerfil": "Tus datos y tu contraseña."
+  "inicio.acc.miPerfil": "Tus datos y tu contraseña.",
+  "bitacora.retencion": "Se muestran los eventos de los últimos {0} días. Los más viejos se pasan al historial archivado.",
+  "bitacora.incluirEliminados": "Mostrar también los registros eliminados",
+  "bitacora.eliminado": "Eliminado",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Archivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "¿Eliminar este registro de la Bitácora? Es una baja lógica: se oculta, queda constancia de quién lo eliminó y se puede restaurar.",
+  "bitacora.eliminadoOk": "Se eliminó el registro #{0}. Podés verlo marcando \"Mostrar también los registros eliminados\".",
+  "bitacora.restauradoOk": "Se restauró el registro #{0}.",
+  "bitacora.noDisponible": "Ese registro ya no está disponible para esta acción."
 }

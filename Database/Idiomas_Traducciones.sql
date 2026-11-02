@@ -139,7 +139,7 @@ BEGIN
   "bitacora.fecha": "Fecha",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalle",
-  "bitacora.cargarMas": "Cargar más",
+  "bitacora.cargarMas": "Ver también el historial archivado",
   "acceso.titulo": "Acceso denegado",
   "acceso.mensaje": "No tenés los permisos necesarios para ver esta página.",
   "acceso.volver": "Volver al inicio",
@@ -537,7 +537,17 @@ BEGIN
   "inicio.acc.backup": "Copias de la base y los archivos, y restore.",
   "inicio.acc.integridad": "Estado de los dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas de la interfaz.",
-  "inicio.acc.miPerfil": "Tus datos y tu contraseña."
+  "inicio.acc.miPerfil": "Tus datos y tu contraseña.",
+  "bitacora.retencion": "Se muestran los eventos de los últimos {0} días. Los más viejos se pasan al historial archivado.",
+  "bitacora.incluirEliminados": "Mostrar también los registros eliminados",
+  "bitacora.eliminado": "Eliminado",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Archivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "¿Eliminar este registro de la Bitácora? Es una baja lógica: se oculta, queda constancia de quién lo eliminó y se puede restaurar.",
+  "bitacora.eliminadoOk": "Se eliminó el registro #{0}. Podés verlo marcando \"Mostrar también los registros eliminados\".",
+  "bitacora.restauradoOk": "Se restauró el registro #{0}.",
+  "bitacora.noDisponible": "Ese registro ya no está disponible para esta acción."
 }';
 END
 ELSE
@@ -668,7 +678,7 @@ ELSE
   "bitacora.fecha": "Fecha",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalle",
-  "bitacora.cargarMas": "Cargar más",
+  "bitacora.cargarMas": "Ver también el historial archivado",
   "acceso.titulo": "Acceso denegado",
   "acceso.mensaje": "No tenés los permisos necesarios para ver esta página.",
   "acceso.volver": "Volver al inicio",
@@ -1066,7 +1076,17 @@ ELSE
   "inicio.acc.backup": "Copias de la base y los archivos, y restore.",
   "inicio.acc.integridad": "Estado de los dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas de la interfaz.",
-  "inicio.acc.miPerfil": "Tus datos y tu contraseña."
+  "inicio.acc.miPerfil": "Tus datos y tu contraseña.",
+  "bitacora.retencion": "Se muestran los eventos de los últimos {0} días. Los más viejos se pasan al historial archivado.",
+  "bitacora.incluirEliminados": "Mostrar también los registros eliminados",
+  "bitacora.eliminado": "Eliminado",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Archivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "¿Eliminar este registro de la Bitácora? Es una baja lógica: se oculta, queda constancia de quién lo eliminó y se puede restaurar.",
+  "bitacora.eliminadoOk": "Se eliminó el registro #{0}. Podés verlo marcando \"Mostrar también los registros eliminados\".",
+  "bitacora.restauradoOk": "Se restauró el registro #{0}.",
+  "bitacora.noDisponible": "Ese registro ya no está disponible para esta acción."
 }';
 
 -- English (en)
@@ -1201,7 +1221,7 @@ BEGIN
   "bitacora.fecha": "Date",
   "bitacora.evento": "Event",
   "bitacora.detalle": "Details",
-  "bitacora.cargarMas": "Load more",
+  "bitacora.cargarMas": "Also show the archived history",
   "acceso.titulo": "Access denied",
   "acceso.mensaje": "You don''t have the permissions required to view this page.",
   "acceso.volver": "Back to home",
@@ -1599,7 +1619,17 @@ BEGIN
   "inicio.acc.backup": "Database and file backups, and restore.",
   "inicio.acc.integridad": "Check digit status.",
   "inicio.acc.idiomas": "Interface languages.",
-  "inicio.acc.miPerfil": "Your details and password."
+  "inicio.acc.miPerfil": "Your details and password.",
+  "bitacora.retencion": "Events from the last {0} days are shown. Older ones are moved to the archived history.",
+  "bitacora.incluirEliminados": "Also show deleted records",
+  "bitacora.eliminado": "Deleted",
+  "bitacora.eliminadoDetalle": "{0} by {1}",
+  "bitacora.archivado": "Archived",
+  "bitacora.restaurar": "Restore",
+  "bitacora.confirmarEliminar": "Delete this Log record? It is a logical deletion: it is hidden, who deleted it is recorded, and it can be restored.",
+  "bitacora.eliminadoOk": "Record #{0} was deleted. You can see it by checking \"Also show deleted records\".",
+  "bitacora.restauradoOk": "Record #{0} was restored.",
+  "bitacora.noDisponible": "That record is no longer available for this action."
 }';
 END
 ELSE
@@ -1730,7 +1760,7 @@ ELSE
   "bitacora.fecha": "Date",
   "bitacora.evento": "Event",
   "bitacora.detalle": "Details",
-  "bitacora.cargarMas": "Load more",
+  "bitacora.cargarMas": "Also show the archived history",
   "acceso.titulo": "Access denied",
   "acceso.mensaje": "You don''t have the permissions required to view this page.",
   "acceso.volver": "Back to home",
@@ -2128,7 +2158,17 @@ ELSE
   "inicio.acc.backup": "Database and file backups, and restore.",
   "inicio.acc.integridad": "Check digit status.",
   "inicio.acc.idiomas": "Interface languages.",
-  "inicio.acc.miPerfil": "Your details and password."
+  "inicio.acc.miPerfil": "Your details and password.",
+  "bitacora.retencion": "Events from the last {0} days are shown. Older ones are moved to the archived history.",
+  "bitacora.incluirEliminados": "Also show deleted records",
+  "bitacora.eliminado": "Deleted",
+  "bitacora.eliminadoDetalle": "{0} by {1}",
+  "bitacora.archivado": "Archived",
+  "bitacora.restaurar": "Restore",
+  "bitacora.confirmarEliminar": "Delete this Log record? It is a logical deletion: it is hidden, who deleted it is recorded, and it can be restored.",
+  "bitacora.eliminadoOk": "Record #{0} was deleted. You can see it by checking \"Also show deleted records\".",
+  "bitacora.restauradoOk": "Record #{0} was restored.",
+  "bitacora.noDisponible": "That record is no longer available for this action."
 }';
 
 -- Português (pt)
@@ -2263,7 +2303,7 @@ BEGIN
   "bitacora.fecha": "Data",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalhe",
-  "bitacora.cargarMas": "Carregar mais",
+  "bitacora.cargarMas": "Ver também o histórico arquivado",
   "acceso.titulo": "Acesso negado",
   "acceso.mensaje": "Você não tem as permissões necessárias para ver esta página.",
   "acceso.volver": "Voltar ao início",
@@ -2661,7 +2701,17 @@ BEGIN
   "inicio.acc.backup": "Cópias do banco e dos arquivos, e restauração.",
   "inicio.acc.integridad": "Estado dos dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas da interface.",
-  "inicio.acc.miPerfil": "Seus dados e sua senha."
+  "inicio.acc.miPerfil": "Seus dados e sua senha.",
+  "bitacora.retencion": "São exibidos os eventos dos últimos {0} dias. Os mais antigos passam para o histórico arquivado.",
+  "bitacora.incluirEliminados": "Mostrar também os registros excluídos",
+  "bitacora.eliminado": "Excluído",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Arquivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "Excluir este registro do Log? É uma exclusão lógica: ele fica oculto, quem o excluiu fica registrado e ele pode ser restaurado.",
+  "bitacora.eliminadoOk": "O registro #{0} foi excluído. Você pode vê-lo marcando \"Mostrar também os registros excluídos\".",
+  "bitacora.restauradoOk": "O registro #{0} foi restaurado.",
+  "bitacora.noDisponible": "Esse registro não está mais disponível para esta ação."
 }';
 END
 ELSE
@@ -2792,7 +2842,7 @@ ELSE
   "bitacora.fecha": "Data",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalhe",
-  "bitacora.cargarMas": "Carregar mais",
+  "bitacora.cargarMas": "Ver também o histórico arquivado",
   "acceso.titulo": "Acesso negado",
   "acceso.mensaje": "Você não tem as permissões necessárias para ver esta página.",
   "acceso.volver": "Voltar ao início",
@@ -3190,6 +3240,16 @@ ELSE
   "inicio.acc.backup": "Cópias do banco e dos arquivos, e restauração.",
   "inicio.acc.integridad": "Estado dos dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas da interface.",
-  "inicio.acc.miPerfil": "Seus dados e sua senha."
+  "inicio.acc.miPerfil": "Seus dados e sua senha.",
+  "bitacora.retencion": "São exibidos os eventos dos últimos {0} dias. Os mais antigos passam para o histórico arquivado.",
+  "bitacora.incluirEliminados": "Mostrar também os registros excluídos",
+  "bitacora.eliminado": "Excluído",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Arquivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "Excluir este registro do Log? É uma exclusão lógica: ele fica oculto, quem o excluiu fica registrado e ele pode ser restaurado.",
+  "bitacora.eliminadoOk": "O registro #{0} foi excluído. Você pode vê-lo marcando \"Mostrar também os registros excluídos\".",
+  "bitacora.restauradoOk": "O registro #{0} foi restaurado.",
+  "bitacora.noDisponible": "Esse registro não está mais disponível para esta ação."
 }';
 GO

@@ -125,7 +125,7 @@
   "bitacora.fecha": "Data",
   "bitacora.evento": "Evento",
   "bitacora.detalle": "Detalhe",
-  "bitacora.cargarMas": "Carregar mais",
+  "bitacora.cargarMas": "Ver também o histórico arquivado",
   "acceso.titulo": "Acesso negado",
   "acceso.mensaje": "Você não tem as permissões necessárias para ver esta página.",
   "acceso.volver": "Voltar ao início",
@@ -523,5 +523,15 @@
   "inicio.acc.backup": "Cópias do banco e dos arquivos, e restauração.",
   "inicio.acc.integridad": "Estado dos dígitos verificadores.",
   "inicio.acc.idiomas": "Idiomas da interface.",
-  "inicio.acc.miPerfil": "Seus dados e sua senha."
+  "inicio.acc.miPerfil": "Seus dados e sua senha.",
+  "bitacora.retencion": "São exibidos os eventos dos últimos {0} dias. Os mais antigos passam para o histórico arquivado.",
+  "bitacora.incluirEliminados": "Mostrar também os registros excluídos",
+  "bitacora.eliminado": "Excluído",
+  "bitacora.eliminadoDetalle": "{0} por {1}",
+  "bitacora.archivado": "Arquivado",
+  "bitacora.restaurar": "Restaurar",
+  "bitacora.confirmarEliminar": "Excluir este registro do Log? É uma exclusão lógica: ele fica oculto, quem o excluiu fica registrado e ele pode ser restaurado.",
+  "bitacora.eliminadoOk": "O registro #{0} foi excluído. Você pode vê-lo marcando \"Mostrar também os registros excluídos\".",
+  "bitacora.restauradoOk": "O registro #{0} foi restaurado.",
+  "bitacora.noDisponible": "Esse registro não está mais disponível para esta ação."
 }
