@@ -364,7 +364,6 @@
   "susc.email.asuntoCambio": "Doverie: cambiaste de plan",
   "susc.email.cuerpo": "Confirmamos tu pago de {1} por el plan {0}.",
   "susc.email.renovacion": "Tu suscripción se renueva automáticamente el {0}. Podés cambiarla o cancelarla cuando quieras desde Suscripción.",
-  "susc.email.comprobante": "Comprobante N.º {0}: lo podés descargar desde Facturación.",
   "pagoSim.aviso": "Entorno de pruebas: este es un checkout simulado de la pasarela de pago. No se cobra nada; elegí aprobar o rechazar el pago.",
   "pagoSim.titulo": "Pagar",
   "pagoSim.concepto": "Concepto",
@@ -533,5 +532,13 @@
   "bitacora.confirmarEliminar": "¿Eliminar este registro de la Bitácora? Es una baja lógica: se oculta, queda constancia de quién lo eliminó y se puede restaurar.",
   "bitacora.eliminadoOk": "Se eliminó el registro #{0}. Podés verlo marcando \"Mostrar también los registros eliminados\".",
   "bitacora.restauradoOk": "Se restauró el registro #{0}.",
-  "bitacora.noDisponible": "Ese registro ya no está disponible para esta acción."
+  "bitacora.noDisponible": "Ese registro ya no está disponible para esta acción.",
+  "susc.email.adjunto": "Adjuntamos el comprobante en PDF ({0}). También lo podés descargar desde Facturación.",
+  "susc.email.asuntoRenovacion": "Doverie: renovaste tu suscripción",
+  "susc.email.cuerpoRenovacion": "Confirmamos el pago de la renovación del plan {0}. Tu suscripción sigue activa hasta el {1}.",
+  "susc.email.asuntoComprobante": "Doverie: comprobante N.º {0}",
+  "susc.email.cuerpoComprobante": "Te enviamos el comprobante de pago que pediste desde Facturación.",
+  "fact.enviarEmail": "Enviar por mail",
+  "fact.emailEnviado": "Te enviamos el comprobante en PDF a {0}.",
+  "fact.errorEmail": "No se pudo enviar el correo. Probá de nuevo más tarde o descargá el PDF."
 }

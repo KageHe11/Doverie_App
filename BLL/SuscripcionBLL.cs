@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace BLL
 {
@@ -283,26 +284,41 @@ namespace BLL
             try
             {
                 UsuarioBE Titular = new UsuarioBLL().ObtenerDatos(Pago.UsuarioId);
-                List<KeyValuePair<string, string>> Filas = new List<KeyValuePair<string, string>>
-                {
-                    Fila(idioma, "fact.numero", NumeroComprobante(Pago)),
-                    Fila(idioma, "fact.fecha", Pago.Fecha.ToString("dd/MM/yyyy HH:mm")),
-                    Fila(idioma, "fact.titular", (Titular.Nombre + " " + Titular.Apellido).Trim() + " (" + Titular.NombreUsuario + ")"),
-                    Fila(idioma, "fact.plan", idioma.Traducir("plan.nivel." + Pago.PlanNombre) + " - " + idioma.Traducir("plan.tipo." + Pago.PlanTipo)),
-                    Fila(idioma, "fact.concepto", idioma.Traducir("fact.concepto." + Pago.Concepto)),
-                    Fila(idioma, "fact.medio", idioma.Traducir("pago.medio." + Pago.MedioPagoId)),
-                    Fila(idioma, "fact.monto", FormatearMonto(Pago.Monto)),
-                    Fila(idioma, "fact.estado", idioma.Traducir("fact.estado." + Pago.Estado)),
-                    Fila(idioma, "fact.operacion", Pago.ComprobanteUrl)
-                };
-                pdf = new GeneradorPdf().Generar(idioma.Traducir("fact.comprobanteTitulo"), Filas, idioma.Traducir("fact.pie"));
-                nombreArchivo = "Comprobante-" + NumeroComprobante(Pago) + ".pdf";
+                pdf = PdfComprobante(Pago, Titular, idioma, out nombreArchivo);
             }
             catch (Exception)
             {
                 return ResultadoSuscripcion.ErrorPdf;
             }
             new BitacoraBLL().Registrar("Descargar Comprobante", "Pago Id: " + Pago.Id, usuario.Id);
+            return ResultadoSuscripcion.Exitoso;
+        }
+        /// Reenvía por correo el comprobante de un pago aprobado de la cuenta
+        /// (botón "Enviar por mail" de Facturación). destino es el email al
+        /// que se mandó: el del titular.
+        public ResultadoSuscripcion EnviarComprobantePorEmail(UsuarioBE usuario, int pagoId, out string destino)
+        {
+            destino = null;
+            PagoBE Pago;
+            ResultadoSuscripcion Resultado = ObtenerComprobante(usuario, pagoId, out Pago);
+            if (Resultado != ResultadoSuscripcion.Exitoso) return Resultado;
+            UsuarioBE Titular = new UsuarioBLL().ObtenerDatos(Pago.UsuarioId);
+            try
+            {
+                ContextoIdioma Idioma = new IdiomaBLL().CrearContexto(Titular.IdiomaId);
+                if (!EnviarFactura(Titular, Pago, Idioma, Idioma.Traducir("susc.email.asuntoComprobante", NumeroComprobante(Pago)),
+                    new List<string> { Idioma.Traducir("susc.email.cuerpoComprobante") }))
+                {
+                    return ResultadoSuscripcion.ErrorEmail;
+                }
+            }
+            catch (Exception)
+            {
+                new BitacoraBLL().Registrar("Error Envío Email", "Comprobante del Pago Id: " + Pago.Id, usuario.Id);
+                return ResultadoSuscripcion.ErrorEmail;
+            }
+            destino = Titular.Gmail;
+            new BitacoraBLL().Registrar("Enviar Comprobante por Email", "Pago Id: " + Pago.Id, usuario.Id);
             return ResultadoSuscripcion.Exitoso;
         }
         /// Número de comprobante a mostrar: el Id del pago con ceros.
@@ -509,6 +525,19 @@ namespace BLL
             new SuscripcionDAL().ActualizarRenovacion(suscripcion.Id, suscripcion.FechaRenovacion);
             new BitacoraBLL().Registrar("Renovación Suscripción", "Plan: " + DescribirPlan(plan) + " | Pago Id: " + pagoId + " | Hasta: " + suscripcion.FechaRenovacion.ToString("dd/MM/yyyy"), suscripcion.UsuarioId);
             GestorEventos.Notificar(CatalogoEventos.SuscripcionRenovacion, suscripcion.UsuarioId, plan.Nombre);
+            // Factura de la renovación por correo. Si falla, la renovación
+            // igual quedó hecha: se registra en la Bitácora y se sigue.
+            try
+            {
+                UsuarioBE Titular = new UsuarioBLL().ObtenerDatos(suscripcion.UsuarioId);
+                ContextoIdioma Idioma = new IdiomaBLL().CrearContexto(Titular.IdiomaId);
+                EnviarFactura(Titular, new PagoDAL().ObtenerDatos(pagoId), Idioma, Idioma.Traducir("susc.email.asuntoRenovacion"),
+                    new List<string> { Idioma.Traducir("susc.email.cuerpoRenovacion", NombrePlan(plan, Idioma), suscripcion.FechaRenovacion.ToString("dd/MM/yyyy")) });
+            }
+            catch (Exception)
+            {
+                new BitacoraBLL().Registrar("Error Envío Email", "Factura de la renovación, Pago Id: " + pagoId, suscripcion.UsuarioId);
+            }
         }
         /// Pagos de renovación del período que terminó (creados desde su fin).
         private static List<PagoBE> PagosDeRenovacion(SuscripcionBE suscripcion)
@@ -571,21 +600,66 @@ namespace BLL
         {
             return new KeyValuePair<string, string>(idioma.Traducir(clave), valor ?? "");
         }
-        /// El correo sale en el idioma preferido del titular.
+        /// Confirmación de la compra, en el idioma preferido del titular.
         /// Devuelve false si el titular no tiene email cargado.
         private static bool EnviarConfirmacion(UsuarioBE usuario, PlanBE plan, PagoBE pago, DateTime renovacion, bool esCambio)
         {
-            if (string.IsNullOrWhiteSpace(usuario.Gmail)) return false;
             ContextoIdioma Idioma = new IdiomaBLL().CrearContexto(usuario.IdiomaId);
-            string NombrePlan = Idioma.Traducir("plan.nivel." + plan.Nombre) + " - " + Idioma.Traducir("plan.tipo." + plan.Tipo);
-            string Asunto = Idioma.Traducir(esCambio ? "susc.email.asuntoCambio" : "susc.email.asunto");
-            string Cuerpo =
-                "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("notif.email.saludo", usuario.Nombre)) + "</p>" +
-                "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("susc.email.cuerpo", NombrePlan, FormatearMonto(pago.Monto))) + "</p>" +
-                "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("susc.email.renovacion", renovacion.ToString("dd/MM/yyyy"))) + "</p>" +
-                "<p style=\"color:#888\">" + WebUtility.HtmlEncode(Idioma.Traducir("susc.email.comprobante", NumeroComprobante(pago))) + "</p>";
-            new EmailService().EnviarEmail(usuario.Gmail, Asunto, Cuerpo);
+            return EnviarFactura(usuario, pago, Idioma, Idioma.Traducir(esCambio ? "susc.email.asuntoCambio" : "susc.email.asunto"), new List<string>
+            {
+                Idioma.Traducir("susc.email.cuerpo", NombrePlan(plan, Idioma), FormatearMonto(pago.Monto)),
+                Idioma.Traducir("susc.email.renovacion", renovacion.ToString("dd/MM/yyyy"))
+            });
+        }
+        /// La factura por correo: los datos de la compra en el cuerpo y el
+        /// comprobante en PDF adjunto (el mismo que se descarga desde
+        /// Facturación). Devuelve false si el titular no tiene email cargado.
+        private static bool EnviarFactura(UsuarioBE titular, PagoBE pago, ContextoIdioma idioma, string asunto, List<string> parrafos)
+        {
+            if (string.IsNullOrWhiteSpace(titular.Gmail)) return false;
+            string NombreArchivo;
+            byte[] Pdf = PdfComprobante(pago, titular, idioma, out NombreArchivo);
+            StringBuilder Cuerpo = new StringBuilder();
+            Cuerpo.Append("<p>" + WebUtility.HtmlEncode(idioma.Traducir("notif.email.saludo", titular.Nombre)) + "</p>");
+            foreach (string Parrafo in parrafos)
+            {
+                Cuerpo.Append("<p>" + WebUtility.HtmlEncode(Parrafo) + "</p>");
+            }
+            Cuerpo.Append("<table style=\"border-collapse:collapse;font-size:14px\">");
+            foreach (KeyValuePair<string, string> Dato in FilasComprobante(pago, titular, idioma))
+            {
+                Cuerpo.Append("<tr><td style=\"padding:4px 16px 4px 0;color:#666\">" + WebUtility.HtmlEncode(Dato.Key) +
+                    "</td><td style=\"padding:4px 0\"><b>" + WebUtility.HtmlEncode(Dato.Value) + "</b></td></tr>");
+            }
+            Cuerpo.Append("</table>");
+            Cuerpo.Append("<p style=\"color:#888\">" + WebUtility.HtmlEncode(idioma.Traducir("susc.email.adjunto", NombreArchivo)) + "</p>");
+            new EmailService().EnviarEmail(titular.Gmail, asunto, Cuerpo.ToString(), Pdf, NombreArchivo);
             return true;
+        }
+        /// Datos del comprobante: los mismos en el PDF y en el correo.
+        private static List<KeyValuePair<string, string>> FilasComprobante(PagoBE pago, UsuarioBE titular, ContextoIdioma idioma)
+        {
+            return new List<KeyValuePair<string, string>>
+            {
+                Fila(idioma, "fact.numero", NumeroComprobante(pago)),
+                Fila(idioma, "fact.fecha", pago.Fecha.ToString("dd/MM/yyyy HH:mm")),
+                Fila(idioma, "fact.titular", (titular.Nombre + " " + titular.Apellido).Trim() + " (" + titular.NombreUsuario + ")"),
+                Fila(idioma, "fact.plan", idioma.Traducir("plan.nivel." + pago.PlanNombre) + " - " + idioma.Traducir("plan.tipo." + pago.PlanTipo)),
+                Fila(idioma, "fact.concepto", idioma.Traducir("fact.concepto." + pago.Concepto)),
+                Fila(idioma, "fact.medio", idioma.Traducir("pago.medio." + pago.MedioPagoId)),
+                Fila(idioma, "fact.monto", FormatearMonto(pago.Monto)),
+                Fila(idioma, "fact.estado", idioma.Traducir("fact.estado." + pago.Estado)),
+                Fila(idioma, "fact.operacion", pago.ComprobanteUrl)
+            };
+        }
+        private static byte[] PdfComprobante(PagoBE pago, UsuarioBE titular, ContextoIdioma idioma, out string nombreArchivo)
+        {
+            nombreArchivo = "Comprobante-" + NumeroComprobante(pago) + ".pdf";
+            return new GeneradorPdf().Generar(idioma.Traducir("fact.comprobanteTitulo"), FilasComprobante(pago, titular, idioma), idioma.Traducir("fact.pie"));
+        }
+        private static string NombrePlan(PlanBE plan, ContextoIdioma idioma)
+        {
+            return idioma.Traducir("plan.nivel." + plan.Nombre) + " - " + idioma.Traducir("plan.tipo." + plan.Tipo);
         }
     }
 }

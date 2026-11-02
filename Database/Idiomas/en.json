@@ -364,7 +364,6 @@
   "susc.email.asuntoCambio": "Doverie: your plan was changed",
   "susc.email.cuerpo": "We confirm your payment of {1} for the {0} plan.",
   "susc.email.renovacion": "Your subscription renews automatically on {0}. You can change or cancel it anytime under Subscription.",
-  "susc.email.comprobante": "Receipt No. {0}: you can download it from Billing.",
   "pagoSim.aviso": "Test environment: this is a simulated payment gateway checkout. Nothing is charged; choose to approve or reject the payment.",
   "pagoSim.titulo": "Pay",
   "pagoSim.concepto": "Description",
@@ -533,5 +532,13 @@
   "bitacora.confirmarEliminar": "Delete this Log record? It is a logical deletion: it is hidden, who deleted it is recorded, and it can be restored.",
   "bitacora.eliminadoOk": "Record #{0} was deleted. You can see it by checking \"Also show deleted records\".",
   "bitacora.restauradoOk": "Record #{0} was restored.",
-  "bitacora.noDisponible": "That record is no longer available for this action."
+  "bitacora.noDisponible": "That record is no longer available for this action.",
+  "susc.email.adjunto": "The receipt is attached as a PDF ({0}). You can also download it from Billing.",
+  "susc.email.asuntoRenovacion": "Doverie: your subscription was renewed",
+  "susc.email.cuerpoRenovacion": "We confirm the renewal payment for the {0} plan. Your subscription stays active until {1}.",
+  "susc.email.asuntoComprobante": "Doverie: receipt No. {0}",
+  "susc.email.cuerpoComprobante": "Here is the payment receipt you requested from Billing.",
+  "fact.enviarEmail": "Send by email",
+  "fact.emailEnviado": "We sent the PDF receipt to {0}.",
+  "fact.errorEmail": "The email could not be sent. Try again later or download the PDF."
 }

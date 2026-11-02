@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Facturacion.aspx.cs" Inherits="Facturacion" %>
+<%@ Register Src="~/Mensaje.ascx" TagPrefix="uc" TagName="Mensaje" %>
 <%@ Import Namespace="BE" %>
 <%@ Import Namespace="BLL" %>
 
@@ -11,6 +12,7 @@
 
     <asp:Label ID="lblInfo" runat="server" CssClass="alert alert-info d-block" Visible="false" EnableViewState="false"></asp:Label>
     <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
+    <uc:Mensaje ID="Mensaje" runat="server" />
 
     <%-- CU-001-014 paso 3: plan vigente y medio de pago registrado --%>
     <div class="card mb-3">
@@ -49,6 +51,7 @@
                 <tr><th><%: Traductor.T("fact.operacion") %></th><td class="font-monospace"><asp:Literal ID="litCompOperacion" runat="server" Mode="Encode" /></td></tr>
             </table>
             <asp:Button ID="btnDescargarPdf" runat="server" CssClass="btn btn-primary btn-sm" OnClick="btnDescargarPdf_Click" />
+            <asp:Button ID="btnEnviarEmail" runat="server" CssClass="btn btn-outline-primary btn-sm ms-1" OnClick="btnEnviarEmail_Click" />
         </div>
     </asp:Panel>
 

@@ -42,4 +42,7 @@
 	     esta clave no se pueden leer. Guardala aparte; si se pierde, se
 	     pierden esos datos. Distinta de las otras claves. -->
 	<add key="CifradoClave" value="poné-acá-otra-clave-larga-random" />
+	<!-- Opcional, solo para pruebas o demos sin internet: si tiene una
+	     carpeta, los correos no se envían, se guardan ahí como .eml. -->
+	<add key="SmtpCarpetaPrueba" value="" />
 </appSettings>

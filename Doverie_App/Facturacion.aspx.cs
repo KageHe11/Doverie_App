@@ -14,6 +14,7 @@ public partial class Facturacion : PaginaBase
     protected void Page_Load(object sender, EventArgs e)
     {
         btnDescargarPdf.Text = Traductor.T("fact.descargarPdf");
+        btnEnviarEmail.Text = Traductor.T("fact.enviarEmail");
         if (!IsPostBack)
         {
             CargarPlan();
@@ -126,6 +127,20 @@ public partial class Facturacion : PaginaBase
         Response.Flush();
         Response.SuppressContent = true;
         Context.ApplicationInstance.CompleteRequest();
+    }
+    /// Reenvía el comprobante en PDF al email del titular.
+    protected void btnEnviarEmail_Click(object sender, EventArgs e)
+    {
+        int PagoId;
+        if (!int.TryParse(hdnPagoId.Value, out PagoId))
+        {
+            MostrarError(Traductor.T("error.035"));
+            return;
+        }
+        string Destino;
+        ResultadoSuscripcion Resultado = new SuscripcionBLL().EnviarComprobantePorEmail(UsuarioActual, PagoId, out Destino);
+        if (Resultado == ResultadoSuscripcion.Exitoso) Mensaje.Exito(Traductor.T("fact.emailEnviado", Destino));
+        else MostrarError(Traductor.T(Resultado == ResultadoSuscripcion.ErrorEmail ? "fact.errorEmail" : "error.035"));
     }
     private void MostrarError(string mensaje)
     {

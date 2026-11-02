@@ -15,6 +15,7 @@
         MismoPlan,            // el plan elegido es el que ya tiene
         LimiteUsuarios,       // la cuenta tiene más usuarios de los que permite el plan
         SinSuscripcion,       // no hay suscripción vigente
-        SinAcceso             // [ERROR-056]: no es titular de la cuenta o el pago es de otra
+        SinAcceso,            // [ERROR-056]: no es titular de la cuenta o el pago es de otra
+        ErrorEmail            // no se pudo enviar el comprobante por correo
     }
 }
