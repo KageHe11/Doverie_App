@@ -28,6 +28,7 @@ public partial class MiPerfil : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         UsuarioBLL UsuarioBll = new UsuarioBLL();
         ResultadoModificarPerfil Resultado = UsuarioBll.ModificarDatosPropios(
             UsuarioLogueado.Id, txtNombre.Text, txtApellido.Text, txtGmail.Text, txtContrasena.Text);
@@ -42,9 +43,7 @@ public partial class MiPerfil : PaginaBase
                 Actualizado.Gmail = txtGmail.Text;
                 Session["Usuario"] = Actualizado;
                 txtContrasena.Text = "";
-                lblError.Visible = false;
-                lblExito.Text = Traductor.T("miPerfil.exito");
-                lblExito.Visible = true;
+                Mensaje.Exito(Traductor.T("miPerfil.exito"));
                 break;
             case ResultadoModificarPerfil.DatosInvalidos:
                 MostrarError(Traductor.T("miPerfil.errorDatos"));
@@ -52,12 +51,13 @@ public partial class MiPerfil : PaginaBase
             case ResultadoModificarPerfil.EmailYaRegistrado:
                 MostrarError(Traductor.T("miPerfil.errorEmail"));
                 break;
+            case ResultadoModificarPerfil.ContrasenaCorta:
+                MostrarError(Traductor.T("error.contrasenaCorta", UsuarioBLL.LargoMinimoContrasena));
+                break;
         }
     }
     private void MostrarError(string mensaje)
     {
-        lblExito.Visible = false;
-        lblError.Text = mensaje;
-        lblError.Visible = true;
+        Mensaje.Error(mensaje);
     }
 }

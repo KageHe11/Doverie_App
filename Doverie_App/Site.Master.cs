@@ -1,14 +1,30 @@
 ﻿using System;
-using System.Web;
+using System.Collections.Generic;
+using System.IO;
 using System.Web.UI;
 using BE;
 using BLL;
 
 public partial class Site : MasterPage
 {
+    /// Título de la pestaña de cada página: el mismo texto que su encabezado.
+    private static readonly Dictionary<string, string> Titulos = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        { "Login", "login.titulo" }, { "Registro", "registro.titulo" },
+        { "RecuperarContrasena", "recuperar.titulo" }, { "RestablecerContrasena", "restablecer.titulo" },
+        { "MiPerfil", "miPerfil.titulo" }, { "Usuarios", "usuarios.titulo" }, { "EmpleadosEmpresa", "empleados.titulo" },
+        { "Perfiles", "perfiles.titulo" }, { "Familias", "familias.titulo" }, { "Permisos", "permisos.titulo" },
+        { "Bitacora", "bitacora.titulo" }, { "AccesoDenegado", "acceso.titulo" }, { "Idiomas", "idiomas.titulo" },
+        { "Documentos", "doc.titulo" }, { "Notificaciones", "notif.titulo" }, { "Estadisticas", "est.titulo" },
+        { "Suscripcion", "susc.titulo" }, { "PagoSimulado", "pagoSim.titulo" }, { "Facturacion", "fact.titulo" },
+        { "Backup", "backup.titulo" }, { "Integridad", "integ.titulo" }
+    };
     protected void Page_Load(object sender, EventArgs e)
     {
-        btnCerrarSesion.Text = Traductor.T("nav.cerrarSesion");
+        string Clave;
+        Page.Title = Titulos.TryGetValue(Path.GetFileNameWithoutExtension(Request.Path), out Clave)
+            ? Traductor.T(Clave) + " - Doverie"
+            : "Doverie";
         UsuarioBE Usuario = Session["Usuario"] as UsuarioBE;
         if (Usuario != null)
         {
@@ -68,18 +84,5 @@ public partial class Site : MasterPage
         PermisoBE Permiso = PermisoBll.ObtenerPorNombre(nombrePermiso);
         if (Permiso == null) return false;
         return usuario.Perfil.TienePermiso(Permiso.Id);
-    }
-    protected void btnCerrarSesion_Click(object sender, EventArgs e)
-    {
-        // CU-002-002 Logout (RC-002 Guardar en Bitácora).
-        UsuarioBE Usuario = Session["Usuario"] as UsuarioBE;
-        if (Usuario != null) new BitacoraBLL().Registrar("Logout", null, Usuario.Id);
-        Session.Clear();
-
-        HttpCookie Cookie = new HttpCookie("TokenSesion", "");
-        Cookie.Expires = DateTime.Now.AddDays(-1);
-        Response.Cookies.Add(Cookie);
-
-        Response.Redirect("~/Login.aspx");
     }
 }

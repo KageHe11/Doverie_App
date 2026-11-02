@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Integridad.aspx.cs" Inherits="Integridad" %>
+<%@ Register Src="~/Mensaje.ascx" TagPrefix="uc" TagName="Mensaje" %>
 <%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 <%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
@@ -10,7 +11,7 @@
 
     <h2 class="mb-3"><%: Traductor.T("integ.titulo") %></h2>
 
-    <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
+    <uc:Mensaje ID="Mensaje" runat="server" />
 
     <%-- Estado general --%>
     <asp:Panel ID="pnlIntegra" runat="server" CssClass="alert alert-success" Visible="false">

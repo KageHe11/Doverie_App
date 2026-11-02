@@ -149,6 +149,7 @@ public partial class Idiomas : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         OcultarMensajes();
         int Id = Convert.ToInt32(hdnId.Value);
         if (!TienePermiso(Id == 0 ? "AltaIdioma" : "ModificarIdioma"))

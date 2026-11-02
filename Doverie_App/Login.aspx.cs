@@ -13,6 +13,8 @@ public partial class Login : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         btnIngresar.Text = Traductor.T("login.ingresar");
+        // Vuelve de RestablecerContrasena.aspx con la contraseña nueva.
+        if (!IsPostBack && Request.QueryString["restablecido"] == "1") Mensaje.Exito(Traductor.T("login.restablecida"));
     }
     /// Identificador de este navegador: un valor aleatorio en una cookie de
     /// larga duración. Si no existe todavía, se crea. Sirve para detectar
@@ -39,6 +41,7 @@ public partial class Login : System.Web.UI.Page
     // y acá solo se ocupa de la parte "web" (cookie, Session, redirección).
     protected void btnIngresar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         UsuarioBE Usuario;
         string Token;
         ContextoIdioma Idioma;
@@ -71,27 +74,23 @@ public partial class Login : System.Web.UI.Page
                 Response.Redirect(DigitoVerificadorBLL.BaseComprometida ? "Integridad.aspx" : "Default.aspx");
                 break;
             case ResultadoLogin.BaseInconsistente:
-                lblError.Text = Traductor.T("login.baseInconsistente");
-                lblError.Visible = true;
+                Mensaje.Error(Traductor.T("login.baseInconsistente"));
                 break;
             case ResultadoLogin.UsuarioBloqueado:
                 // [ERROR-002] Bloqueo automático por intentos fallidos.
-                lblError.Text = Traductor.T("login.cuentaBloqueada");
-                lblError.Visible = true;
+                Mensaje.Error(Traductor.T("login.cuentaBloqueada"));
                 break;
             case ResultadoLogin.UsuarioSuspendido:
                 // Suspensión manual (Administrador o Empresa): recuperar la
                 // contraseña no la levanta.
-                lblError.Text = Traductor.T("login.cuentaSuspendida");
-                lblError.Visible = true;
+                Mensaje.Error(Traductor.T("login.cuentaSuspendida"));
                 break;
             case ResultadoLogin.CredencialesInvalidas:
                 // Mismo mensaje tanto si el usuario no existe como si la
                 // contraseña está mal — por seguridad, no se revela cuál de
                 // las dos cosas falló (evita que alguien pueda "adivinar"
                 // qué nombres de usuario existen en el sistema).
-                lblError.Text = Traductor.T("login.credencialesInvalidas");
-                lblError.Visible = true;
+                Mensaje.Error(Traductor.T("login.credencialesInvalidas"));
                 break;
         }
     }

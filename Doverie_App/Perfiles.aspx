@@ -66,7 +66,8 @@
 
                             <div class="mb-3">
                                 <label class="form-label"><%: Traductor.T("perfiles.nombre") %></label>
-                                <asp:TextBox ID="txtNombrePerfil" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtNombrePerfil" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvNombrePerfil" runat="server" ControlToValidate="txtNombrePerfil" ValidationGroup="Perfil" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
 
                             <div class="mb-2 form-check">
@@ -93,7 +94,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <asp:Button ID="btnGuardar" runat="server" ValidationGroup="Perfil" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

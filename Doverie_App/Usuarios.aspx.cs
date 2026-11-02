@@ -102,6 +102,7 @@ public partial class Usuarios : PaginaBase
     /// [ERROR-038].
     protected void btnConfirmarSuspension_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModalSuspender(); return; }
         UsuarioBLL UsuarioBll = new UsuarioBLL();
         ResultadoEstadoUsuario Resultado = UsuarioBll.Suspender(Convert.ToInt32(hdnSuspenderId.Value), txtMotivo.Text, UsuarioActual.Id);
         if (Resultado == ResultadoEstadoUsuario.MotivoInvalido)
@@ -145,6 +146,7 @@ public partial class Usuarios : PaginaBase
         txtDni.Text = Usuario.Dni;
         txtTelefono.Text = Usuario.Telefono;
         ddlPerfil.SelectedValue = Usuario.Perfil.Id.ToString();
+        MostrarPermisosPerfil();
     }
     ///Vacía todos los campos del modal, para dejarlo listo en modo alta.
     private void LimpiarFormulario()
@@ -158,11 +160,23 @@ public partial class Usuarios : PaginaBase
         txtDni.Text = "";
         txtTelefono.Text = "";
         lblErrorModal.Visible = false;
+        MostrarPermisosPerfil();
+    }
+    /// Familias y Permisos que otorga el Perfil elegido en el modal.
+    protected void ddlPerfil_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        MostrarPermisosPerfil();
+    }
+    private void MostrarPermisosPerfil()
+    {
+        int PerfilId;
+        ArbolPerfil.Mostrar(int.TryParse(ddlPerfil.SelectedValue, out PerfilId) ? new PerfilBLL().ObtenerDatos(PerfilId) : null);
     }
     /// Botón "Guardar" del modal. hdnId = 0 indica alta; cualquier otro
     /// valor indica edición de ese Id puntual.
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         int Id = Convert.ToInt32(hdnId.Value);
         UsuarioBLL UsuarioBll = new UsuarioBLL();
         ResultadoRegistro Resultado;
@@ -211,7 +225,9 @@ public partial class Usuarios : PaginaBase
         {
             // [ERROR-004] datos o formato; ya registrado: [ERROR-005] en el
             // alta, [ERROR-021] email de otro usuario en la edición.
-            lblErrorModal.Text = Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
+            lblErrorModal.Text = Resultado == ResultadoRegistro.ContrasenaCorta
+                ? Traductor.T("error.contrasenaCorta", UsuarioBLL.LargoMinimoContrasena)
+                : Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
             lblErrorModal.Visible = true;
             AbrirModal();
             return;

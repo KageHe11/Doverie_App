@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Usuarios.aspx.cs" Inherits="Usuarios" %>
+<%@ Register Src="~/ArbolPermisos.ascx" TagPrefix="uc" TagName="ArbolPermisos" %>
 <%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 <%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
@@ -73,43 +74,60 @@
 
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.nombre") %></label>
-                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvNombre" runat="server" ControlToValidate="txtNombre" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.apellido") %></label>
-                                <asp:TextBox ID="txtApellido" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtApellido" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvApellido" runat="server" ControlToValidate="txtApellido" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.nombreUsuario") %></label>
-                                <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtNombreUsuario" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvNombreUsuario" runat="server" ControlToValidate="txtNombreUsuario" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.contrasena") %></label>
                                 <asp:TextBox ID="txtContrasena" runat="server" CssClass="form-control" TextMode="Password"></asp:TextBox>
+                                <asp:RegularExpressionValidator ID="revContrasena" runat="server" ControlToValidate="txtContrasena" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^[\s\S]{6,}$" ErrorMessage="<%$ Traduccion:valid.contrasena %>" />
                                 <small class="text-muted"><%: Traductor.T("comun.ayudaContrasenaEditar") %></small>
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.email") %></label>
-                                <asp:TextBox ID="txtGmail" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtGmail" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvGmail" runat="server" ControlToValidate="txtGmail" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
+                                <asp:RegularExpressionValidator ID="revGmail" runat="server" ControlToValidate="txtGmail" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$" ErrorMessage="<%$ Traduccion:valid.email %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.dni") %></label>
-                                <asp:TextBox ID="txtDni" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtDni" runat="server" CssClass="form-control" MaxLength="8"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvDni" runat="server" ControlToValidate="txtDni" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
+                                <asp:RegularExpressionValidator ID="revDni" runat="server" ControlToValidate="txtDni" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^\d{7,8}$" ErrorMessage="<%$ Traduccion:valid.dni %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.telefono") %></label>
-                                <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtTelefono" runat="server" CssClass="form-control" MaxLength="20"></asp:TextBox>
+                                <asp:RegularExpressionValidator ID="revTelefono" runat="server" ControlToValidate="txtTelefono" ValidationGroup="Usuario" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^[0-9+\-\s()]{6,20}$" ErrorMessage="<%$ Traduccion:valid.telefono %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("usuarios.perfil") %></label>
                                 <asp:DropDownList ID="ddlPerfil" runat="server" CssClass="form-select"
-                                    DataTextField="NombrePerfil" DataValueField="Id"></asp:DropDownList>
+                                    DataTextField="NombrePerfil" DataValueField="Id"
+                                    AutoPostBack="true" OnSelectedIndexChanged="ddlPerfil_SelectedIndexChanged"></asp:DropDownList>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label"><%: Traductor.T("usuarios.permisosPerfil") %></label>
+                                <div class="border rounded p-2 small" style="max-height: 220px; overflow: auto;">
+                                    <uc:ArbolPermisos ID="ArbolPerfil" runat="server" />
+                                </div>
+                                <small class="text-muted"><%: Traductor.T("usuarios.sinPermisosParticulares") %></small>
                             </div>
 
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <asp:Button ID="btnGuardar" runat="server" ValidationGroup="Usuario" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>
@@ -131,11 +149,12 @@
                             <asp:Label ID="lblErrorSuspender" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
                             <label class="form-label"><%: Traductor.T("usuarios.motivo") %></label>
                             <asp:TextBox ID="txtMotivo" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="rfvMotivo" runat="server" ControlToValidate="txtMotivo" ValidationGroup="Suspension" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             <small class="text-muted"><%: Traductor.T("usuarios.motivoAyuda") %></small>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnConfirmarSuspension" runat="server" CssClass="btn btn-danger" OnClick="btnConfirmarSuspension_Click" />
+                            <asp:Button ID="btnConfirmarSuspension" runat="server" ValidationGroup="Suspension" CssClass="btn btn-danger" OnClick="btnConfirmarSuspension_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

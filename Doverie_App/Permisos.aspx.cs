@@ -80,6 +80,7 @@ public partial class Permisos : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         int Id = Convert.ToInt32(hdnId.Value);
         PermisoBLL PermisoBll = new PermisoBLL();
         PermisoBE Permiso = new PermisoBE { Id = Id, Nombre = txtNombre.Text, Descripcion = txtDescripcion.Text };

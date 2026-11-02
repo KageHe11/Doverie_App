@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Familias.aspx.cs" Inherits="Familias" %>
+<%@ Register Src="~/ArbolPermisos.ascx" TagPrefix="uc" TagName="ArbolPermisos" %>
 <%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 <%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
@@ -44,7 +45,7 @@
         <ContentTemplate>
             <div class="card">
                 <div class="card-body">
-                    <asp:TreeView ID="tvArbol" runat="server" ShowLines="true"></asp:TreeView>
+                    <uc:ArbolPermisos ID="Arbol" runat="server" />
                 </div>
             </div>
         </ContentTemplate>
@@ -64,7 +65,8 @@
 
                             <div class="mb-3">
                                 <label class="form-label"><%: Traductor.T("familias.nombre") %></label>
-                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvNombre" runat="server" ControlToValidate="txtNombre" ValidationGroup="Familia" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
 
                             <label class="form-label"><%: Traductor.T("familias.componentes") %></label>
@@ -86,7 +88,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <asp:Button ID="btnGuardar" runat="server" ValidationGroup="Familia" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

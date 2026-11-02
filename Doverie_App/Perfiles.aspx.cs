@@ -123,6 +123,7 @@ public partial class Perfiles : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         int Id = Convert.ToInt32(hdnId.Value);
         PerfilBLL PerfilBll = new PerfilBLL();
         PerfilBE Perfil = new PerfilBE

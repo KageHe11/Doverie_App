@@ -17,6 +17,7 @@ public partial class Registro : System.Web.UI.Page
     }
     protected void btnRegistrar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         if (txtContrasena.Text != txtConfirmar.Text)
         {
             MostrarError(Traductor.T("comun.contrasenasNoCoinciden"));
@@ -44,8 +45,7 @@ public partial class Registro : System.Web.UI.Page
         {
             case ResultadoRegistro.Exitoso:
                 pnlFormulario.Visible = false;
-                lblExito.Text = Traductor.T("registro.exito");
-                lblExito.Visible = true;
+                Mensaje.Exito(Traductor.T("registro.exito"));
                 break;
             case ResultadoRegistro.DatosInvalidos:
                 MostrarError(Traductor.T("registro.errorDatos"));
@@ -53,11 +53,13 @@ public partial class Registro : System.Web.UI.Page
             case ResultadoRegistro.YaRegistrado:
                 MostrarError(Traductor.T("registro.errorYaRegistrado"));
                 break;
+            case ResultadoRegistro.ContrasenaCorta:
+                MostrarError(Traductor.T("error.contrasenaCorta", UsuarioBLL.LargoMinimoContrasena));
+                break;
         }
     }
     private void MostrarError(string mensaje)
     {
-        lblError.Text = mensaje;
-        lblError.Visible = true;
+        Mensaje.Error(mensaje);
     }
 }

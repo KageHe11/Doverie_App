@@ -501,7 +501,21 @@ BEGIN
   "integ.confirmarTodo": "¿Recalcular los dígitos de todas las tablas? Los datos actuales, incluidos los alterados, pasan a tomarse como correctos.",
   "integ.confirmarTabla": "¿Recalcular los dígitos de esta tabla? Sus datos actuales pasan a tomarse como correctos.",
   "integ.recalculado": "Se recalcularon los dígitos de todas las tablas.",
-  "integ.recalculadaTabla": "Se recalcularon los dígitos de la tabla {0}."
+  "integ.recalculadaTabla": "Se recalcularon los dígitos de la tabla {0}.",
+  "comun.cerrar": "Cerrar",
+  "error.contrasenaCorta": "La contraseña debe tener al menos {0} caracteres.",
+  "login.restablecida": "Tu contraseña se cambió. Ya podés iniciar sesión con la nueva.",
+  "valid.obligatorio": "Campo obligatorio.",
+  "valid.email": "Ingresá un email válido.",
+  "valid.dni": "El DNI tiene que tener 7 u 8 números.",
+  "valid.telefono": "Teléfono inválido: de 6 a 20 caracteres, solo números, espacios, +, - y paréntesis.",
+  "valid.contrasena": "La contraseña debe tener al menos 6 caracteres.",
+  "valid.codigoIdioma": "Código inválido (ej.: es, en, pt-BR).",
+  "valid.archivo": "Elegí un archivo.",
+  "valid.rangoFechas": "La fecha \"hasta\" no puede ser anterior a la fecha \"desde\".",
+  "arbol.vacio": "Sin familias asignadas.",
+  "usuarios.permisosPerfil": "Familias y permisos del perfil",
+  "usuarios.sinPermisosParticulares": "Los permisos se otorgan solo a través del perfil: el usuario no tiene permisos particulares."
 }';
 END
 ELSE
@@ -994,7 +1008,21 @@ ELSE
   "integ.confirmarTodo": "¿Recalcular los dígitos de todas las tablas? Los datos actuales, incluidos los alterados, pasan a tomarse como correctos.",
   "integ.confirmarTabla": "¿Recalcular los dígitos de esta tabla? Sus datos actuales pasan a tomarse como correctos.",
   "integ.recalculado": "Se recalcularon los dígitos de todas las tablas.",
-  "integ.recalculadaTabla": "Se recalcularon los dígitos de la tabla {0}."
+  "integ.recalculadaTabla": "Se recalcularon los dígitos de la tabla {0}.",
+  "comun.cerrar": "Cerrar",
+  "error.contrasenaCorta": "La contraseña debe tener al menos {0} caracteres.",
+  "login.restablecida": "Tu contraseña se cambió. Ya podés iniciar sesión con la nueva.",
+  "valid.obligatorio": "Campo obligatorio.",
+  "valid.email": "Ingresá un email válido.",
+  "valid.dni": "El DNI tiene que tener 7 u 8 números.",
+  "valid.telefono": "Teléfono inválido: de 6 a 20 caracteres, solo números, espacios, +, - y paréntesis.",
+  "valid.contrasena": "La contraseña debe tener al menos 6 caracteres.",
+  "valid.codigoIdioma": "Código inválido (ej.: es, en, pt-BR).",
+  "valid.archivo": "Elegí un archivo.",
+  "valid.rangoFechas": "La fecha \"hasta\" no puede ser anterior a la fecha \"desde\".",
+  "arbol.vacio": "Sin familias asignadas.",
+  "usuarios.permisosPerfil": "Familias y permisos del perfil",
+  "usuarios.sinPermisosParticulares": "Los permisos se otorgan solo a través del perfil: el usuario no tiene permisos particulares."
 }';
 
 -- English (en)
@@ -1491,7 +1519,21 @@ BEGIN
   "integ.confirmarTodo": "Recalculate the digits of every table? The current data, including any altered data, will be taken as correct.",
   "integ.confirmarTabla": "Recalculate the digits of this table? Its current data will be taken as correct.",
   "integ.recalculado": "The digits of every table were recalculated.",
-  "integ.recalculadaTabla": "The digits of table {0} were recalculated."
+  "integ.recalculadaTabla": "The digits of table {0} were recalculated.",
+  "comun.cerrar": "Close",
+  "error.contrasenaCorta": "The password must be at least {0} characters long.",
+  "login.restablecida": "Your password was changed. You can now sign in with the new one.",
+  "valid.obligatorio": "Required field.",
+  "valid.email": "Enter a valid email.",
+  "valid.dni": "The ID number must have 7 or 8 digits.",
+  "valid.telefono": "Invalid phone: 6 to 20 characters, only digits, spaces, +, - and parentheses.",
+  "valid.contrasena": "The password must be at least 6 characters long.",
+  "valid.codigoIdioma": "Invalid code (e.g. es, en, pt-BR).",
+  "valid.archivo": "Choose a file.",
+  "valid.rangoFechas": "The \"to\" date cannot be earlier than the \"from\" date.",
+  "arbol.vacio": "No families assigned.",
+  "usuarios.permisosPerfil": "Profile families and permissions",
+  "usuarios.sinPermisosParticulares": "Permissions are granted only through the profile: the user has no individual permissions."
 }';
 END
 ELSE
@@ -1984,7 +2026,21 @@ ELSE
   "integ.confirmarTodo": "Recalculate the digits of every table? The current data, including any altered data, will be taken as correct.",
   "integ.confirmarTabla": "Recalculate the digits of this table? Its current data will be taken as correct.",
   "integ.recalculado": "The digits of every table were recalculated.",
-  "integ.recalculadaTabla": "The digits of table {0} were recalculated."
+  "integ.recalculadaTabla": "The digits of table {0} were recalculated.",
+  "comun.cerrar": "Close",
+  "error.contrasenaCorta": "The password must be at least {0} characters long.",
+  "login.restablecida": "Your password was changed. You can now sign in with the new one.",
+  "valid.obligatorio": "Required field.",
+  "valid.email": "Enter a valid email.",
+  "valid.dni": "The ID number must have 7 or 8 digits.",
+  "valid.telefono": "Invalid phone: 6 to 20 characters, only digits, spaces, +, - and parentheses.",
+  "valid.contrasena": "The password must be at least 6 characters long.",
+  "valid.codigoIdioma": "Invalid code (e.g. es, en, pt-BR).",
+  "valid.archivo": "Choose a file.",
+  "valid.rangoFechas": "The \"to\" date cannot be earlier than the \"from\" date.",
+  "arbol.vacio": "No families assigned.",
+  "usuarios.permisosPerfil": "Profile families and permissions",
+  "usuarios.sinPermisosParticulares": "Permissions are granted only through the profile: the user has no individual permissions."
 }';
 
 -- Português (pt)
@@ -2481,7 +2537,21 @@ BEGIN
   "integ.confirmarTodo": "Recalcular os dígitos de todas as tabelas? Os dados atuais, incluindo os alterados, passam a ser considerados corretos.",
   "integ.confirmarTabla": "Recalcular os dígitos desta tabela? Os dados atuais passam a ser considerados corretos.",
   "integ.recalculado": "Os dígitos de todas as tabelas foram recalculados.",
-  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados."
+  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados.",
+  "comun.cerrar": "Fechar",
+  "error.contrasenaCorta": "A senha deve ter pelo menos {0} caracteres.",
+  "login.restablecida": "Sua senha foi alterada. Você já pode entrar com a nova.",
+  "valid.obligatorio": "Campo obrigatório.",
+  "valid.email": "Informe um email válido.",
+  "valid.dni": "O DNI deve ter 7 ou 8 números.",
+  "valid.telefono": "Telefone inválido: de 6 a 20 caracteres, apenas números, espaços, +, - e parênteses.",
+  "valid.contrasena": "A senha deve ter pelo menos 6 caracteres.",
+  "valid.codigoIdioma": "Código inválido (ex.: es, en, pt-BR).",
+  "valid.archivo": "Escolha um arquivo.",
+  "valid.rangoFechas": "A data \"até\" não pode ser anterior à data \"de\".",
+  "arbol.vacio": "Nenhuma família atribuída.",
+  "usuarios.permisosPerfil": "Famílias e permissões do perfil",
+  "usuarios.sinPermisosParticulares": "As permissões são concedidas apenas pelo perfil: o usuário não tem permissões individuais."
 }';
 END
 ELSE
@@ -2974,6 +3044,20 @@ ELSE
   "integ.confirmarTodo": "Recalcular os dígitos de todas as tabelas? Os dados atuais, incluindo os alterados, passam a ser considerados corretos.",
   "integ.confirmarTabla": "Recalcular os dígitos desta tabela? Os dados atuais passam a ser considerados corretos.",
   "integ.recalculado": "Os dígitos de todas as tabelas foram recalculados.",
-  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados."
+  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados.",
+  "comun.cerrar": "Fechar",
+  "error.contrasenaCorta": "A senha deve ter pelo menos {0} caracteres.",
+  "login.restablecida": "Sua senha foi alterada. Você já pode entrar com a nova.",
+  "valid.obligatorio": "Campo obrigatório.",
+  "valid.email": "Informe um email válido.",
+  "valid.dni": "O DNI deve ter 7 ou 8 números.",
+  "valid.telefono": "Telefone inválido: de 6 a 20 caracteres, apenas números, espaços, +, - e parênteses.",
+  "valid.contrasena": "A senha deve ter pelo menos 6 caracteres.",
+  "valid.codigoIdioma": "Código inválido (ex.: es, en, pt-BR).",
+  "valid.archivo": "Escolha um arquivo.",
+  "valid.rangoFechas": "A data \"até\" não pode ser anterior à data \"de\".",
+  "arbol.vacio": "Nenhuma família atribuída.",
+  "usuarios.permisosPerfil": "Famílias e permissões do perfil",
+  "usuarios.sinPermisosParticulares": "As permissões são concedidas apenas pelo perfil: o usuário não tem permissões individuais."
 }';
 GO

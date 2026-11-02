@@ -70,6 +70,7 @@ public partial class Bitacora : PaginaBase
     }
     protected void btnFiltrar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         Paginador.Reiniciar();
         CargarGrilla();
     }

@@ -55,8 +55,19 @@ public partial class EmpleadosEmpresa : PaginaBase
             return;
         }
         LimpiarFormulario();
+        MostrarPermisosPerfil();
         litTituloModal.Text = Traductor.T("empleados.tituloAgregar");
         AbrirModal();
+    }
+    /// Familias y Permisos que otorga el Perfil elegido en el modal.
+    protected void ddlPerfil_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        MostrarPermisosPerfil();
+    }
+    private void MostrarPermisosPerfil()
+    {
+        int PerfilId;
+        ArbolPerfil.Mostrar(int.TryParse(ddlPerfil.SelectedValue, out PerfilId) ? new PerfilBLL().ObtenerDatos(PerfilId) : null);
     }
     protected void gvEmpleados_RowCommand(object sender, GridViewCommandEventArgs e)
     {
@@ -81,6 +92,7 @@ public partial class EmpleadosEmpresa : PaginaBase
             txtContrasena.Text = "";
             txtGmail.Text = Empleado.Gmail;
             ddlPerfil.SelectedValue = Empleado.Perfil.Id.ToString();
+            MostrarPermisosPerfil();
             txtDni.Text = Empleado.Dni;
             txtTelefono.Text = Empleado.Telefono;
             litTituloModal.Text = Traductor.T("empleados.tituloEditar");
@@ -132,6 +144,7 @@ public partial class EmpleadosEmpresa : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         int Id = Convert.ToInt32(hdnId.Value);
         UsuarioBLL UsuarioBll = new UsuarioBLL();
         ResultadoRegistro Resultado;
@@ -196,7 +209,9 @@ public partial class EmpleadosEmpresa : PaginaBase
         }
         if (Resultado != ResultadoRegistro.Exitoso)
         {
-            lblErrorModal.Text = Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
+            lblErrorModal.Text = Resultado == ResultadoRegistro.ContrasenaCorta
+                ? Traductor.T("error.contrasenaCorta", UsuarioBLL.LargoMinimoContrasena)
+                : Traductor.T(Resultado == ResultadoRegistro.DatosInvalidos ? "error.004" : Id == 0 ? "error.005" : "error.021");
             lblErrorModal.Visible = true;
             AbrirModal();
             return;

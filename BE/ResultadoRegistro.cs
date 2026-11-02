@@ -10,6 +10,7 @@ namespace BE
     {
         Exitoso,
         DatosInvalidos,
-        YaRegistrado
+        YaRegistrado,
+        ContrasenaCorta
     }
 }

@@ -25,10 +25,11 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-9">
                     <asp:FileUpload ID="fuArchivo" runat="server" CssClass="form-control" />
+                    <asp:RequiredFieldValidator ID="rfvArchivo" runat="server" ControlToValidate="fuArchivo" ValidationGroup="Subir" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.archivo %>" />
                     <div class="form-text"><asp:Literal ID="litAyudaArchivo" runat="server" Mode="Encode" /></div>
                 </div>
                 <div class="col-md-3 align-self-start">
-                    <asp:Button ID="btnSubir" runat="server" CssClass="btn btn-primary w-100" OnClick="btnSubir_Click" />
+                    <asp:Button ID="btnSubir" runat="server" ValidationGroup="Subir" CssClass="btn btn-primary w-100" OnClick="btnSubir_Click" />
                 </div>
             </div>
         </div>
@@ -105,13 +106,15 @@
                 <div class="col-md-6">
                     <label class="form-label"><%: Traductor.T("compartir.emailDestinatario") %></label>
                     <asp:TextBox ID="txtEmailDestinatario" runat="server" CssClass="form-control" TextMode="Email" MaxLength="100"></asp:TextBox>
+                    <asp:RequiredFieldValidator ID="rfvEmailDestinatario" runat="server" ControlToValidate="txtEmailDestinatario" ValidationGroup="Compartir" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
+                    <asp:RegularExpressionValidator ID="revEmailDestinatario" runat="server" ControlToValidate="txtEmailDestinatario" ValidationGroup="Compartir" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$" ErrorMessage="<%$ Traduccion:valid.email %>" />
                 </div>
                 <div class="col-md-3">
                     <label class="form-label"><%: Traductor.T("compartir.vigencia") %></label>
                     <asp:DropDownList ID="ddlVigencia" runat="server" CssClass="form-select" />
                 </div>
                 <div class="col-md-3">
-                    <asp:Button ID="btnCompartir" runat="server" CssClass="btn btn-primary w-100" OnClick="btnCompartir_Click" />
+                    <asp:Button ID="btnCompartir" runat="server" ValidationGroup="Compartir" CssClass="btn btn-primary w-100" OnClick="btnCompartir_Click" />
                 </div>
             </div>
             <h6><%: Traductor.T("compartir.enlaces") %></h6>
@@ -165,9 +168,10 @@
                 <div class="col-md-2">
                     <label class="form-label"><%: Traductor.T("bitacora.hasta") %></label>
                     <asp:TextBox ID="txtHasta" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                    <asp:CompareValidator ID="cmpHasta" runat="server" ControlToValidate="txtHasta" ValidationGroup="FiltroDocumentos" Display="Dynamic" CssClass="text-danger small" ControlToCompare="txtDesde" Operator="GreaterThanEqual" Type="Date" ErrorMessage="<%$ Traduccion:valid.rangoFechas %>" />
                 </div>
                 <div class="col-md-2">
-                    <asp:Button ID="btnFiltrar" runat="server" CssClass="btn btn-outline-primary w-100" OnClick="btnFiltrar_Click" />
+                    <asp:Button ID="btnFiltrar" runat="server" ValidationGroup="FiltroDocumentos" CssClass="btn btn-outline-primary w-100" OnClick="btnFiltrar_Click" />
                 </div>
             </div>
         </div>

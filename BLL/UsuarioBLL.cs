@@ -20,6 +20,13 @@ namespace BLL
         // suspensión manual del Administrador o la Empresa: solo el primero
         // se levanta al recuperar la contraseña.
         public const string MotivoBloqueoIntentos = "Bloqueo por intentos fallidos";
+        /// Largo mínimo de toda contraseña nueva (alta, gestión, Mi Perfil y
+        /// restablecimiento). Las contraseñas ya guardadas no se revalidan.
+        public const int LargoMinimoContrasena = 6;
+        public static bool ContrasenaValida(string contrasena)
+        {
+            return contrasena != null && contrasena.Length >= LargoMinimoContrasena;
+        }
         public void Registrar(UsuarioBE Pusuario)
         {
             HashService HashServ = new HashService();
@@ -52,6 +59,7 @@ namespace BLL
             {
                 return ResultadoRegistro.DatosInvalidos;
             }
+            if (esAlta && !ContrasenaValida(usuario.Contrasena)) return ResultadoRegistro.ContrasenaCorta;
             UsuarioDAL UsuarioDal = new UsuarioDAL();
             bool Repetido = esAlta
                 ? UsuarioDal.ExistePorNombreUsuario(usuario.NombreUsuario) || UsuarioDal.ExistePorGmail(usuario.Gmail)
@@ -74,6 +82,7 @@ namespace BLL
         {
             ResultadoRegistro Validacion = ValidarDatos(usuario, false);
             if (Validacion != ResultadoRegistro.Exitoso) return Validacion;
+            if (!string.IsNullOrWhiteSpace(nuevaContrasena) && !ContrasenaValida(nuevaContrasena)) return ResultadoRegistro.ContrasenaCorta;
             if (!string.IsNullOrWhiteSpace(nuevaContrasena))
             {
                 usuario.Contrasena = new HashService().HashearContrasena(nuevaContrasena);
@@ -304,6 +313,7 @@ namespace BLL
             {
                 return ResultadoRestablecimiento.ContrasenasNoCoinciden;
             }
+            if (!ContrasenaValida(nuevaContrasena)) return ResultadoRestablecimiento.ContrasenaCorta;
             TokenService TokenServ = new TokenService();
             int IdUsuario;
             string Huella;
@@ -351,6 +361,10 @@ namespace BLL
             if (!Regex.IsMatch(gmail, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 return ResultadoModificarPerfil.DatosInvalidos;
+            }
+            if (!string.IsNullOrWhiteSpace(nuevaContrasena) && !ContrasenaValida(nuevaContrasena))
+            {
+                return ResultadoModificarPerfil.ContrasenaCorta;
             }
             UsuarioDAL UsuarioDal = new UsuarioDAL();
             // 5. Verificar que el email no esté registrado por OTRO usuario [ERROR-021]

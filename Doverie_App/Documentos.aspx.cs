@@ -103,6 +103,7 @@ public partial class Documentos : PaginaBase
     }
     protected void btnFiltrar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         Paginador.Reiniciar();
         pnlVerificacion.Visible = false;
         pnlNFT.Visible = false;
@@ -111,6 +112,7 @@ public partial class Documentos : PaginaBase
     }
     protected void btnSubir_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         pnlVerificacion.Visible = false;
         pnlNFT.Visible = false;
         pnlCompartir.Visible = false;
@@ -332,6 +334,7 @@ public partial class Documentos : PaginaBase
     }
     protected void btnCompartir_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         pnlVerificacion.Visible = false;
         pnlNFT.Visible = false;
         if (!PuedeCompartir) { MostrarError(Traductor.T("error.056")); return; }

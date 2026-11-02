@@ -63,11 +63,14 @@
                                 <div class="col-md-4 mb-2">
                                     <label class="form-label"><%: Traductor.T("idiomas.codigo") %></label>
                                     <asp:TextBox ID="txtCodigo" runat="server" CssClass="form-control" MaxLength="10"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="rfvCodigo" runat="server" ControlToValidate="txtCodigo" ValidationGroup="Idioma" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
+                                    <asp:RegularExpressionValidator ID="revCodigo" runat="server" ControlToValidate="txtCodigo" ValidationGroup="Idioma" Display="Dynamic" CssClass="text-danger small" ValidationExpression="^[a-z]{2,3}(-[A-Z]{2})?$" ErrorMessage="<%$ Traduccion:valid.codigoIdioma %>" />
                                     <div class="form-text"><%: Traductor.T("idiomas.codigoAyuda") %></div>
                                 </div>
                                 <div class="col-md-8 mb-2">
                                     <label class="form-label"><%: Traductor.T("idiomas.nombre") %></label>
                                     <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                    <asp:RequiredFieldValidator ID="rfvNombre" runat="server" ControlToValidate="txtNombre" ValidationGroup="Idioma" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -86,7 +89,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <asp:Button ID="btnGuardar" runat="server" ValidationGroup="Idioma" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

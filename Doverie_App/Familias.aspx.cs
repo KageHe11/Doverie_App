@@ -134,6 +134,7 @@ public partial class Familias : PaginaBase
     }
     protected void btnGuardar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) { AbrirModal(); return; }
         int Id = Convert.ToInt32(hdnId.Value);
         if (string.IsNullOrWhiteSpace(txtNombre.Text))
         {
@@ -185,35 +186,7 @@ public partial class Familias : PaginaBase
     private void CargarArbol()
     {
         FamiliaBLL FamiliaBll = new FamiliaBLL();
-        List<FamiliaBE> Raices = FamiliaBll.ObtenerRaices();
-
-        tvArbol.Nodes.Clear();
-        foreach (FamiliaBE Raiz in Raices)
-        {
-            TreeNode NodoRaiz = new TreeNode("📁 " + Raiz.Nombre);
-            AgregarHijosAlNodo(NodoRaiz, Raiz);
-            NodoRaiz.Expanded = true;
-            tvArbol.Nodes.Add(NodoRaiz);
-        }
-    }
-    private void AgregarHijosAlNodo(TreeNode NodoPadre, FamiliaBE Familia)
-    {
-        foreach (ComponentePermiso Hijo in Familia.Hijos)
-        {
-            if (Hijo.EsHoja)
-            {
-                TreeNode NodoHoja = new TreeNode("🔑 " + Hijo.Nombre);
-                NodoPadre.ChildNodes.Add(NodoHoja);
-            }
-            else
-            {
-                FamiliaBE SubFamilia = (FamiliaBE)Hijo;
-                TreeNode NodoSub = new TreeNode("📁 " + SubFamilia.Nombre);
-                NodoSub.Expanded = true;
-                AgregarHijosAlNodo(NodoSub, SubFamilia);
-                NodoPadre.ChildNodes.Add(NodoSub);
-            }
-        }
+        Arbol.Mostrar(FamiliaBll.ObtenerRaices());
     }
     private void AbrirModal()
     {

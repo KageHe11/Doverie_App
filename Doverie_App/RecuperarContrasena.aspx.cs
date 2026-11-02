@@ -9,10 +9,10 @@ public partial class RecuperarContrasena : System.Web.UI.Page
     }
     protected void btnEnviar_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         if (string.IsNullOrWhiteSpace(txtNombreUsuario.Text) || string.IsNullOrWhiteSpace(txtEmail.Text))
         {
-            lblError.Text = Traductor.T("comun.completarAmbos");
-            lblError.Visible = true;
+            Mensaje.Error(Traductor.T("comun.completarAmbos"));
             return;
         }
         string UrlBase = Request.Url.GetLeftPart(UriPartial.Authority);
@@ -20,9 +20,7 @@ public partial class RecuperarContrasena : System.Web.UI.Page
         BE.ResultadoRecuperacion Resultado = UsuarioBll.EnviarRecuperacion(txtEmail.Text, txtNombreUsuario.Text, UrlBase);
         // Mostramos el mismo mensaje de éxito exista o no la cuenta, por
         // seguridad (no confirmamos ni negamos si el usuario/email existe).
-        lblError.Visible = false;
         pnlFormulario.Visible = false;
-        lblExito.Text = Traductor.T("recuperar.exito");
-        lblExito.Visible = true;
+        Mensaje.Exito(Traductor.T("recuperar.exito"));
     }
 }

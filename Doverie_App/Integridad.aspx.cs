@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 using System.Web.UI.WebControls;
 using BE;
 using BLL;
@@ -36,14 +35,14 @@ public partial class Integridad : PaginaBase
     protected void btnRecalcularTodo_Click(object sender, EventArgs e)
     {
         Mostrar(new DigitoVerificadorBLL().RecalcularTodo(UsuarioActual));
-        MostrarMensaje(Traductor.T("integ.recalculado"));
+        Mensaje.Exito(Traductor.T("integ.recalculado"));
     }
     protected void gvProblemas_RowCommand(object sender, GridViewCommandEventArgs e)
     {
         if (e.CommandName != "Recalcular") return;
         string Tabla = e.CommandArgument.ToString();
         Mostrar(new DigitoVerificadorBLL().RecalcularTabla(UsuarioActual, Tabla));
-        MostrarMensaje(Traductor.T("integ.recalculadaTabla", Tabla));
+        Mensaje.Exito(Traductor.T("integ.recalculadaTabla", Tabla));
     }
     protected void Paginador_Cambio(object sender, EventArgs e)
     {
@@ -57,10 +56,5 @@ public partial class Integridad : PaginaBase
         pnlProblemas.Visible = !Integra;
         gvProblemas.DataSource = Paginador.Paginar(problemas, P => P.Tabla + " " + P.Nivel + " " + P.Detalle);
         gvProblemas.DataBind();
-    }
-    private void MostrarMensaje(string mensaje)
-    {
-        lblMensaje.Text = HttpUtility.HtmlEncode(mensaje);
-        lblMensaje.Visible = true;
     }
 }

@@ -487,5 +487,19 @@
   "integ.confirmarTodo": "Recalculate the digits of every table? The current data, including any altered data, will be taken as correct.",
   "integ.confirmarTabla": "Recalculate the digits of this table? Its current data will be taken as correct.",
   "integ.recalculado": "The digits of every table were recalculated.",
-  "integ.recalculadaTabla": "The digits of table {0} were recalculated."
+  "integ.recalculadaTabla": "The digits of table {0} were recalculated.",
+  "comun.cerrar": "Close",
+  "error.contrasenaCorta": "The password must be at least {0} characters long.",
+  "login.restablecida": "Your password was changed. You can now sign in with the new one.",
+  "valid.obligatorio": "Required field.",
+  "valid.email": "Enter a valid email.",
+  "valid.dni": "The ID number must have 7 or 8 digits.",
+  "valid.telefono": "Invalid phone: 6 to 20 characters, only digits, spaces, +, - and parentheses.",
+  "valid.contrasena": "The password must be at least 6 characters long.",
+  "valid.codigoIdioma": "Invalid code (e.g. es, en, pt-BR).",
+  "valid.archivo": "Choose a file.",
+  "valid.rangoFechas": "The \"to\" date cannot be earlier than the \"from\" date.",
+  "arbol.vacio": "No families assigned.",
+  "usuarios.permisosPerfil": "Profile families and permissions",
+  "usuarios.sinPermisosParticulares": "Permissions are granted only through the profile: the user has no individual permissions."
 }

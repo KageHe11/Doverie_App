@@ -52,7 +52,8 @@
                             <asp:Label ID="lblErrorModal" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.nombre") %></label>
-                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                                <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="50"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvNombre" runat="server" ControlToValidate="txtNombre" ValidationGroup="Permiso" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                             </div>
                             <div class="mb-2">
                                 <label class="form-label"><%: Traductor.T("comun.descripcion") %></label>
@@ -61,7 +62,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%: Traductor.T("comun.cancelar") %></button>
-                            <asp:Button ID="btnGuardar" runat="server" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
+                            <asp:Button ID="btnGuardar" runat="server" ValidationGroup="Permiso" CssClass="btn btn-primary" OnClick="btnGuardar_Click" />
                         </div>
                     </ContentTemplate>
                 </asp:UpdatePanel>

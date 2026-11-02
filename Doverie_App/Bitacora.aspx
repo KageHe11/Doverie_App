@@ -34,9 +34,10 @@
                         <div class="col-md-2">
                             <label class="form-label"><%: Traductor.T("bitacora.hasta") %></label>
                             <asp:TextBox ID="txtHasta" runat="server" CssClass="form-control" TextMode="Date"></asp:TextBox>
+                            <asp:CompareValidator ID="cmpHasta" runat="server" ControlToValidate="txtHasta" ValidationGroup="FiltroBitacora" Display="Dynamic" CssClass="text-danger small" ControlToCompare="txtDesde" Operator="GreaterThanEqual" Type="Date" ErrorMessage="<%$ Traduccion:valid.rangoFechas %>" />
                         </div>
                         <div class="col-md-2">
-                            <asp:Button ID="btnFiltrar" runat="server" CssClass="btn btn-primary w-100" OnClick="btnFiltrar_Click" />
+                            <asp:Button ID="btnFiltrar" runat="server" ValidationGroup="FiltroBitacora" CssClass="btn btn-primary w-100" OnClick="btnFiltrar_Click" />
                         </div>
                     </div>
                 </div>

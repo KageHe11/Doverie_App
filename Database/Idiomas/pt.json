@@ -487,5 +487,19 @@
   "integ.confirmarTodo": "Recalcular os dígitos de todas as tabelas? Os dados atuais, incluindo os alterados, passam a ser considerados corretos.",
   "integ.confirmarTabla": "Recalcular os dígitos desta tabela? Os dados atuais passam a ser considerados corretos.",
   "integ.recalculado": "Os dígitos de todas as tabelas foram recalculados.",
-  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados."
+  "integ.recalculadaTabla": "Os dígitos da tabela {0} foram recalculados.",
+  "comun.cerrar": "Fechar",
+  "error.contrasenaCorta": "A senha deve ter pelo menos {0} caracteres.",
+  "login.restablecida": "Sua senha foi alterada. Você já pode entrar com a nova.",
+  "valid.obligatorio": "Campo obrigatório.",
+  "valid.email": "Informe um email válido.",
+  "valid.dni": "O DNI deve ter 7 ou 8 números.",
+  "valid.telefono": "Telefone inválido: de 6 a 20 caracteres, apenas números, espaços, +, - e parênteses.",
+  "valid.contrasena": "A senha deve ter pelo menos 6 caracteres.",
+  "valid.codigoIdioma": "Código inválido (ex.: es, en, pt-BR).",
+  "valid.archivo": "Escolha um arquivo.",
+  "valid.rangoFechas": "A data \"até\" não pode ser anterior à data \"de\".",
+  "arbol.vacio": "Nenhuma família atribuída.",
+  "usuarios.permisosPerfil": "Famílias e permissões do perfil",
+  "usuarios.sinPermisosParticulares": "As permissões são concedidas apenas pelo perfil: o usuário não tem permissões individuais."
 }

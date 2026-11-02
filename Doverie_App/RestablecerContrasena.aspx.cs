@@ -18,10 +18,10 @@ public partial class RestablecerContrasena : System.Web.UI.Page
     }
     protected void btnRestablecer_Click(object sender, EventArgs e)
     {
+        if (!Page.IsValid) return;
         if (string.IsNullOrWhiteSpace(txtContrasena.Text) || string.IsNullOrWhiteSpace(txtConfirmar.Text))
         {
-            lblError.Text = Traductor.T("comun.completarAmbos");
-            lblError.Visible = true;
+            Mensaje.Error(Traductor.T("comun.completarAmbos"));
             return;
         }
         UsuarioBLL UsuarioBll = new UsuarioBLL();
@@ -32,8 +32,10 @@ public partial class RestablecerContrasena : System.Web.UI.Page
                 Response.Redirect("~/Login.aspx?restablecido=1");
                 break;
             case ResultadoRestablecimiento.ContrasenasNoCoinciden:
-                lblError.Text = Traductor.T("comun.contrasenasNoCoinciden");
-                lblError.Visible = true;
+                Mensaje.Error(Traductor.T("comun.contrasenasNoCoinciden"));
+                break;
+            case ResultadoRestablecimiento.ContrasenaCorta:
+                Mensaje.Error(Traductor.T("error.contrasenaCorta", UsuarioBLL.LargoMinimoContrasena));
                 break;
             case ResultadoRestablecimiento.TokenInvalido:
                 MostrarError(Traductor.T("restablecer.linkExpirado"));
@@ -42,8 +44,7 @@ public partial class RestablecerContrasena : System.Web.UI.Page
     }
     private void MostrarError(string mensaje)
     {
-        lblError.Text = mensaje;
-        lblError.Visible = true;
+        Mensaje.Error(mensaje);
         pnlFormulario.Visible = false;
     }
 }
