@@ -13,11 +13,13 @@ namespace SERVICE
     {
         /// Crea el cobro de un pago y devuelve la URL del checkout al que
         /// se redirige al Usuario. Al terminar, la pasarela lo devuelve a
-        /// urlRetorno.
-        string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno);
+        /// urlRetorno. cobro es el identificador del cobro en la pasarela
+        /// (o null si no lo necesita): Doverie lo guarda y se lo pasa a
+        /// ConsultarPago.
+        string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno, out string cobro);
         /// Estado del cobro de una referencia. Es la única fuente válida del
         /// resultado: nunca se confía en lo que diga la URL de retorno.
-        OperacionPagoBE ConsultarPago(int referencia, DateTime fecha);
+        OperacionPagoBE ConsultarPago(int referencia, DateTime fecha, string cobro);
         /// Si la pasarela puede debitar sola las renovaciones con el medio
         /// registrado. Si no, el Usuario las paga desde Suscripción, dentro
         /// del plazo de gracia.

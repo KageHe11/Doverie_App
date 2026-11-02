@@ -16,8 +16,10 @@ namespace SERVICE
         private static readonly Dictionary<int, OperacionPagoBE> Cobros = new Dictionary<int, OperacionPagoBE>();
 
         public bool DebitoAutomatico { get { return true; } }
-        public string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno)
+        public string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno, out string cobro)
         {
+            // Los cobros simulados se buscan por la referencia.
+            cobro = null;
             lock (Bloqueo)
             {
                 Cobros[referencia] = new OperacionPagoBE
@@ -31,7 +33,7 @@ namespace SERVICE
             }
             return "~/PagoSimulado.aspx?ref=" + referencia;
         }
-        public OperacionPagoBE ConsultarPago(int referencia, DateTime fecha)
+        public OperacionPagoBE ConsultarPago(int referencia, DateTime fecha, string cobro)
         {
             lock (Bloqueo)
             {

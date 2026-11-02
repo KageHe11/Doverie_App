@@ -134,7 +134,7 @@ namespace BLL
             // 6. Redirigir al proceso de pago [ERROR-014]
             try
             {
-                urlCheckout = ProveedorServicios.PasarelaPago().IniciarPago(Pago.Id, Pago.Fecha, Pago.Monto, "Doverie - " + DescribirPlan(Plan), urlRetorno + "?pago=" + Pago.Id);
+                urlCheckout = IniciarCobro(Pago, "Doverie - " + DescribirPlan(Plan), urlRetorno);
             }
             catch (Exception)
             {
@@ -164,7 +164,7 @@ namespace BLL
             OperacionPagoBE Operacion;
             try
             {
-                Operacion = ProveedorServicios.PasarelaPago().ConsultarPago(pago.Id, pago.Fecha);
+                Operacion = ProveedorServicios.PasarelaPago().ConsultarPago(pago.Id, pago.Fecha, pago.ComprobanteUrl);
             }
             catch (Exception)
             {
@@ -404,7 +404,7 @@ namespace BLL
                 {
                     try
                     {
-                        OperacionPagoBE Operacion = pasarela.ConsultarPago(Pendiente.Id, Pendiente.Fecha);
+                        OperacionPagoBE Operacion = pasarela.ConsultarPago(Pendiente.Id, Pendiente.Fecha, Pendiente.ComprobanteUrl);
                         ValidarMonto(Operacion, Pendiente);
                         if (Operacion.Estado == OperacionPagoBE.EstadoAprobado)
                         {
@@ -455,8 +455,7 @@ namespace BLL
             if (Pago == null) return ResultadoSuscripcion.SinSuscripcion;
             try
             {
-                urlCheckout = ProveedorServicios.PasarelaPago().IniciarPago(Pago.Id, Pago.Fecha, Pago.Monto,
-                    "Doverie - Renovación " + DescribirPlan(Suscripcion.Plan), urlRetorno + "?pago=" + Pago.Id);
+                urlCheckout = IniciarCobro(Pago, "Doverie - Renovación " + DescribirPlan(Suscripcion.Plan), urlRetorno);
             }
             catch (Exception)
             {
@@ -464,6 +463,16 @@ namespace BLL
             }
             new BitacoraBLL().Registrar("Iniciar Pago Renovación", "Pago Id: " + Pago.Id + " | Plan: " + DescribirPlan(Suscripcion.Plan) + " | Monto: " + FormatearMonto(Pago.Monto), usuario.Id);
             return ResultadoSuscripcion.Exitoso;
+        }
+        /// Crea el cobro en la pasarela y, si la pasarela lo identifica con su
+        /// propio número (la order de Mercado Pago), lo guarda en el Pago
+        /// pendiente para poder consultarlo al volver del checkout.
+        private static string IniciarCobro(PagoBE pago, string descripcion, string urlRetorno)
+        {
+            string Cobro;
+            string Url = ProveedorServicios.PasarelaPago().IniciarPago(pago.Id, pago.Fecha, pago.Monto, descripcion, urlRetorno + "?pago=" + pago.Id, out Cobro);
+            if (Cobro != null) new PagoDAL().ActualizarEstado(pago.Id, PagoBE.EstadoPendiente, Cobro);
+            return Url;
         }
         /// Resultado del pago de una renovación al volver del checkout.
         private ResultadoSuscripcion ConfirmarRenovacion(UsuarioBE usuario, ref PagoBE pago, OperacionPagoBE operacion)

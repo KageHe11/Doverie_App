@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -10,17 +11,18 @@ using BE;
 
 namespace SERVICE
 {
-    /// Implementación de IPasarelaPago con Mercado Pago Checkout Pro (API
-    /// REST). IniciarPago crea una "preferencia" con el monto y la referencia
-    /// del Pago y devuelve el link al checkout de Mercado Pago; al volver,
-    /// ConsultarPago busca en Mercado Pago los pagos de esa referencia. No
-    /// hacen falta webhooks: el resultado siempre se consulta a la API, así
-    /// que funciona igual con la app en localhost.
+    /// Implementación de IPasarelaPago con Mercado Pago Checkout Pro sobre la
+    /// API de Orders. IniciarPago crea una order con el monto y la referencia
+    /// del Pago y devuelve su checkout_url; Doverie guarda el Id de la order y,
+    /// al volver, ConsultarPago la lee de la API. No hacen falta webhooks: el
+    /// resultado siempre se consulta a Mercado Pago, así que funciona igual
+    /// con la app en localhost.
     /// Checkout Pro no debita solo: las renovaciones las paga el Usuario
     /// dentro del plazo de gracia (DebitoAutomatico = false).
     ///
     /// Configuración (AppSettings.config): MercadoPagoAccessToken. Con las
-    /// credenciales de producción los cobros son reales.
+    /// credenciales de producción los cobros son reales. MercadoPagoSandbox =
+    /// true lleva al checkout de pruebas (credenciales de prueba).
     public class PasarelaMercadoPago : IPasarelaPago
     {
         private static readonly HttpClient Cliente = new HttpClient
@@ -31,55 +33,76 @@ namespace SERVICE
 
         public bool DebitoAutomatico { get { return false; } }
 
-        public string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno)
+        public string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno, out string cobro)
         {
-            Dictionary<string, object> Preferencia = new Dictionary<string, object>
+            string Monto = monto.ToString("0.00", CultureInfo.InvariantCulture);
+            Dictionary<string, object> Online = new Dictionary<string, object>
             {
+                { "success_url", urlRetorno },
+                { "failure_url", urlRetorno },
+                { "pending_url", urlRetorno }
+            };
+            // La vuelta automática solo se pide con https; en localhost el
+            // Usuario vuelve con el botón "Volver al sitio" de Mercado Pago.
+            if (urlRetorno.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) Online.Add("auto_return", "approved");
+            Dictionary<string, object> Order = new Dictionary<string, object>
+            {
+                { "type", "online" },
+                { "processing_mode", "manual" },
+                { "total_amount", Monto },
+                { "external_reference", ReferenciaExterna(referencia, fecha) },
+                { "description", descripcion },
                 { "items", new[] { new Dictionary<string, object>
                     {
-                        { "id", "DOVERIE-SUSCRIPCION" },
                         { "title", descripcion },
-                        { "quantity", 1 },
-                        { "currency_id", "ARS" },
-                        { "unit_price", monto }
+                        { "unit_price", Monto },
+                        { "quantity", 1 }
                     } } },
-                { "external_reference", ReferenciaExterna(referencia, fecha) },
-                { "back_urls", new Dictionary<string, string> { { "success", urlRetorno }, { "failure", urlRetorno }, { "pending", urlRetorno } } },
-                // Solo aprobado o rechazado: sin medios que quedan pendientes
-                // días (efectivo en un local de pago).
-                { "binary_mode", true },
-                { "statement_descriptor", "DOVERIE" }
+                { "config", new Dictionary<string, object> { { "online", Online } } }
             };
-            // La vuelta automática solo se acepta con https; en localhost el
-            // Usuario vuelve con el botón "Volver al sitio" de Mercado Pago.
-            if (urlRetorno.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) Preferencia.Add("auto_return", "approved");
-            using (JsonDocument Respuesta = Enviar(HttpMethod.Post, "checkout/preferences", JsonSerializer.Serialize(Preferencia)))
+            using (JsonDocument Respuesta = Enviar(HttpMethod.Post, "v1/orders", JsonSerializer.Serialize(Order)))
             {
-                // Con credenciales de prueba, MercadoPagoSandbox=true usa el
-                // checkout de pruebas de Mercado Pago.
+                cobro = Respuesta.RootElement.GetProperty("id").GetString();
+                string Url = Respuesta.RootElement.GetProperty("checkout_url").GetString();
                 bool Sandbox = string.Equals(ConfigurationManager.AppSettings["MercadoPagoSandbox"], "true", StringComparison.OrdinalIgnoreCase);
-                return Respuesta.RootElement.GetProperty(Sandbox ? "sandbox_init_point" : "init_point").GetString();
+                return Sandbox ? Url.Replace("://www.mercadopago.", "://sandbox.mercadopago.") : Url;
             }
         }
-        /// Aprobado si algún pago de la referencia se aprobó (el Usuario puede
-        /// reintentar con otra tarjeta en el mismo checkout); pendiente si
-        /// todavía no pagó o el pago está en proceso; si no, rechazado.
-        public OperacionPagoBE ConsultarPago(int referencia, DateTime fecha)
+        /// Estado de la order: processed es aprobado; failed, canceled,
+        /// expired o refunded, rechazado; el resto (creada, en proceso),
+        /// pendiente.
+        public OperacionPagoBE ConsultarPago(int referencia, DateTime fecha, string cobro)
         {
-            string Ruta = "v1/payments/search?sort=date_created&criteria=desc&external_reference=" + Uri.EscapeDataString(ReferenciaExterna(referencia, fecha));
-            using (JsonDocument Respuesta = Enviar(HttpMethod.Get, Ruta, null))
+            OperacionPagoBE Pendiente = new OperacionPagoBE { Referencia = referencia, Estado = OperacionPagoBE.EstadoPendiente };
+            if (string.IsNullOrEmpty(cobro)) return Pendiente;
+            using (JsonDocument Respuesta = Enviar(HttpMethod.Get, "v1/orders/" + Uri.EscapeDataString(cobro), null))
             {
-                bool EnProceso = false;
-                JsonElement? Rechazado = null;
-                foreach (JsonElement Pago in Respuesta.RootElement.GetProperty("results").EnumerateArray())
+                JsonElement Order = Respuesta.RootElement;
+                // La order tiene que ser la de este Pago y no otra.
+                if (Order.GetProperty("external_reference").GetString() != ReferenciaExterna(referencia, fecha))
                 {
-                    string Estado = Pago.GetProperty("status").GetString();
-                    if (Estado == "approved") return Armar(referencia, OperacionPagoBE.EstadoAprobado, Pago);
-                    if (Estado == "pending" || Estado == "in_process" || Estado == "authorized") EnProceso = true;
-                    else if (Rechazado == null) Rechazado = Pago;
+                    throw new InvalidOperationException("La order " + cobro + " no corresponde al pago " + referencia + ".");
                 }
-                if (!EnProceso && Rechazado.HasValue) return Armar(referencia, OperacionPagoBE.EstadoRechazado, Rechazado.Value);
-                return new OperacionPagoBE { Referencia = referencia, Estado = OperacionPagoBE.EstadoPendiente };
+                string Estado;
+                switch (Order.GetProperty("status").GetString())
+                {
+                    case "processed": Estado = OperacionPagoBE.EstadoAprobado; break;
+                    case "failed":
+                    case "canceled":
+                    case "expired":
+                    case "refunded": Estado = OperacionPagoBE.EstadoRechazado; break;
+                    default: return Pendiente;
+                }
+                JsonElement Pagado;
+                return new OperacionPagoBE
+                {
+                    Referencia = referencia,
+                    Estado = Estado,
+                    Operacion = "MP-" + cobro,
+                    Monto = Order.TryGetProperty("total_paid_amount", out Pagado)
+                        ? decimal.Parse(Pagado.GetString(), CultureInfo.InvariantCulture)
+                        : 0
+                };
             }
         }
         public OperacionPagoBE CobrarRecurrente(int referencia, decimal monto, string descripcion)
@@ -88,21 +111,11 @@ namespace SERVICE
         }
 
         /// Referencia del cobro en Mercado Pago: el Id y la fecha del Pago, para
-        /// que un Id reusado (por ejemplo después de restaurar un backup) no
-        /// encuentre los pagos de otro.
+        /// que un Id reusado (por ejemplo después de restaurar un backup) no se
+        /// confunda con un cobro viejo.
         private static string ReferenciaExterna(int referencia, DateTime fecha)
         {
             return "DOVERIE-" + referencia + "-" + fecha.ToString("yyyyMMddHHmmss");
-        }
-        private static OperacionPagoBE Armar(int referencia, string estado, JsonElement pago)
-        {
-            return new OperacionPagoBE
-            {
-                Referencia = referencia,
-                Estado = estado,
-                Operacion = "MP-" + pago.GetProperty("id").GetRawText(),
-                Monto = pago.GetProperty("transaction_amount").GetDecimal()
-            };
         }
         /// Llama a la API con el Access Token. Se ejecuta fuera del contexto de
         /// ASP.NET para poder esperar la respuesta sin bloquear el request.
@@ -115,7 +128,12 @@ namespace SERVICE
                 using (HttpRequestMessage Pedido = new HttpRequestMessage(metodo, ruta))
                 {
                     Pedido.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
-                    if (cuerpo != null) Pedido.Content = new StringContent(cuerpo, Encoding.UTF8, "application/json");
+                    if (cuerpo != null)
+                    {
+                        Pedido.Content = new StringContent(cuerpo, Encoding.UTF8, "application/json");
+                        // Mercado Pago lo pide para no crear dos veces la misma order.
+                        Pedido.Headers.Add("X-Idempotency-Key", Guid.NewGuid().ToString());
+                    }
                     using (HttpResponseMessage Respuesta = await Cliente.SendAsync(Pedido).ConfigureAwait(false))
                     {
                         string Texto = await Respuesta.Content.ReadAsStringAsync().ConfigureAwait(false);
