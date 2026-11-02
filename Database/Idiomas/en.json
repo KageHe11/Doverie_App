@@ -448,5 +448,15 @@
   "restore.errorNoDisponible": "The .bak file for that backup was not found, neither on the server nor in AWS S3.",
   "restore.errorPrevio": "The safety backup could not be generated, so nothing was restored.",
   "restore.errorBase": "The database could not be restored; it was left as it was. The safety backup of {0} was still generated.",
-  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}."
+  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}.",
+  "confirmacion.titulo": "Confirm action",
+  "confirmacion.confirmar": "Confirm",
+  "confirmacion.cancelar": "Cancel",
+  "pag.placeholder": "Search the list...",
+  "pag.buscar": "Search",
+  "pag.limpiar": "Clear",
+  "pag.mostrando": "{0}–{1} of {2}",
+  "pag.paginas": "Pages",
+  "pag.anterior": "Previous page",
+  "pag.siguiente": "Next page"
 }

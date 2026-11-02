@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Usuarios.aspx.cs" Inherits="Usuarios" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
@@ -16,6 +20,7 @@
             <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false" EnableViewState="false"></asp:Label>
             <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
+            <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" />
             <asp:GridView ID="gvUsuarios" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvUsuarios_RowCommand">
                 <Columns>
@@ -39,7 +44,7 @@
                             <%-- Suspender abre el modal del motivo; Reactivar pide confirmación. --%>
                             <asp:LinkButton runat="server" CssClass='<%# (bool)Eval("Suspendido") ? "btn btn-sm btn-outline-success" : "btn btn-sm btn-outline-danger" %>'
                                 CommandName="ToggleEstado" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# (bool)Eval("Suspendido") ? Traductor.Confirmar("usuarios.confirmarReactivar") : "" %>'
+                                OnClientClick='<%# (bool)Eval("Suspendido") ? Confirmacion.Para("usuarios.confirmarReactivar") : "" %>'
                                 Text='<%# (bool)Eval("Suspendido") ? Traductor.T("comun.reactivar") : Traductor.T("usuarios.suspender") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>

@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Bitacora.aspx.cs" Inherits="Bitacora" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
@@ -43,6 +44,7 @@
 
             <asp:Label ID="lblSinResultados" runat="server" CssClass="alert alert-info" Visible="false"></asp:Label>
 
+            <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" TamanoPagina="15" />
             <asp:GridView ID="gvBitacora" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false">
                 <Columns>

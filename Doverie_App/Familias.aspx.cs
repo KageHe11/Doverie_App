@@ -27,10 +27,15 @@ public partial class Familias : PaginaBase
 
         }
     }
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         FamiliaBLL FamiliaBll = new FamiliaBLL();
-        gvFamilias.DataSource = FamiliaBll.Listar();
+        gvFamilias.DataSource = Paginador.Paginar(FamiliaBll.Listar(), F => F.Nombre);
         gvFamilias.DataBind();
     }
     protected void btnAgregar_Click(object sender, EventArgs e)

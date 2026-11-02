@@ -32,7 +32,7 @@ public partial class Suscripcion : PaginaBase
         lnkFacturacion.Visible = TienePermiso("VerFacturacion");
         btnCambiarPlan.Text = Traductor.T("susc.cambiarPlan");
         btnCancelar.Text = Traductor.T("susc.cancelar");
-        btnCancelar.OnClientClick = Traductor.Confirmar("susc.confirmarCancelar");
+        btnCancelar.OnClientClick = Confirmacion.Para("susc.confirmarCancelar");
         btnPagar.Text = Traductor.T("susc.irAPagar");
         btnVolverPlanes.Text = Traductor.T("susc.volverPlanes");
         btnVolverActual.Text = Traductor.T("susc.volverActual");

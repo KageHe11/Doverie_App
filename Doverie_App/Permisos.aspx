@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Permisos.aspx.cs" Inherits="Permisos" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
@@ -14,6 +18,7 @@
     <asp:UpdatePanel ID="UpdatePanelGrilla" runat="server">
         <ContentTemplate>
             <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
+            <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" />
             <asp:GridView ID="gvPermisos" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvPermisos_RowCommand">
                 <Columns>
@@ -25,7 +30,7 @@
                                 CommandName="Editar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.editar") %>' />
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger"
                                 CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# Traductor.Confirmar("permisos.confirmarEliminar") %>'
+                                OnClientClick='<%# Confirmacion.Para("permisos.confirmarEliminar") %>'
                                 Text='<%# Traductor.T("comun.eliminar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>

@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Perfiles.aspx.cs" Inherits="Perfiles" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
@@ -15,6 +19,7 @@
         <ContentTemplate>
             <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
+            <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" />
             <asp:GridView ID="gvPerfiles" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvPerfiles_RowCommand">
                 <Columns>
@@ -33,7 +38,7 @@
 
                             <asp:LinkButton runat="server" CssClass='<%# (bool)Eval("Activo") ? "btn btn-sm btn-outline-danger" : "btn btn-sm btn-outline-success" %>'
                                 CommandName="ToggleEstado" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# Traductor.Confirmar("comun.confirmarAccion") %>'
+                                OnClientClick='<%# Confirmacion.Para("comun.confirmarAccion") %>'
                                 Text='<%# (bool)Eval("Activo") ? Traductor.T("comun.darDeBaja") : Traductor.T("comun.reactivar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>

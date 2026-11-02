@@ -38,12 +38,6 @@ public static class Traductor
     {
         return Contexto.Traducir(clave, valores);
     }
-    /// Script para el OnClientClick de un botón que pide confirmación,
-    /// con el mensaje traducido y escapado para JavaScript.
-    public static string Confirmar(string clave)
-    {
-        return "return confirm(" + HttpUtility.JavaScriptStringEncode(T(clave), true) + ");";
-    }
     private static HttpSessionStateBase SesionActual()
     {
         if (HttpContext.Current == null || HttpContext.Current.Session == null) return null;

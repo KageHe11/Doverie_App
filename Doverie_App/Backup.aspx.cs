@@ -32,9 +32,9 @@ public partial class Backup : PaginaBase
         gvBackups.Columns[4].Visible = PuedeRestaurar;
         btnGenerar.Text = Traductor.T("backup.generar");
         // 2. Solicitar confirmación
-        btnGenerar.OnClientClick = Traductor.Confirmar("backup.confirmar");
+        btnGenerar.OnClientClick = Confirmacion.Para("backup.confirmar");
         btnRestaurarArchivo.Text = Traductor.T("restore.subir");
-        btnRestaurarArchivo.OnClientClick = Traductor.Confirmar("restore.confirmar");
+        btnRestaurarArchivo.OnClientClick = Confirmacion.Para("restore.confirmar");
         if (!IsPostBack) CargarHistorial();
     }
     /// 3. a 6. Generar la copia de la base y de los archivos.

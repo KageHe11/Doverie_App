@@ -1,8 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Suscripcion.aspx.cs" Inherits="Suscripcion" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="mb-0"><%: Traductor.T("susc.titulo") %></h2>

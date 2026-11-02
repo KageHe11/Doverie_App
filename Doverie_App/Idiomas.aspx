@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Idiomas.aspx.cs" Inherits="Idiomas" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
@@ -15,6 +19,7 @@
         <ContentTemplate>
             <asp:Label ID="lblMensaje" runat="server" CssClass="alert alert-success d-block" Visible="false"></asp:Label>
             <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false"></asp:Label>
+            <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" />
             <asp:GridView ID="gvIdiomas" runat="server" CssClass="table table-striped table-hover"
                 AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvIdiomas_RowCommand" OnRowDataBound="gvIdiomas_RowDataBound">
                 <Columns>

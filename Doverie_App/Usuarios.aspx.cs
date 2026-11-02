@@ -37,10 +37,15 @@ public partial class Usuarios : PaginaBase
         }
     }
     ///Trae todos los usuarios y los pinta en la grilla.
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         UsuarioBLL UsuarioBll = new UsuarioBLL();
-        gvUsuarios.DataSource = UsuarioBll.Listar();
+        gvUsuarios.DataSource = Paginador.Paginar(UsuarioBll.Listar(), U => U.Nombre + " " + U.Apellido + " " + U.NombreUsuario + " " + U.Gmail);
         gvUsuarios.DataBind();
     }
 

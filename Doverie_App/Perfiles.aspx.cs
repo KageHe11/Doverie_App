@@ -25,10 +25,15 @@ public partial class Perfiles : PaginaBase
             CargarGrilla();
         }
     }
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         PerfilBLL PerfilBll = new PerfilBLL();
-        gvPerfiles.DataSource = PerfilBll.Listar();
+        gvPerfiles.DataSource = Paginador.Paginar(PerfilBll.Listar(), P => P.NombrePerfil);
         gvPerfiles.DataBind();
     }
     protected void btnAgregar_Click(object sender, EventArgs e)

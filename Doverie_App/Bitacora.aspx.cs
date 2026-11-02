@@ -44,6 +44,11 @@ public partial class Bitacora : PaginaBase
     }
     /// Trae la lista base (30 recientes, o el historial completo si ya
     /// se tocó "Cargar más") y le aplica los filtros vigentes.
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         BitacoraBLL BitacoraBll = new BitacoraBLL();
@@ -56,7 +61,7 @@ public partial class Bitacora : PaginaBase
         DateTime? Desde = string.IsNullOrEmpty(txtDesde.Text) ? (DateTime?)null : Convert.ToDateTime(txtDesde.Text);
         DateTime? Hasta = string.IsNullOrEmpty(txtHasta.Text) ? (DateTime?)null : Convert.ToDateTime(txtHasta.Text).AddDays(1).AddSeconds(-1);
         List<BitacoraBE> Filtrado = BitacoraBll.Filtrar(Base, UsuarioId, Accion, Desde, Hasta);
-        gvBitacora.DataSource = Filtrado;
+        gvBitacora.DataSource = Paginador.Paginar(Filtrado, B => B.Accion + " " + B.Detalle + " " + B.NombreUsuario);
         gvBitacora.DataBind();
         lblSinResultados.Visible = Filtrado.Count == 0;
         // Una vez cargado todo el historial, no tiene sentido seguir
@@ -65,11 +70,13 @@ public partial class Bitacora : PaginaBase
     }
     protected void btnFiltrar_Click(object sender, EventArgs e)
     {
+        Paginador.Reiniciar();
         CargarGrilla();
     }
     protected void btnCargarMas_Click(object sender, EventArgs e)
     {
         hdnHistorialCompleto.Value = "1";
+        Paginador.Reiniciar();
         CargarGrilla();
     }
 }

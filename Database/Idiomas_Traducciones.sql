@@ -462,7 +462,17 @@ BEGIN
   "restore.errorNoDisponible": "No se encontró el archivo .bak de ese backup, ni en el servidor ni en AWS S3.",
   "restore.errorPrevio": "No se pudo generar el backup de seguridad previo, así que no se restauró nada.",
   "restore.errorBase": "No se pudo restaurar la base de datos; quedó como estaba. Igual se generó el backup de seguridad del {0}.",
-  "restore.errorArchivos": "La base de datos se restauró, pero falló la restauración de los archivos en AWS S3. El estado anterior está en el backup de seguridad del {0}."
+  "restore.errorArchivos": "La base de datos se restauró, pero falló la restauración de los archivos en AWS S3. El estado anterior está en el backup de seguridad del {0}.",
+  "confirmacion.titulo": "Confirmar acción",
+  "confirmacion.confirmar": "Confirmar",
+  "confirmacion.cancelar": "Cancelar",
+  "pag.placeholder": "Buscar en el listado...",
+  "pag.buscar": "Buscar",
+  "pag.limpiar": "Limpiar",
+  "pag.mostrando": "{0}–{1} de {2}",
+  "pag.paginas": "Páginas",
+  "pag.anterior": "Página anterior",
+  "pag.siguiente": "Página siguiente"
 }';
 END
 ELSE
@@ -916,7 +926,17 @@ ELSE
   "restore.errorNoDisponible": "No se encontró el archivo .bak de ese backup, ni en el servidor ni en AWS S3.",
   "restore.errorPrevio": "No se pudo generar el backup de seguridad previo, así que no se restauró nada.",
   "restore.errorBase": "No se pudo restaurar la base de datos; quedó como estaba. Igual se generó el backup de seguridad del {0}.",
-  "restore.errorArchivos": "La base de datos se restauró, pero falló la restauración de los archivos en AWS S3. El estado anterior está en el backup de seguridad del {0}."
+  "restore.errorArchivos": "La base de datos se restauró, pero falló la restauración de los archivos en AWS S3. El estado anterior está en el backup de seguridad del {0}.",
+  "confirmacion.titulo": "Confirmar acción",
+  "confirmacion.confirmar": "Confirmar",
+  "confirmacion.cancelar": "Cancelar",
+  "pag.placeholder": "Buscar en el listado...",
+  "pag.buscar": "Buscar",
+  "pag.limpiar": "Limpiar",
+  "pag.mostrando": "{0}–{1} de {2}",
+  "pag.paginas": "Páginas",
+  "pag.anterior": "Página anterior",
+  "pag.siguiente": "Página siguiente"
 }';
 
 -- English (en)
@@ -1374,7 +1394,17 @@ BEGIN
   "restore.errorNoDisponible": "The .bak file for that backup was not found, neither on the server nor in AWS S3.",
   "restore.errorPrevio": "The safety backup could not be generated, so nothing was restored.",
   "restore.errorBase": "The database could not be restored; it was left as it was. The safety backup of {0} was still generated.",
-  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}."
+  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}.",
+  "confirmacion.titulo": "Confirm action",
+  "confirmacion.confirmar": "Confirm",
+  "confirmacion.cancelar": "Cancel",
+  "pag.placeholder": "Search the list...",
+  "pag.buscar": "Search",
+  "pag.limpiar": "Clear",
+  "pag.mostrando": "{0}–{1} of {2}",
+  "pag.paginas": "Pages",
+  "pag.anterior": "Previous page",
+  "pag.siguiente": "Next page"
 }';
 END
 ELSE
@@ -1828,7 +1858,17 @@ ELSE
   "restore.errorNoDisponible": "The .bak file for that backup was not found, neither on the server nor in AWS S3.",
   "restore.errorPrevio": "The safety backup could not be generated, so nothing was restored.",
   "restore.errorBase": "The database could not be restored; it was left as it was. The safety backup of {0} was still generated.",
-  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}."
+  "restore.errorArchivos": "The database was restored, but restoring the AWS S3 files failed. The previous state is in the safety backup of {0}.",
+  "confirmacion.titulo": "Confirm action",
+  "confirmacion.confirmar": "Confirm",
+  "confirmacion.cancelar": "Cancel",
+  "pag.placeholder": "Search the list...",
+  "pag.buscar": "Search",
+  "pag.limpiar": "Clear",
+  "pag.mostrando": "{0}–{1} of {2}",
+  "pag.paginas": "Pages",
+  "pag.anterior": "Previous page",
+  "pag.siguiente": "Next page"
 }';
 
 -- Português (pt)
@@ -2286,7 +2326,17 @@ BEGIN
   "restore.errorNoDisponible": "O arquivo .bak desse backup não foi encontrado, nem no servidor nem no AWS S3.",
   "restore.errorPrevio": "Não foi possível gerar o backup de segurança prévio, então nada foi restaurado.",
   "restore.errorBase": "Não foi possível restaurar o banco de dados; ele ficou como estava. Mesmo assim foi gerado o backup de segurança de {0}.",
-  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}."
+  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}.",
+  "confirmacion.titulo": "Confirmar ação",
+  "confirmacion.confirmar": "Confirmar",
+  "confirmacion.cancelar": "Cancelar",
+  "pag.placeholder": "Buscar na lista...",
+  "pag.buscar": "Buscar",
+  "pag.limpiar": "Limpar",
+  "pag.mostrando": "{0}–{1} de {2}",
+  "pag.paginas": "Páginas",
+  "pag.anterior": "Página anterior",
+  "pag.siguiente": "Próxima página"
 }';
 END
 ELSE
@@ -2740,6 +2790,16 @@ ELSE
   "restore.errorNoDisponible": "O arquivo .bak desse backup não foi encontrado, nem no servidor nem no AWS S3.",
   "restore.errorPrevio": "Não foi possível gerar o backup de segurança prévio, então nada foi restaurado.",
   "restore.errorBase": "Não foi possível restaurar o banco de dados; ele ficou como estava. Mesmo assim foi gerado o backup de segurança de {0}.",
-  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}."
+  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}.",
+  "confirmacion.titulo": "Confirmar ação",
+  "confirmacion.confirmar": "Confirmar",
+  "confirmacion.cancelar": "Cancelar",
+  "pag.placeholder": "Buscar na lista...",
+  "pag.buscar": "Buscar",
+  "pag.limpiar": "Limpar",
+  "pag.mostrando": "{0}–{1} de {2}",
+  "pag.paginas": "Páginas",
+  "pag.anterior": "Página anterior",
+  "pag.siguiente": "Próxima página"
 }';
 GO

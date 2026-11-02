@@ -1,8 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="EmpleadosEmpresa.aspx.cs" Inherits="EmpleadosEmpresa" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true" />
 
@@ -38,7 +41,7 @@
                             <%-- CU-001-016: la baja es permanente; el empleado deja de listarse. --%>
                             <asp:LinkButton runat="server" CssClass="btn btn-sm btn-outline-danger"
                                 CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>'
-                                OnClientClick='<%# Traductor.Confirmar("empleados.confirmarEliminar") %>'
+                                OnClientClick='<%# Confirmacion.Para("empleados.confirmarEliminar") %>'
                                 Text='<%# Traductor.T("comun.eliminar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>

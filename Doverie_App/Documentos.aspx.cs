@@ -70,6 +70,11 @@ public partial class Documentos : PaginaBase
         }
         if (ddlTipo.Items.FindByValue(Seleccionado) != null) ddlTipo.SelectedValue = Seleccionado;
     }
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         DateTime? Desde = string.IsNullOrEmpty(txtDesde.Text) ? (DateTime?)null : Convert.ToDateTime(txtDesde.Text);
@@ -77,7 +82,7 @@ public partial class Documentos : PaginaBase
         bool HayFiltros = !string.IsNullOrWhiteSpace(txtFiltroNombre.Text) || ddlTipo.SelectedValue != "" || Desde.HasValue || Hasta.HasValue;
         DocumentoBLL DocumentoBll = new DocumentoBLL();
         List<DocumentoBE> Lista = DocumentoBll.Listar(UsuarioActual, txtFiltroNombre.Text, ddlTipo.SelectedValue, Desde, Hasta);
-        gvDocumentos.DataSource = Lista;
+        gvDocumentos.DataSource = Paginador.Paginar(Lista);
         gvDocumentos.DataBind();
         // 2.1 La cuenta no tiene documentos / 4.1 El filtro no arroja
         // resultados [ERROR-033].
@@ -98,6 +103,7 @@ public partial class Documentos : PaginaBase
     }
     protected void btnFiltrar_Click(object sender, EventArgs e)
     {
+        Paginador.Reiniciar();
         pnlVerificacion.Visible = false;
         pnlNFT.Visible = false;
         pnlCompartir.Visible = false;

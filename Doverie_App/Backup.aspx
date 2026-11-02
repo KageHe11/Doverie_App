@@ -1,9 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Backup.aspx.cs" Inherits="Backup" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
 <%@ Import Namespace="BE" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <h2 class="mb-3"><%: Traductor.T("backup.titulo") %></h2>
 
@@ -56,7 +59,7 @@
                 <ItemTemplate>
                     <asp:LinkButton ID="btnRestaurar" runat="server" CssClass="btn btn-sm btn-outline-warning text-nowrap"
                         CommandName="Restaurar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("restore.boton") %>'
-                        OnClientClick='<%# Traductor.Confirmar("restore.confirmar") %>' />
+                        OnClientClick='<%# Confirmacion.Para("restore.confirmar") %>' />
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>

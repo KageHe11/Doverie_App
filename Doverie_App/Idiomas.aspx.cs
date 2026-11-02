@@ -40,10 +40,15 @@ public partial class Idiomas : PaginaBase
         btnGuardar.Text = Traductor.T("comun.guardar");
         chkPredeterminado.InputAttributes["class"] = "form-check-input";
     }
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         IdiomaBLL IdiomaBll = new IdiomaBLL();
-        gvIdiomas.DataSource = IdiomaBll.Listar();
+        gvIdiomas.DataSource = Paginador.Paginar(IdiomaBll.Listar(), I => I.Codigo + " " + I.Nombre);
         gvIdiomas.DataBind();
     }
     protected void gvIdiomas_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -58,7 +63,7 @@ public partial class Idiomas : PaginaBase
         LinkButton BtnEliminar = (LinkButton)e.Row.FindControl("btnEliminar");
         BtnEliminar.Text = Traductor.T("comun.eliminar");
         BtnEliminar.Visible = TienePermiso("BajaIdioma") && !Idioma.EsPredeterminado;
-        BtnEliminar.OnClientClick = "return confirm(" + HttpUtility.JavaScriptStringEncode(Traductor.T("idiomas.confirmarEliminar"), true) + ");";
+        BtnEliminar.OnClientClick = Confirmacion.Para("idiomas.confirmarEliminar");
     }
     protected void btnAgregar_Click(object sender, EventArgs e)
     {

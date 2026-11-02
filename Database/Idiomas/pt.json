@@ -448,5 +448,15 @@
   "restore.errorNoDisponible": "O arquivo .bak desse backup não foi encontrado, nem no servidor nem no AWS S3.",
   "restore.errorPrevio": "Não foi possível gerar o backup de segurança prévio, então nada foi restaurado.",
   "restore.errorBase": "Não foi possível restaurar o banco de dados; ele ficou como estava. Mesmo assim foi gerado o backup de segurança de {0}.",
-  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}."
+  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}.",
+  "confirmacion.titulo": "Confirmar ação",
+  "confirmacion.confirmar": "Confirmar",
+  "confirmacion.cancelar": "Cancelar",
+  "pag.placeholder": "Buscar na lista...",
+  "pag.buscar": "Buscar",
+  "pag.limpiar": "Limpar",
+  "pag.mostrando": "{0}–{1} de {2}",
+  "pag.paginas": "Páginas",
+  "pag.anterior": "Página anterior",
+  "pag.siguiente": "Próxima página"
 }

@@ -24,10 +24,15 @@ public partial class Permisos : PaginaBase
             CargarGrilla();
         }
     }
+    /// La búsqueda o la página del Paginador cambiaron.
+    protected void Paginador_Cambio(object sender, EventArgs e)
+    {
+        CargarGrilla();
+    }
     private void CargarGrilla()
     {
         PermisoBLL PermisoBll = new PermisoBLL();
-        gvPermisos.DataSource = PermisoBll.Listar();
+        gvPermisos.DataSource = Paginador.Paginar(PermisoBll.Listar(), P => P.Nombre + " " + P.Descripcion);
         gvPermisos.DataBind();
     }
     protected void btnAgregar_Click(object sender, EventArgs e)

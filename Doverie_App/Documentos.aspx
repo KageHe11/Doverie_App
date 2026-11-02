@@ -1,8 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeFile="Documentos.aspx.cs" Inherits="Documentos" %>
+<%@ Register Src="~/ConfirmacionAccion.ascx" TagPrefix="uc" TagName="ConfirmacionAccion" %>
+<%@ Register Src="~/Paginador.ascx" TagPrefix="uc" TagName="Paginador" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <uc:ConfirmacionAccion ID="Confirmacion" runat="server" />
 
     <%-- Sin UpdatePanel a propósito: la subida y la descarga de archivos
          necesitan postbacks completos. --%>
@@ -125,7 +129,7 @@
                             <asp:Label ID="lblEstadoEnlace" runat="server" />
                             <asp:LinkButton ID="btnRevocar" runat="server" CssClass="btn btn-sm btn-outline-danger ms-1"
                                 CommandName="Revocar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("compartir.revocar") %>'
-                                OnClientClick='<%# Traductor.Confirmar("compartir.confirmarRevocar") %>' />
+                                OnClientClick='<%# Confirmacion.Para("compartir.confirmarRevocar") %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>
@@ -171,6 +175,7 @@
 
     <asp:Label ID="lblSinResultados" runat="server" CssClass="alert alert-info d-block" Visible="false"></asp:Label>
 
+    <uc:Paginador ID="Paginador" runat="server" OnCambio="Paginador_Cambio" MostrarBuscador="false" />
     <asp:GridView ID="gvDocumentos" runat="server" CssClass="table table-striped table-hover align-middle"
         AutoGenerateColumns="false" DataKeyNames="Id" OnRowCommand="gvDocumentos_RowCommand" OnRowDataBound="gvDocumentos_RowDataBound">
         <Columns>
@@ -186,14 +191,14 @@
                         CommandName="Verificar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.verificar") %>' />
                     <asp:LinkButton ID="btnGenerarNFT" runat="server" CssClass="btn btn-sm btn-outline-dark"
                         CommandName="GenerarNFT" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.generarNFT") %>'
-                        OnClientClick='<%# Traductor.Confirmar("doc.nftConfirmar") %>' />
+                        OnClientClick='<%# Confirmacion.Para("doc.nftConfirmar") %>' />
                     <asp:LinkButton ID="btnConsultarNFT" runat="server" CssClass="btn btn-sm btn-dark"
                         CommandName="ConsultarNFT" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.consultarNFT") %>' />
                     <asp:LinkButton ID="btnCompartirFila" runat="server" CssClass="btn btn-sm btn-outline-success"
                         CommandName="Compartir" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("compartir.boton") %>' />
                     <asp:LinkButton ID="btnEliminar" runat="server" CssClass="btn btn-sm btn-outline-danger"
                         CommandName="Eliminar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("comun.eliminar") %>'
-                        OnClientClick='<%# Traductor.Confirmar("doc.confirmarEliminar") %>' />
+                        OnClientClick='<%# Confirmacion.Para("doc.confirmarEliminar") %>' />
                 </ItemTemplate>
             </asp:TemplateField>
         </Columns>
