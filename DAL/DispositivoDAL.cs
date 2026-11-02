@@ -31,7 +31,7 @@ namespace DAL
             {
                 { "@UsuarioId", PusuarioId },
                 { "@Identificador", Pidentificador },
-                { "@Descripcion", (object)Pdescripcion ?? DBNull.Value }
+                { "@Descripcion", (object)CifradoDatos.Cifrar(Pdescripcion) ?? DBNull.Value }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Dispositivo_Registrar", Parametros, CommandType.StoredProcedure);
         }

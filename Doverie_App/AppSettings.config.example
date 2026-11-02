@@ -38,4 +38,8 @@
 	<!-- <add key="MercadoPagoSandbox" value="true" /> (con credenciales de prueba: checkout sandbox) -->
 	<!-- Clave de los dígitos verificadores (HMAC). Si cambia, hay que recalcularlos. -->
 	<add key="DigitoVerificadorClave" value="poné-acá-una-clave-larga-random-distinta-de-la-JWT" />
+	<!-- Cifrado AES-256 de los datos personales (email, DNI, teléfono): sin
+	     esta clave no se pueden leer. Guardala aparte; si se pierde, se
+	     pierden esos datos. Distinta de las otras claves. -->
+	<add key="CifradoClave" value="poné-acá-otra-clave-larga-random" />
 </appSettings>

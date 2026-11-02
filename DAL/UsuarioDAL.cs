@@ -26,9 +26,10 @@ namespace DAL
                 { "@Apellido", Pusuario.Apellido },
                 { "@NombreUsuario", Pusuario.NombreUsuario },
                 { "@Contrasena", Pusuario.Contrasena },
-                { "@Gmail", Pusuario.Gmail },
-                { "@Dni", Pusuario.Dni },
-                { "@Telefono", Pusuario.Telefono },
+                { "@Gmail", CifradoDatos.Cifrar(Pusuario.Gmail) },
+                { "@GmailIndice", CifradoDatos.Indice(Pusuario.Gmail) },
+                { "@Dni", CifradoDatos.Cifrar(Pusuario.Dni) },
+                { "@Telefono", (object)CifradoDatos.Cifrar(Pusuario.Telefono) ?? DBNull.Value },
                 { "@Empleado", Pusuario.Empleado },
                 { "@Empresa", Pusuario.Empresa },
                 { "@Independiente", Pusuario.Independiente },
@@ -48,9 +49,10 @@ namespace DAL
                 { "@Nombre", Pusuario.Nombre },
                 { "@Apellido", Pusuario.Apellido },
                 { "@Contrasena", Pusuario.Contrasena },
-                { "@Gmail", Pusuario.Gmail },
-                { "@Dni", Pusuario.Dni },
-                { "@Telefono", Pusuario.Telefono },
+                { "@Gmail", CifradoDatos.Cifrar(Pusuario.Gmail) },
+                { "@GmailIndice", CifradoDatos.Indice(Pusuario.Gmail) },
+                { "@Dni", CifradoDatos.Cifrar(Pusuario.Dni) },
+                { "@Telefono", (object)CifradoDatos.Cifrar(Pusuario.Telefono) ?? DBNull.Value },
                 { "@Empleado", Pusuario.Empleado },
                 { "@Empresa", Pusuario.Empresa },
                 { "@Independiente", Pusuario.Independiente },
@@ -166,7 +168,7 @@ namespace DAL
             DAO Dao = new DAO();
             Dictionary<string, object> Parametros = new Dictionary<string, object>
             {
-                { "@Gmail", gmail },
+                { "@GmailIndice", CifradoDatos.Indice(gmail) },
                 { "@IdExcluir", idExcluir }
             };
             object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorGmailExcluyendo", Parametros, CommandType.StoredProcedure);
@@ -175,7 +177,7 @@ namespace DAL
         public bool ExistePorGmail(string gmail)
         {
             DAO Dao = new DAO();
-            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Gmail", gmail } };
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@GmailIndice", CifradoDatos.Indice(gmail) } };
             object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorGmail", Parametros, CommandType.StoredProcedure);
             return Convert.ToInt32(Resultado) > 0;
         }
@@ -186,7 +188,8 @@ namespace DAL
             object Resultado = Dao.ExecuteScalarStoredProcedure("SP_Usuario_ExistePorNombreUsuario", Parametros, CommandType.StoredProcedure);
             return Convert.ToInt32(Resultado) > 0;
         }
-        /// Convierte una fila del DataSet en un UsuarioBE. El Perfil queda
+        /// Convierte una fila del DataSet en un UsuarioBE (con email, DNI y
+        /// teléfono descifrados: en la base están cifrados). El Perfil queda
         /// armado solo con el Id (no el árbol completo de permisos) — eso
         /// se completa aparte, cuando hace falta, vía PerfilBLL.
         private UsuarioBE MapearFila(DataRow Fila)
@@ -198,9 +201,9 @@ namespace DAL
                 Apellido = Fila["Apellido"].ToString(),
                 NombreUsuario = Fila["NombreUsuario"].ToString(),
                 Contrasena = Fila.Table.Columns.Contains("Contrasena") ? Fila["Contrasena"].ToString() : null,
-                Gmail = Fila["Gmail"].ToString(),
-                Dni = Fila["Dni"].ToString(),
-                Telefono = Fila["Telefono"] == DBNull.Value ? null : Fila["Telefono"].ToString(),
+                Gmail = CifradoDatos.Descifrar(Fila["Gmail"].ToString()),
+                Dni = CifradoDatos.Descifrar(Fila["Dni"].ToString()),
+                Telefono = Fila["Telefono"] == DBNull.Value ? null : CifradoDatos.Descifrar(Fila["Telefono"].ToString()),
                 Empleado = Convert.ToBoolean(Fila["Empleado"]),
                 Empresa = Convert.ToBoolean(Fila["Empresa"]),
                 Independiente = Convert.ToBoolean(Fila["Independiente"]),

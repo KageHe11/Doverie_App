@@ -280,7 +280,7 @@ namespace BLL
                 new BitacoraBLL().Registrar("Recuperar Contraseña (datos inválidos)", "Usuario ingresado: " + (nombreUsuario ?? "").Trim(), Usuario != null ? (int?)Usuario.Id : null);
                 return ResultadoRecuperacion.DatosInvalidos;
             }
-            new BitacoraBLL().Registrar("Recuperar Contraseña", "Link de recuperación generado para " + Usuario.Gmail, Usuario.Id);
+            new BitacoraBLL().Registrar("Recuperar Contraseña", "Link de recuperación generado para " + Usuario.NombreUsuario, Usuario.Id);
 
             TokenService TokenServ = new TokenService();
             string Token = TokenServ.GenerarTokenRecuperacion(Usuario);

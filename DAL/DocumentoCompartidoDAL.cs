@@ -24,7 +24,7 @@ namespace DAL
                 { "@Id", Pcompartido.Id },
                 { "@DocumentoId", Pcompartido.DocumentoId },
                 { "@UsuarioId", Pcompartido.UsuarioId },
-                { "@EmailDestinatario", Pcompartido.EmailDestinatario },
+                { "@EmailDestinatario", CifradoDatos.Cifrar(Pcompartido.EmailDestinatario) },
                 { "@TokenHash", PtokenHash },
                 { "@FechaCreacion", Pcompartido.FechaCreacion },
                 { "@FechaVencimiento", Pcompartido.FechaVencimiento }
@@ -78,7 +78,7 @@ namespace DAL
                 Id = Convert.ToInt32(Fila["Id"]),
                 DocumentoId = Convert.ToInt32(Fila["DocumentoId"]),
                 UsuarioId = Convert.ToInt32(Fila["UsuarioId"]),
-                EmailDestinatario = Fila["EmailDestinatario"].ToString(),
+                EmailDestinatario = CifradoDatos.Descifrar(Fila["EmailDestinatario"].ToString()),
                 FechaCreacion = Convert.ToDateTime(Fila["FechaCreacion"]),
                 FechaVencimiento = Convert.ToDateTime(Fila["FechaVencimiento"]),
                 Revocado = Convert.ToBoolean(Fila["Revocado"]),
