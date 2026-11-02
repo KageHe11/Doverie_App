@@ -413,7 +413,11 @@ BEGIN
   "error.034": "Error no existen pagos asociados al Usuario.",
   "error.035": "Error al obtener el comprobante solicitado",
   "error.036": "Error el sistema no puede generar el comprobante solicitado en formato PDF",
-  "susc.emailEnviado": "Te enviamos la confirmación por correo."
+  "susc.emailEnviado": "Te enviamos la confirmación por correo.",
+  "doc.red": "Red",
+  "doc.bloque": "bloque",
+  "doc.registroLocal": "Registro local (simulado)",
+  "doc.verExplorador": "Ver la transacción en Etherscan"
 }';
 END
 ELSE
@@ -818,7 +822,11 @@ ELSE
   "error.034": "Error no existen pagos asociados al Usuario.",
   "error.035": "Error al obtener el comprobante solicitado",
   "error.036": "Error el sistema no puede generar el comprobante solicitado en formato PDF",
-  "susc.emailEnviado": "Te enviamos la confirmación por correo."
+  "susc.emailEnviado": "Te enviamos la confirmación por correo.",
+  "doc.red": "Red",
+  "doc.bloque": "bloque",
+  "doc.registroLocal": "Registro local (simulado)",
+  "doc.verExplorador": "Ver la transacción en Etherscan"
 }';
 
 -- English (en)
@@ -1227,7 +1235,11 @@ BEGIN
   "error.034": "Error: there are no payments associated with the user.",
   "error.035": "Error retrieving the requested receipt",
   "error.036": "Error: the system cannot generate the requested receipt in PDF format",
-  "susc.emailEnviado": "We sent you a confirmation email."
+  "susc.emailEnviado": "We sent you a confirmation email.",
+  "doc.red": "Network",
+  "doc.bloque": "block",
+  "doc.registroLocal": "Local registry (simulated)",
+  "doc.verExplorador": "View the transaction on Etherscan"
 }';
 END
 ELSE
@@ -1632,7 +1644,11 @@ ELSE
   "error.034": "Error: there are no payments associated with the user.",
   "error.035": "Error retrieving the requested receipt",
   "error.036": "Error: the system cannot generate the requested receipt in PDF format",
-  "susc.emailEnviado": "We sent you a confirmation email."
+  "susc.emailEnviado": "We sent you a confirmation email.",
+  "doc.red": "Network",
+  "doc.bloque": "block",
+  "doc.registroLocal": "Local registry (simulated)",
+  "doc.verExplorador": "View the transaction on Etherscan"
 }';
 
 -- Português (pt)
@@ -2041,7 +2057,11 @@ BEGIN
   "error.034": "Erro: não existem pagamentos associados ao usuário.",
   "error.035": "Erro ao obter o comprovante solicitado",
   "error.036": "Erro: o sistema não pode gerar o comprovante solicitado em formato PDF",
-  "susc.emailEnviado": "Enviamos a confirmação por e-mail."
+  "susc.emailEnviado": "Enviamos a confirmação por e-mail.",
+  "doc.red": "Rede",
+  "doc.bloque": "bloco",
+  "doc.registroLocal": "Registro local (simulado)",
+  "doc.verExplorador": "Ver a transação no Etherscan"
 }';
 END
 ELSE
@@ -2446,6 +2466,10 @@ ELSE
   "error.034": "Erro: não existem pagamentos associados ao usuário.",
   "error.035": "Erro ao obter o comprovante solicitado",
   "error.036": "Erro: o sistema não pode gerar o comprovante solicitado em formato PDF",
-  "susc.emailEnviado": "Enviamos a confirmação por e-mail."
+  "susc.emailEnviado": "Enviamos a confirmação por e-mail.",
+  "doc.red": "Rede",
+  "doc.bloque": "bloco",
+  "doc.registroLocal": "Registro local (simulado)",
+  "doc.verExplorador": "Ver a transação no Etherscan"
 }';
 GO

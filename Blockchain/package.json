@@ -1,0 +1,18 @@
+{
+  "name": "doverie-blockchain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart contract de Doverie para registrar hashes de documentos (Proof of Existence).",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.29.1"
+  }
+}

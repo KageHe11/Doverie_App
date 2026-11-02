@@ -6,10 +6,19 @@
 	<add key="SmtpUser" value="appdoverie@gmail.com" />
 	<add key="SmtpPassword" value="tu-nueva-contraseña-de-aplicación" />
 	<add key="SmtpFromName" value="Doverie" />
-	<!-- Documentos (opcionales). Implementación: "Local" (por ahora la única).
+	<!-- Documentos (opcionales). Almacenamiento: "Local". Blockchain: "Local" (simulada) o "Nethereum" (Ethereum).
 	     Sin las rutas, se usan App_Data/Documentos y App_Data/Blockchain/registro.jsonl. -->
 	<add key="Almacenamiento" value="Local" />
 	<add key="Blockchain" value="Local" />
+	<!-- Blockchain="Nethereum": red Ethereum y contrato DoverieRegistro (carpeta Blockchain).
+	     Sepolia: ChainId 11155111, URL de Alchemy. Red local de Hardhat: ChainId 31337,
+	     URL http://127.0.0.1:8545. La clave privada es la de una wallet SOLO de prueba. -->
+	<add key="BlockchainRpcUrl" value="https://eth-sepolia.g.alchemy.com/v2/tu-api-key" />
+	<add key="BlockchainChainId" value="11155111" />
+	<add key="BlockchainClavePrivada" value="0xclave-privada-de-la-wallet-de-prueba" />
+	<add key="BlockchainContrato" value="0xE9f903669a54678b717FEf28A1bb3412EaD159d8" />
+	<add key="BlockchainRed" value="Ethereum Sepolia" />
+	<add key="BlockchainExplorador" value="https://sepolia.etherscan.io" />
 	<!-- <add key="DocumentosRuta" value="C:\DoverieDatos\Documentos" /> -->
 	<!-- <add key="BlockchainLocalRuta" value="C:\DoverieDatos\Blockchain\registro.jsonl" /> -->
 </appSettings>

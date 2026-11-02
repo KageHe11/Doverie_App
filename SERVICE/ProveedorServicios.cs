@@ -5,8 +5,9 @@ namespace SERVICE
 {
     /// Decide qué implementación de almacenamiento, de blockchain y de
     /// pasarela de pago usa el sistema, según AppSettings ("Almacenamiento",
-    /// "Blockchain" y "PasarelaPago"). Hoy solo existe "Local"; cuando se
-    /// sumen S3, Nethereum y Mercado Pago, se agregan acá sus casos y la BLL
+    /// "Blockchain" y "PasarelaPago"). Todas tienen una versión "Local" para
+    /// desarrollo; la blockchain además tiene "Nethereum" (Ethereum real).
+    /// Cuando se sumen S3 y Mercado Pago, se agregan acá sus casos y la BLL
     /// no cambia.
     public static class ProveedorServicios
     {
@@ -25,6 +26,7 @@ namespace SERVICE
             switch (Tipo)
             {
                 case "Local": return new RegistroBlockchainLocal();
+                case "Nethereum": return new RegistroBlockchainNethereum();
                 default: throw new ConfigurationErrorsException("Blockchain no soportada: " + Tipo);
             }
         }

@@ -39,7 +39,9 @@
                 <tr><th style="width: 30%"><%: Traductor.T("doc.hashRegistrado") %></th><td class="font-monospace text-break"><asp:Literal ID="litHashRegistrado" runat="server" Mode="Encode" /></td></tr>
                 <tr><th><%: Traductor.T("doc.hashActual") %></th><td class="font-monospace text-break"><asp:Literal ID="litHashActual" runat="server" Mode="Encode" /></td></tr>
                 <tr><th><%: Traductor.T("doc.fechaSellado") %></th><td><asp:Literal ID="litFechaSellado" runat="server" Mode="Encode" /></td></tr>
-                <tr><th><%: Traductor.T("doc.transaccion") %></th><td class="font-monospace text-break"><asp:Literal ID="litTransaccion" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.red") %></th><td><asp:Literal ID="litRed" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.transaccion") %></th><td class="font-monospace text-break"><asp:Literal ID="litTransaccion" runat="server" Mode="Encode" />
+                    <asp:HyperLink ID="lnkExplorador" runat="server" CssClass="d-block small mt-1" Target="_blank" rel="noopener noreferrer" Visible="false" /></td></tr>
             </table>
             <h6><%: Traductor.T("doc.historial") %></h6>
             <asp:GridView ID="gvHistorial" runat="server" CssClass="table table-sm table-striped small" AutoGenerateColumns="false">

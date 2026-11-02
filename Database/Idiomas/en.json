@@ -399,5 +399,9 @@
   "error.034": "Error: there are no payments associated with the user.",
   "error.035": "Error retrieving the requested receipt",
   "error.036": "Error: the system cannot generate the requested receipt in PDF format",
-  "susc.emailEnviado": "We sent you a confirmation email."
+  "susc.emailEnviado": "We sent you a confirmation email.",
+  "doc.red": "Network",
+  "doc.bloque": "block",
+  "doc.registroLocal": "Local registry (simulated)",
+  "doc.verExplorador": "View the transaction on Etherscan"
 }

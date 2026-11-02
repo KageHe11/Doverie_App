@@ -196,6 +196,12 @@ public partial class Documentos : PaginaBase
         litHashActual.Text = verificacion.HashActual;
         litFechaSellado.Text = verificacion.Sello.FechaSellado.ToString("dd/MM/yyyy HH:mm:ss");
         litTransaccion.Text = verificacion.Sello.Transaccion;
+        SelloBlockchainBE Sello = verificacion.Sello;
+        litRed.Text = Sello.Red == null ? Traductor.T("doc.registroLocal")
+            : Sello.Red + (Sello.Bloque.HasValue ? " (" + Traductor.T("doc.bloque") + " " + Sello.Bloque.Value + ")" : "");
+        lnkExplorador.Visible = Sello.UrlExplorador != null;
+        lnkExplorador.NavigateUrl = Sello.UrlExplorador;
+        lnkExplorador.Text = HttpUtility.HtmlEncode(Traductor.T("doc.verExplorador"));
         DocumentoBLL DocumentoBll = new DocumentoBLL();
         gvHistorial.DataSource = DocumentoBll.Historial(documento.Id);
         gvHistorial.DataBind();

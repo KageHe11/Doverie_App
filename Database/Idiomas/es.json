@@ -399,5 +399,9 @@
   "error.034": "Error no existen pagos asociados al Usuario.",
   "error.035": "Error al obtener el comprobante solicitado",
   "error.036": "Error el sistema no puede generar el comprobante solicitado en formato PDF",
-  "susc.emailEnviado": "Te enviamos la confirmación por correo."
+  "susc.emailEnviado": "Te enviamos la confirmación por correo.",
+  "doc.red": "Red",
+  "doc.bloque": "bloque",
+  "doc.registroLocal": "Registro local (simulado)",
+  "doc.verExplorador": "Ver la transacción en Etherscan"
 }
