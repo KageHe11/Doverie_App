@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -70,28 +71,12 @@ namespace SERVICE
             RespaldoArchivosBE Respaldo = new RespaldoArchivosBE { Ubicacion = "s3://" + Bucket + "/" + Destino };
             using (AmazonS3Client Cliente = CrearCliente())
             {
-                ListObjectsV2Request Pedido = new ListObjectsV2Request { BucketName = Bucket, Prefix = Prefijo };
-                ListObjectsV2Response Pagina;
-                do
+                foreach (S3Object Objeto in Listar(Cliente, Bucket, Prefijo))
                 {
-                    Pagina = Ejecutar(() => Cliente.ListObjectsV2Async(Pedido));
-                    foreach (S3Object Objeto in Pagina.S3Objects ?? new System.Collections.Generic.List<S3Object>())
-                    {
-                        CopyObjectRequest Copia = new CopyObjectRequest
-                        {
-                            SourceBucket = Bucket,
-                            SourceKey = Objeto.Key,
-                            DestinationBucket = Bucket,
-                            DestinationKey = Destino + "documentos/" + Objeto.Key.Substring(Prefijo.Length),
-                            ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
-                        };
-                        Ejecutar(() => Cliente.CopyObjectAsync(Copia));
-                        Respaldo.CantidadArchivos++;
-                        Respaldo.TamanoBytes += Objeto.Size ?? 0;
-                    }
-                    Pedido.ContinuationToken = Pagina.NextContinuationToken;
-                } while (Pagina.IsTruncated == true);
-
+                    Copiar(Cliente, Bucket, Objeto.Key, Destino + "documentos/" + Objeto.Key.Substring(Prefijo.Length));
+                    Respaldo.CantidadArchivos++;
+                    Respaldo.TamanoBytes += Objeto.Size ?? 0;
+                }
                 if (archivoBaseDatos != null)
                 {
                     PutObjectRequest Subida = new PutObjectRequest
@@ -106,6 +91,85 @@ namespace SERVICE
                 }
             }
             return Respaldo;
+        }
+        /// Restore: vuelve a copiar "backups/<etiqueta>/documentos/" a
+        /// "documentos/" y borra de "documentos/" lo que no estaba en el
+        /// respaldo. Si el respaldo no tiene archivos no toca nada: borrar todo
+        /// por un respaldo vacío o inexistente sería peor que no restaurar.
+        public RespaldoArchivosBE RestaurarArchivos(string etiqueta)
+        {
+            string Bucket = Configuracion("S3Bucket");
+            string Prefijo = ConfigurationManager.AppSettings["S3Prefijo"] ?? "documentos/";
+            string Origen = "backups/" + etiqueta + "/documentos/";
+            using (AmazonS3Client Cliente = CrearCliente())
+            {
+                List<S3Object> Respaldados = Listar(Cliente, Bucket, Origen);
+                if (Respaldados.Count == 0) return null;
+                RespaldoArchivosBE Resultado = new RespaldoArchivosBE { Ubicacion = "s3://" + Bucket + "/" + Origen };
+                HashSet<string> Nombres = new HashSet<string>();
+                foreach (S3Object Objeto in Respaldados)
+                {
+                    string Nombre = Objeto.Key.Substring(Origen.Length);
+                    Nombres.Add(Nombre);
+                    Copiar(Cliente, Bucket, Objeto.Key, Prefijo + Nombre);
+                    Resultado.CantidadArchivos++;
+                    Resultado.TamanoBytes += Objeto.Size ?? 0;
+                }
+                foreach (S3Object Objeto in Listar(Cliente, Bucket, Prefijo))
+                {
+                    if (Nombres.Contains(Objeto.Key.Substring(Prefijo.Length))) continue;
+                    Ejecutar(() => Cliente.DeleteObjectAsync(Bucket, Objeto.Key));
+                    Resultado.CantidadEliminados++;
+                }
+                return Resultado;
+            }
+        }
+        public bool ObtenerBaseDatos(string etiqueta, string nombreArchivo, string rutaDestino)
+        {
+            using (AmazonS3Client Cliente = CrearCliente())
+            {
+                GetObjectResponse Respuesta;
+                try
+                {
+                    Respuesta = Ejecutar(() => Cliente.GetObjectAsync(Configuracion("S3Bucket"), "backups/" + etiqueta + "/" + nombreArchivo));
+                }
+                catch (AmazonS3Exception Error) when (Error.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+                using (Respuesta)
+                using (FileStream Archivo = File.Create(rutaDestino))
+                {
+                    Respuesta.ResponseStream.CopyTo(Archivo);
+                }
+                return true;
+            }
+        }
+        private static List<S3Object> Listar(AmazonS3Client cliente, string bucket, string prefijo)
+        {
+            List<S3Object> Objetos = new List<S3Object>();
+            ListObjectsV2Request Pedido = new ListObjectsV2Request { BucketName = bucket, Prefix = prefijo };
+            ListObjectsV2Response Pagina;
+            do
+            {
+                Pagina = Ejecutar(() => cliente.ListObjectsV2Async(Pedido));
+                if (Pagina.S3Objects != null) Objetos.AddRange(Pagina.S3Objects);
+                Pedido.ContinuationToken = Pagina.NextContinuationToken;
+            } while (Pagina.IsTruncated == true);
+            return Objetos;
+        }
+        /// Copia del lado de S3: el archivo no pasa por el servidor de la app.
+        private static void Copiar(AmazonS3Client cliente, string bucket, string origen, string destino)
+        {
+            CopyObjectRequest Copia = new CopyObjectRequest
+            {
+                SourceBucket = bucket,
+                SourceKey = origen,
+                DestinationBucket = bucket,
+                DestinationKey = destino,
+                ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
+            };
+            Ejecutar(() => cliente.CopyObjectAsync(Copia));
         }
         /// El SDK es asíncrono; se ejecuta fuera del contexto de ASP.NET para
         /// poder esperar el resultado sin bloquear el request.

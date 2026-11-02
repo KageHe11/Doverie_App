@@ -35,9 +35,7 @@ namespace SERVICE
         /// defecto App_Data/Backups) y el .bak de la base a "<etiqueta>".
         public RespaldoArchivosBE Respaldar(string etiqueta, string archivoBaseDatos)
         {
-            string Raiz = ConfigurationManager.AppSettings["BackupsRuta"];
-            if (string.IsNullOrWhiteSpace(Raiz)) Raiz = HostingEnvironment.MapPath("~/App_Data/Backups");
-            string Destino = Path.Combine(Raiz, etiqueta);
+            string Destino = CarpetaRespaldo(etiqueta);
             string DestinoDocumentos = Path.Combine(Destino, "documentos");
             Directory.CreateDirectory(DestinoDocumentos);
             RespaldoArchivosBE Respaldo = new RespaldoArchivosBE { Ubicacion = Destino };
@@ -52,6 +50,41 @@ namespace SERVICE
                 File.Copy(archivoBaseDatos, Path.Combine(Destino, Path.GetFileName(archivoBaseDatos)));
             }
             return Respaldo;
+        }
+        /// Restore: vuelve a copiar los documentos del respaldo y borra los que
+        /// no estaban. Sin copia de archivos en ese respaldo no toca nada.
+        public RespaldoArchivosBE RestaurarArchivos(string etiqueta)
+        {
+            string Origen = Path.Combine(CarpetaRespaldo(etiqueta), "documentos");
+            if (!Directory.Exists(Origen) || Directory.GetFiles(Origen).Length == 0) return null;
+            RespaldoArchivosBE Resultado = new RespaldoArchivosBE { Ubicacion = Origen };
+            foreach (string Archivo in Directory.GetFiles(Origen))
+            {
+                File.Copy(Archivo, Path.Combine(Carpeta(), Path.GetFileName(Archivo)), true);
+                Resultado.CantidadArchivos++;
+                Resultado.TamanoBytes += new FileInfo(Archivo).Length;
+            }
+            foreach (string Archivo in Directory.GetFiles(Carpeta()))
+            {
+                if (File.Exists(Path.Combine(Origen, Path.GetFileName(Archivo)))) continue;
+                File.Delete(Archivo);
+                Resultado.CantidadEliminados++;
+            }
+            return Resultado;
+        }
+        public bool ObtenerBaseDatos(string etiqueta, string nombreArchivo, string rutaDestino)
+        {
+            string Origen = Path.Combine(CarpetaRespaldo(etiqueta), nombreArchivo);
+            if (!File.Exists(Origen)) return false;
+            File.Copy(Origen, rutaDestino, true);
+            return true;
+        }
+        /// "<BackupsRuta>/<etiqueta>", por defecto bajo App_Data/Backups.
+        private static string CarpetaRespaldo(string etiqueta)
+        {
+            string Raiz = ConfigurationManager.AppSettings["BackupsRuta"];
+            if (string.IsNullOrWhiteSpace(Raiz)) Raiz = HostingEnvironment.MapPath("~/App_Data/Backups");
+            return Path.Combine(Raiz, etiqueta);
         }
         private string RutaCompleta(string ubicacion)
         {

@@ -436,5 +436,17 @@
   "backup.estado.Exitoso": "Bem-sucedido",
   "backup.estado.Fallido": "Falhou",
   "error.041": "O sistema não pode gerar a cópia de segurança do banco de dados",
-  "error.042": "O sistema não pode gerar a cópia de segurança dos arquivos armazenados no AWS S3"
+  "error.042": "O sistema não pode gerar a cópia de segurança dos arquivos armazenados no AWS S3",
+  "restore.titulo": "Restaurar a partir de um arquivo .bak",
+  "restore.descripcion": "Para voltar a um backup do histórico, use o botão Restaurar. Aqui você pode enviar um .bak do banco do Doverie salvo no seu computador. Antes de restaurar, é gerado um backup de segurança do estado atual.",
+  "restore.boton": "Restaurar",
+  "restore.subir": "Restaurar a partir do arquivo",
+  "restore.confirmar": "Restaurar este backup? O banco de dados e os arquivos no AWS S3 voltam a como estavam naquele momento. Antes é gerado um backup de segurança do estado atual.",
+  "restore.exito": "O backup foi restaurado: o banco de dados e os arquivos voltaram àquele momento. O estado anterior ficou no backup de segurança de {0}.",
+  "restore.exitoSinArchivos": "O banco de dados foi restaurado. Esse backup não tem uma cópia de arquivos associada, então os arquivos ficaram como estavam. O estado anterior ficou no backup de segurança de {0}.",
+  "restore.errorArchivo": "O arquivo não é um backup válido do banco de dados do Doverie.",
+  "restore.errorNoDisponible": "O arquivo .bak desse backup não foi encontrado, nem no servidor nem no AWS S3.",
+  "restore.errorPrevio": "Não foi possível gerar o backup de segurança prévio, então nada foi restaurado.",
+  "restore.errorBase": "Não foi possível restaurar o banco de dados; ele ficou como estava. Mesmo assim foi gerado o backup de segurança de {0}.",
+  "restore.errorArchivos": "O banco de dados foi restaurado, mas a restauração dos arquivos no AWS S3 falhou. O estado anterior está no backup de segurança de {0}."
 }

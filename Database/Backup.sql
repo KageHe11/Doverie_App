@@ -52,12 +52,13 @@ BEGIN
 END
 GO
 
--- Historial de backups para la pantalla (los más recientes primero).
+-- Historial de backups (los más recientes primero). Completo: el restore
+-- lo usa para no perder backups que siguen existiendo.
 CREATE OR ALTER PROCEDURE SP_BackUp_Listar
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT TOP 50 B.Id, B.UsuarioId, U.NombreUsuario, B.Fecha, B.Estado, B.Detalle
+    SELECT B.Id, B.UsuarioId, U.NombreUsuario, B.Fecha, B.Estado, B.Detalle
     FROM [BackUp] B
     JOIN Usuario U ON U.Id = B.UsuarioId
     ORDER BY B.Fecha DESC, B.Id DESC;
@@ -78,7 +79,9 @@ BEGIN
     DECLARE @Base SYSNAME = DB_NAME();
     IF @Carpeta IS NULL SET @Carpeta = CAST(SERVERPROPERTY('InstanceDefaultBackupPath') AS NVARCHAR(300));
     DECLARE @Ruta NVARCHAR(500) = @Carpeta + CASE WHEN RIGHT(@Carpeta, 1) = '\' THEN '' ELSE '\' END + @Archivo;
-    DECLARE @Nombre NVARCHAR(128) = @Base + N' - Backup manual';
+    -- El nombre del backup es el del archivo (trae la fecha): el restore lo
+    -- usa para encontrar la copia de los documentos de ese mismo backup.
+    DECLARE @Nombre NVARCHAR(128) = LEFT(@Archivo, 128);
 
     IF CAST(SERVERPROPERTY('EngineEdition') AS INT) = 4
         BACKUP DATABASE @Base TO DISK = @Ruta WITH COPY_ONLY, INIT, FORMAT, CHECKSUM, NAME = @Nombre;
@@ -93,25 +96,64 @@ BEGIN
 END
 GO
 
--- ----------------------------------------
--- Permiso GenerarBackup en la Familia RespaldoSistema, asignada al
--- Perfil Administrador.
--- ----------------------------------------
-DECLARE @PermisoId INT = (SELECT Id FROM Permiso WHERE Nombre = 'GenerarBackup');
-IF @PermisoId IS NULL
+-- Restore: un backup del historial por Id.
+CREATE OR ALTER PROCEDURE SP_BackUp_ObtenerDatos
+    @Id INT
+AS
 BEGIN
-    SELECT @PermisoId = ISNULL(MAX(Id), 0) + 1 FROM Permiso;
-    INSERT INTO Permiso (Id, Nombre, Descripcion)
-    VALUES (@PermisoId, 'GenerarBackup', 'Permite generar un backup manual de la base de datos y de los archivos en AWS S3 (CU-002-013)');
+    SET NOCOUNT ON;
+    SELECT B.Id, B.UsuarioId, U.NombreUsuario, B.Fecha, B.Estado, B.Detalle
+    FROM [BackUp] B
+    JOIN Usuario U ON U.Id = B.UsuarioId
+    WHERE B.Id = @Id;
 END
+GO
+
+-- Carpeta de backups de la instancia, donde SP_BackUp_GenerarBaseDatos deja
+-- los .bak cuando no se configura otra.
+CREATE OR ALTER PROCEDURE SP_BackUp_ObtenerCarpeta
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT CAST(SERVERPROPERTY('InstanceDefaultBackupPath') AS NVARCHAR(300)) AS Carpeta;
+END
+GO
+
+-- ----------------------------------------
+-- Permisos GenerarBackup y RestaurarBackup en la Familia RespaldoSistema,
+-- asignada al Perfil Administrador.
+-- ----------------------------------------
+DECLARE @Permisos TABLE (Nombre NVARCHAR(50), Descripcion NVARCHAR(MAX));
+INSERT INTO @Permisos VALUES
+    ('GenerarBackup', 'Permite generar un backup manual de la base de datos y de los archivos en AWS S3 (CU-002-013)'),
+    ('RestaurarBackup', 'Permite restaurar la base de datos y los archivos en AWS S3 desde un backup');
+
 DECLARE @FamiliaId INT = (SELECT Id FROM Familia WHERE Nombre = 'RespaldoSistema');
 IF @FamiliaId IS NULL
 BEGIN
     SELECT @FamiliaId = ISNULL(MAX(Id), 0) + 1 FROM Familia;
     INSERT INTO Familia (Id, Nombre) VALUES (@FamiliaId, 'RespaldoSistema');
 END
-IF NOT EXISTS (SELECT 1 FROM FamiliaComponente WHERE FamiliaId = @FamiliaId AND PermisoId = @PermisoId)
-    INSERT INTO FamiliaComponente (FamiliaId, PermisoId, SubFamiliaId) VALUES (@FamiliaId, @PermisoId, NULL);
+
+DECLARE @Nombre NVARCHAR(50), @Descripcion NVARCHAR(MAX), @PermisoId INT;
+DECLARE CursorPermisos CURSOR LOCAL FAST_FORWARD FOR SELECT Nombre, Descripcion FROM @Permisos;
+OPEN CursorPermisos;
+FETCH NEXT FROM CursorPermisos INTO @Nombre, @Descripcion;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @PermisoId = (SELECT Id FROM Permiso WHERE Nombre = @Nombre);
+    IF @PermisoId IS NULL
+    BEGIN
+        SELECT @PermisoId = ISNULL(MAX(Id), 0) + 1 FROM Permiso;
+        INSERT INTO Permiso (Id, Nombre, Descripcion) VALUES (@PermisoId, @Nombre, @Descripcion);
+    END
+    IF NOT EXISTS (SELECT 1 FROM FamiliaComponente WHERE FamiliaId = @FamiliaId AND PermisoId = @PermisoId)
+        INSERT INTO FamiliaComponente (FamiliaId, PermisoId, SubFamiliaId) VALUES (@FamiliaId, @PermisoId, NULL);
+    FETCH NEXT FROM CursorPermisos INTO @Nombre, @Descripcion;
+END
+CLOSE CursorPermisos;
+DEALLOCATE CursorPermisos;
+
 DECLARE @PerfilAdminId INT = (SELECT Id FROM Perfil WHERE NombrePerfil = 'Administrador');
 IF @PerfilAdminId IS NOT NULL AND NOT EXISTS (SELECT 1 FROM PerfilFamilia WHERE PerfilId = @PerfilAdminId AND FamiliaId = @FamiliaId)
     INSERT INTO PerfilFamilia (PerfilId, FamiliaId) VALUES (@PerfilAdminId, @FamiliaId);

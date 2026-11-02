@@ -21,12 +21,36 @@ namespace DAL
             string ConnectionString = ConfigurationManager.ConnectionStrings["BD_Doverie"].ConnectionString;
             Con = new SqlConnection(ConnectionString);
         }
+        /// Tiempo máximo de cada comando, en segundos. Un backup o un restore
+        /// tardan bastante más que una consulta.
+        public int TiempoEspera { get; set; } = 30;
+        /// Nombre de la base de la aplicación (Initial Catalog).
+        public string NombreBase
+        {
+            get { return new SqlConnectionStringBuilder(Con.ConnectionString).InitialCatalog; }
+        }
+        /// Mismo servidor y credenciales, pero conectado a master: para
+        /// restaurar la base de la aplicación sin estar conectado a ella.
+        public static DAO Servidor()
+        {
+            DAO Dao = new DAO();
+            SqlConnectionStringBuilder Datos = new SqlConnectionStringBuilder(Dao.Con.ConnectionString) { InitialCatalog = "master" };
+            Dao.Con = new SqlConnection(Datos.ConnectionString);
+            return Dao;
+        }
+        /// Descarta las conexiones del pool: después de un restore las que
+        /// estaban abiertas quedaron cortadas.
+        public static void ReiniciarConexiones()
+        {
+            SqlConnection.ClearAllPools();
+        }
         public DataSet ExecuteDataSetStoredProcedure(string Nombre, Dictionary<string, object> Parameters = null, CommandType TypeCommand = CommandType.StoredProcedure)
         {
             try
             {
                 SqlCommand Command = new SqlCommand(Nombre, Con);
                 Command.CommandType = TypeCommand;
+                Command.CommandTimeout = TiempoEspera;
                 if (Parameters != null)
                 {
                     foreach (var P in Parameters)
@@ -55,6 +79,7 @@ namespace DAL
             {
                 SqlCommand Command = new SqlCommand(Nombre, Con);
                 Command.CommandType = TypeCommand;
+                Command.CommandTimeout = TiempoEspera;
                 if (Parameters != null)
                 {
                     foreach (var P in Parameters)
@@ -81,6 +106,7 @@ namespace DAL
             {
                 SqlCommand Command = new SqlCommand(Nombre, Con);
                 Command.CommandType = TypeCommand;
+                Command.CommandTimeout = TiempoEspera;
                 if (Parameters != null)
                 {
                     foreach (var P in Parameters)

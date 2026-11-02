@@ -23,9 +23,26 @@
         </div>
     </div>
 
+    <%-- Restore desde un .bak propio (el del historial se elige en la grilla) --%>
+    <asp:Panel ID="pnlRestaurarArchivo" runat="server" CssClass="card mb-4 border-warning">
+        <div class="card-body">
+            <h5 class="card-title"><%: Traductor.T("restore.titulo") %></h5>
+            <p class="small mb-2"><%: Traductor.T("restore.descripcion") %></p>
+            <div class="row g-2 align-items-start">
+                <div class="col-md-8">
+                    <asp:FileUpload ID="fuBak" runat="server" CssClass="form-control" accept=".bak" />
+                </div>
+                <div class="col-md-4">
+                    <asp:Button ID="btnRestaurarArchivo" runat="server" CssClass="btn btn-warning w-100" OnClick="btnRestaurarArchivo_Click" />
+                </div>
+            </div>
+        </div>
+    </asp:Panel>
+
     <h5><%: Traductor.T("backup.historial") %></h5>
     <asp:Label ID="lblSinBackups" runat="server" CssClass="alert alert-info d-block" Visible="false"></asp:Label>
-    <asp:GridView ID="gvBackups" runat="server" CssClass="table table-striped table-sm align-middle small" AutoGenerateColumns="false">
+    <asp:GridView ID="gvBackups" runat="server" CssClass="table table-striped table-sm align-middle small" AutoGenerateColumns="false"
+        OnRowCommand="gvBackups_RowCommand" OnRowDataBound="gvBackups_RowDataBound">
         <Columns>
             <asp:BoundField DataField="Fecha" DataFormatString="{0:dd/MM/yyyy HH:mm:ss}" />
             <asp:BoundField DataField="NombreUsuario" />
@@ -35,6 +52,13 @@
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="Detalle" ItemStyle-CssClass="text-break" />
+            <asp:TemplateField>
+                <ItemTemplate>
+                    <asp:LinkButton ID="btnRestaurar" runat="server" CssClass="btn btn-sm btn-outline-warning text-nowrap"
+                        CommandName="Restaurar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("restore.boton") %>'
+                        OnClientClick='<%# Traductor.Confirmar("restore.confirmar") %>' />
+                </ItemTemplate>
+            </asp:TemplateField>
         </Columns>
     </asp:GridView>
 
