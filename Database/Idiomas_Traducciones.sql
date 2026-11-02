@@ -417,7 +417,24 @@ BEGIN
   "doc.red": "Red",
   "doc.bloque": "bloque",
   "doc.registroLocal": "Registro local (simulado)",
-  "doc.verExplorador": "Ver la transacción en Etherscan"
+  "doc.verExplorador": "Ver la transacción en Etherscan",
+  "doc.generarNFT": "Generar NFT",
+  "doc.consultarNFT": "Consultar NFT",
+  "doc.nftConfirmar": "¿Generar el NFT de este documento? Queda registrado en la blockchain y no se puede deshacer.",
+  "doc.nftGenerado": "Se generó el NFT del documento \"{0}\". Identificador: {1}",
+  "doc.nftTitulo": "NFT del documento",
+  "doc.nftVigente": "NFT vigente: certifica en la blockchain el contenido actual del documento.",
+  "doc.nftNoCoincide": "El NFT no coincide con el documento: certifica un contenido distinto.",
+  "doc.nftIdentificador": "Identificador",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Hash certificado",
+  "doc.nftFecha": "Fecha de emisión",
+  "doc.nftPropietario": "Wallet propietaria",
+  "doc.nftVerExplorador": "Ver el NFT en Etherscan",
+  "error.019": "El documento ya tiene un NFT generado previamente.",
+  "error.020": "Error al generar el NFT en la red blockchain. Por favor intente nuevamente.",
+  "error.031": "Error el documento no posee un NFT asociado generado.",
+  "error.032": "Error no se puede consultar la red blockchain."
 }';
 END
 ELSE
@@ -826,7 +843,24 @@ ELSE
   "doc.red": "Red",
   "doc.bloque": "bloque",
   "doc.registroLocal": "Registro local (simulado)",
-  "doc.verExplorador": "Ver la transacción en Etherscan"
+  "doc.verExplorador": "Ver la transacción en Etherscan",
+  "doc.generarNFT": "Generar NFT",
+  "doc.consultarNFT": "Consultar NFT",
+  "doc.nftConfirmar": "¿Generar el NFT de este documento? Queda registrado en la blockchain y no se puede deshacer.",
+  "doc.nftGenerado": "Se generó el NFT del documento \"{0}\". Identificador: {1}",
+  "doc.nftTitulo": "NFT del documento",
+  "doc.nftVigente": "NFT vigente: certifica en la blockchain el contenido actual del documento.",
+  "doc.nftNoCoincide": "El NFT no coincide con el documento: certifica un contenido distinto.",
+  "doc.nftIdentificador": "Identificador",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Hash certificado",
+  "doc.nftFecha": "Fecha de emisión",
+  "doc.nftPropietario": "Wallet propietaria",
+  "doc.nftVerExplorador": "Ver el NFT en Etherscan",
+  "error.019": "El documento ya tiene un NFT generado previamente.",
+  "error.020": "Error al generar el NFT en la red blockchain. Por favor intente nuevamente.",
+  "error.031": "Error el documento no posee un NFT asociado generado.",
+  "error.032": "Error no se puede consultar la red blockchain."
 }';
 
 -- English (en)
@@ -1239,7 +1273,24 @@ BEGIN
   "doc.red": "Network",
   "doc.bloque": "block",
   "doc.registroLocal": "Local registry (simulated)",
-  "doc.verExplorador": "View the transaction on Etherscan"
+  "doc.verExplorador": "View the transaction on Etherscan",
+  "doc.generarNFT": "Generate NFT",
+  "doc.consultarNFT": "View NFT",
+  "doc.nftConfirmar": "Generate the NFT for this document? It is recorded on the blockchain and cannot be undone.",
+  "doc.nftGenerado": "The NFT for \"{0}\" was generated. Identifier: {1}",
+  "doc.nftTitulo": "Document NFT",
+  "doc.nftVigente": "Valid NFT: it certifies the current content of the document on the blockchain.",
+  "doc.nftNoCoincide": "The NFT does not match the document: it certifies different content.",
+  "doc.nftIdentificador": "Identifier",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Certified hash",
+  "doc.nftFecha": "Issue date",
+  "doc.nftPropietario": "Owner wallet",
+  "doc.nftVerExplorador": "View the NFT on Etherscan",
+  "error.019": "The document already has a previously generated NFT.",
+  "error.020": "Error generating the NFT on the blockchain network. Please try again.",
+  "error.031": "Error: the document has no associated NFT.",
+  "error.032": "Error: the blockchain network cannot be queried."
 }';
 END
 ELSE
@@ -1648,7 +1699,24 @@ ELSE
   "doc.red": "Network",
   "doc.bloque": "block",
   "doc.registroLocal": "Local registry (simulated)",
-  "doc.verExplorador": "View the transaction on Etherscan"
+  "doc.verExplorador": "View the transaction on Etherscan",
+  "doc.generarNFT": "Generate NFT",
+  "doc.consultarNFT": "View NFT",
+  "doc.nftConfirmar": "Generate the NFT for this document? It is recorded on the blockchain and cannot be undone.",
+  "doc.nftGenerado": "The NFT for \"{0}\" was generated. Identifier: {1}",
+  "doc.nftTitulo": "Document NFT",
+  "doc.nftVigente": "Valid NFT: it certifies the current content of the document on the blockchain.",
+  "doc.nftNoCoincide": "The NFT does not match the document: it certifies different content.",
+  "doc.nftIdentificador": "Identifier",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Certified hash",
+  "doc.nftFecha": "Issue date",
+  "doc.nftPropietario": "Owner wallet",
+  "doc.nftVerExplorador": "View the NFT on Etherscan",
+  "error.019": "The document already has a previously generated NFT.",
+  "error.020": "Error generating the NFT on the blockchain network. Please try again.",
+  "error.031": "Error: the document has no associated NFT.",
+  "error.032": "Error: the blockchain network cannot be queried."
 }';
 
 -- Português (pt)
@@ -2061,7 +2129,24 @@ BEGIN
   "doc.red": "Rede",
   "doc.bloque": "bloco",
   "doc.registroLocal": "Registro local (simulado)",
-  "doc.verExplorador": "Ver a transação no Etherscan"
+  "doc.verExplorador": "Ver a transação no Etherscan",
+  "doc.generarNFT": "Gerar NFT",
+  "doc.consultarNFT": "Consultar NFT",
+  "doc.nftConfirmar": "Gerar o NFT deste documento? Ele fica registrado na blockchain e não pode ser desfeito.",
+  "doc.nftGenerado": "O NFT do documento \"{0}\" foi gerado. Identificador: {1}",
+  "doc.nftTitulo": "NFT do documento",
+  "doc.nftVigente": "NFT válido: certifica na blockchain o conteúdo atual do documento.",
+  "doc.nftNoCoincide": "O NFT não corresponde ao documento: certifica um conteúdo diferente.",
+  "doc.nftIdentificador": "Identificador",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Hash certificado",
+  "doc.nftFecha": "Data de emissão",
+  "doc.nftPropietario": "Carteira proprietária",
+  "doc.nftVerExplorador": "Ver o NFT no Etherscan",
+  "error.019": "O documento já tem um NFT gerado anteriormente.",
+  "error.020": "Erro ao gerar o NFT na rede blockchain. Por favor, tente novamente.",
+  "error.031": "Erro: o documento não possui um NFT associado.",
+  "error.032": "Erro: não é possível consultar a rede blockchain."
 }';
 END
 ELSE
@@ -2470,6 +2555,23 @@ ELSE
   "doc.red": "Rede",
   "doc.bloque": "bloco",
   "doc.registroLocal": "Registro local (simulado)",
-  "doc.verExplorador": "Ver a transação no Etherscan"
+  "doc.verExplorador": "Ver a transação no Etherscan",
+  "doc.generarNFT": "Gerar NFT",
+  "doc.consultarNFT": "Consultar NFT",
+  "doc.nftConfirmar": "Gerar o NFT deste documento? Ele fica registrado na blockchain e não pode ser desfeito.",
+  "doc.nftGenerado": "O NFT do documento \"{0}\" foi gerado. Identificador: {1}",
+  "doc.nftTitulo": "NFT do documento",
+  "doc.nftVigente": "NFT válido: certifica na blockchain o conteúdo atual do documento.",
+  "doc.nftNoCoincide": "O NFT não corresponde ao documento: certifica um conteúdo diferente.",
+  "doc.nftIdentificador": "Identificador",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Hash certificado",
+  "doc.nftFecha": "Data de emissão",
+  "doc.nftPropietario": "Carteira proprietária",
+  "doc.nftVerExplorador": "Ver o NFT no Etherscan",
+  "error.019": "O documento já tem um NFT gerado anteriormente.",
+  "error.020": "Erro ao gerar o NFT na rede blockchain. Por favor, tente novamente.",
+  "error.031": "Erro: o documento não possui um NFT associado.",
+  "error.032": "Erro: não é possível consultar a rede blockchain."
 }';
 GO

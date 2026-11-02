@@ -17,6 +17,10 @@ namespace BE
         ErrorEnlace,          // [ERROR-013]: no se pudo generar el enlace
         EnlaceNoEnviado,      // [ERROR-013]: el enlace se generó pero el email falló
         EnlaceInvalido,       // [ERROR-044]: el token no existe, venció o fue revocado
-        SinSuscripcion        // la cuenta no tiene una suscripción vigente
+        SinSuscripcion,       // la cuenta no tiene una suscripción vigente
+        NFTExistente,         // [ERROR-019]
+        ErrorNFT,             // [ERROR-020]
+        SinNFT,               // [ERROR-031]
+        ErrorConsultaNFT      // [ERROR-032]
     }
 }

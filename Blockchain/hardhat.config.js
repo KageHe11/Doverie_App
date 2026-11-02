@@ -12,7 +12,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY && !process.env.PRIVATE_KEY.startsWi
 module.exports = {
   solidity: {
     version: "0.8.28",
-    settings: { optimizer: { enabled: true, runs: 200 } },
+    // OpenZeppelin 5.7 usa instrucciones de Cancun (mcopy); Sepolia las soporta.
+    settings: { optimizer: { enabled: true, runs: 200 }, evmVersion: "cancun" },
   },
   networks: {
     sepolia: {

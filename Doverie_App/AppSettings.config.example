@@ -25,6 +25,7 @@
 	<add key="BlockchainChainId" value="11155111" />
 	<add key="BlockchainClavePrivada" value="0xclave-privada-de-la-wallet-de-prueba" />
 	<add key="BlockchainContrato" value="0xE9f903669a54678b717FEf28A1bb3412EaD159d8" />
+	<add key="BlockchainContratoNFT" value="0x959d6fCbf9c00163A83d11b05c8ed1DFF144AC7D" />
 	<add key="BlockchainRed" value="Ethereum Sepolia" />
 	<add key="BlockchainExplorador" value="https://sepolia.etherscan.io" />
 	<!-- <add key="DocumentosRuta" value="C:\DoverieDatos\Documentos" /> -->

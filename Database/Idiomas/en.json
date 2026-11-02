@@ -403,5 +403,22 @@
   "doc.red": "Network",
   "doc.bloque": "block",
   "doc.registroLocal": "Local registry (simulated)",
-  "doc.verExplorador": "View the transaction on Etherscan"
+  "doc.verExplorador": "View the transaction on Etherscan",
+  "doc.generarNFT": "Generate NFT",
+  "doc.consultarNFT": "View NFT",
+  "doc.nftConfirmar": "Generate the NFT for this document? It is recorded on the blockchain and cannot be undone.",
+  "doc.nftGenerado": "The NFT for \"{0}\" was generated. Identifier: {1}",
+  "doc.nftTitulo": "Document NFT",
+  "doc.nftVigente": "Valid NFT: it certifies the current content of the document on the blockchain.",
+  "doc.nftNoCoincide": "The NFT does not match the document: it certifies different content.",
+  "doc.nftIdentificador": "Identifier",
+  "doc.nftToken": "Token",
+  "doc.nftHash": "Certified hash",
+  "doc.nftFecha": "Issue date",
+  "doc.nftPropietario": "Owner wallet",
+  "doc.nftVerExplorador": "View the NFT on Etherscan",
+  "error.019": "The document already has a previously generated NFT.",
+  "error.020": "Error generating the NFT on the blockchain network. Please try again.",
+  "error.031": "Error: the document has no associated NFT.",
+  "error.032": "Error: the blockchain network cannot be queried."
 }

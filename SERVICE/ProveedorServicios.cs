@@ -31,6 +31,17 @@ namespace SERVICE
                 default: throw new ConfigurationErrorsException("Blockchain no soportada: " + Tipo);
             }
         }
+        /// Los NFT siguen a la blockchain configurada.
+        public static IRegistroNFT NFT()
+        {
+            string Tipo = ConfigurationManager.AppSettings["Blockchain"] ?? "Local";
+            switch (Tipo)
+            {
+                case "Local": return new RegistroNFTLocal();
+                case "Nethereum": return new RegistroNFTNethereum();
+                default: throw new ConfigurationErrorsException("Blockchain no soportada: " + Tipo);
+            }
+        }
         /// Una sola instancia: la pasarela local guarda los cobros en memoria.
         private static readonly PasarelaPagoLocal PasarelaLocal = new PasarelaPagoLocal();
         public static IPasarelaPago PasarelaPago()

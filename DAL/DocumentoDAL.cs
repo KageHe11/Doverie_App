@@ -41,6 +41,18 @@ namespace DAL
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_Documento_ActualizarEstado", Parametros, CommandType.StoredProcedure);
         }
+        /// Asocia el NFT al documento (CU-001-007 paso 6). Devuelve false si
+        /// el documento ya tenía uno o dejó de estar activo.
+        public bool RegistrarNFT(int Pid, string PnftId)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object>
+            {
+                { "@Id", Pid },
+                { "@NFTId", PnftId }
+            };
+            return Convert.ToInt32(Dao.ExecuteScalarStoredProcedure("SP_Documento_RegistrarNFT", Parametros, CommandType.StoredProcedure)) == 1;
+        }
         /// Deja registro de una verificación de integridad (para estadísticas).
         public void RegistrarVerificacion(int PdocumentoId, int PusuarioId, bool Pintegro)
         {

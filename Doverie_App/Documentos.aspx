@@ -54,6 +54,31 @@
         </div>
     </asp:Panel>
 
+    <%-- CU-001-007 Generar NFT y CU-001-013 Consultar Estado de NFT --%>
+    <asp:Panel ID="pnlNFT" runat="server" CssClass="card mb-3 border-dark" Visible="false">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title"><%: Traductor.T("doc.nftTitulo") %>: <asp:Literal ID="litNFTNombre" runat="server" Mode="Encode" /></h5>
+                <asp:LinkButton ID="btnCerrarNFT" runat="server" CssClass="btn-close" OnClick="btnCerrarNFT_Click" />
+            </div>
+            <asp:Label ID="lblNFTEstado" runat="server" CssClass="alert d-block"></asp:Label>
+            <table class="table table-sm small mb-0">
+                <tr><th style="width: 30%"><%: Traductor.T("doc.nftIdentificador") %></th><td class="font-monospace text-break"><asp:Literal ID="litNFTIdentificador" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.nftToken") %></th><td><asp:Literal ID="litNFTToken" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.nftHash") %></th><td class="font-monospace text-break"><asp:Literal ID="litNFTHash" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.nftFecha") %></th><td><asp:Literal ID="litNFTFecha" runat="server" Mode="Encode" /></td></tr>
+                <tr><th><%: Traductor.T("doc.red") %></th><td><asp:Literal ID="litNFTRed" runat="server" Mode="Encode" /></td></tr>
+                <asp:PlaceHolder ID="phNFTPropietario" runat="server">
+                    <tr><th><%: Traductor.T("doc.nftPropietario") %></th><td class="font-monospace text-break"><asp:Literal ID="litNFTPropietario" runat="server" Mode="Encode" /></td></tr>
+                </asp:PlaceHolder>
+                <asp:PlaceHolder ID="phNFTTransaccion" runat="server">
+                    <tr><th><%: Traductor.T("doc.transaccion") %></th><td class="font-monospace text-break"><asp:Literal ID="litNFTTransaccion" runat="server" Mode="Encode" /></td></tr>
+                </asp:PlaceHolder>
+            </table>
+            <asp:HyperLink ID="lnkNFTExplorador" runat="server" CssClass="d-inline-block small mt-2" Target="_blank" rel="noopener noreferrer" Visible="false" />
+        </div>
+    </asp:Panel>
+
     <%-- CU-001-005 Compartir Documento --%>
     <asp:Panel ID="pnlCompartir" runat="server" CssClass="card mb-3 border-primary" Visible="false">
         <div class="card-body">
@@ -159,6 +184,11 @@
                         CommandName="Descargar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.descargar") %>' />
                     <asp:LinkButton ID="btnVerificar" runat="server" CssClass="btn btn-sm btn-outline-primary"
                         CommandName="Verificar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.verificar") %>' />
+                    <asp:LinkButton ID="btnGenerarNFT" runat="server" CssClass="btn btn-sm btn-outline-dark"
+                        CommandName="GenerarNFT" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.generarNFT") %>'
+                        OnClientClick='<%# Traductor.Confirmar("doc.nftConfirmar") %>' />
+                    <asp:LinkButton ID="btnConsultarNFT" runat="server" CssClass="btn btn-sm btn-dark"
+                        CommandName="ConsultarNFT" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("doc.consultarNFT") %>' />
                     <asp:LinkButton ID="btnCompartirFila" runat="server" CssClass="btn btn-sm btn-outline-success"
                         CommandName="Compartir" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("compartir.boton") %>' />
                     <asp:LinkButton ID="btnEliminar" runat="server" CssClass="btn btn-sm btn-outline-danger"

@@ -6,8 +6,9 @@ using System.Web.UI.WebControls;
 using BE;
 using BLL;
 
-/// Documentos: CU-001-012 Listado, 002 Subir, 003 Descargar, 004 Eliminar
-/// y 006 Verificar Integridad. Entrar exige VerDocumentos; cada acción
+/// Documentos: CU-001-012 Listado, 002 Subir, 003 Descargar, 004 Eliminar,
+/// 006 Verificar Integridad, 007 Generar NFT y 013 Consultar Estado de NFT.
+/// Entrar exige VerDocumentos; cada acción
 /// exige además su propio Permiso. Que el documento sea de la cuenta del
 /// Usuario lo controla DocumentoBLL.
 public partial class Documentos : PaginaBase
@@ -35,13 +36,15 @@ public partial class Documentos : PaginaBase
     }
     // Se calculan una vez por request: TienePermiso consulta la base y la
     // grilla lo necesita en cada fila.
-    private bool PuedeDescargar, PuedeVerificar, PuedeEliminar, PuedeCompartir;
+    private bool PuedeDescargar, PuedeVerificar, PuedeEliminar, PuedeCompartir, PuedeGenerarNFT, PuedeConsultarNFT;
     protected void Page_Load(object sender, EventArgs e)
     {
         PuedeDescargar = TienePermiso("DescargarDocumento");
         PuedeVerificar = TienePermiso("VerificarDocumento");
         PuedeEliminar = TienePermiso("EliminarDocumento");
         PuedeCompartir = TienePermiso("CompartirDocumento");
+        PuedeGenerarNFT = TienePermiso("GenerarNFT");
+        PuedeConsultarNFT = TienePermiso("ConsultarNFT");
         pnlSubir.Visible = TienePermiso("SubirDocumento");
         btnCompartir.Text = Traductor.T("compartir.boton");
         CargarVigencias();
@@ -88,16 +91,22 @@ public partial class Documentos : PaginaBase
         e.Row.FindControl("btnVerificar").Visible = PuedeVerificar;
         e.Row.FindControl("btnEliminar").Visible = PuedeEliminar;
         e.Row.FindControl("btnCompartirFila").Visible = PuedeCompartir;
+        // Generar solo si todavía no tiene NFT; consultar solo si ya tiene.
+        bool TieneNFT = !string.IsNullOrEmpty(((DocumentoBE)e.Row.DataItem).NFTId);
+        e.Row.FindControl("btnGenerarNFT").Visible = PuedeGenerarNFT && !TieneNFT;
+        e.Row.FindControl("btnConsultarNFT").Visible = PuedeConsultarNFT && TieneNFT;
     }
     protected void btnFiltrar_Click(object sender, EventArgs e)
     {
         pnlVerificacion.Visible = false;
+        pnlNFT.Visible = false;
         pnlCompartir.Visible = false;
         CargarGrilla();
     }
     protected void btnSubir_Click(object sender, EventArgs e)
     {
         pnlVerificacion.Visible = false;
+        pnlNFT.Visible = false;
         pnlCompartir.Visible = false;
         if (!TienePermiso("SubirDocumento"))
         {
@@ -134,6 +143,7 @@ public partial class Documentos : PaginaBase
         int Id = Convert.ToInt32(e.CommandArgument);
         DocumentoBLL DocumentoBll = new DocumentoBLL();
         pnlVerificacion.Visible = false;
+        pnlNFT.Visible = false;
         pnlCompartir.Visible = false;
         if (e.CommandName == "Compartir")
         {
@@ -163,6 +173,40 @@ public partial class Documentos : PaginaBase
             if (Verificacion != null)
             {
                 MostrarVerificacion(Documento, Verificacion);
+            }
+            else
+            {
+                MostrarError(MensajeResultado(Resultado));
+            }
+        }
+        else if (e.CommandName == "GenerarNFT")
+        {
+            if (!PuedeGenerarNFT) { MostrarError(Traductor.T("error.056")); return; }
+            DocumentoBE Documento;
+            NFTBE Nft;
+            ResultadoDocumento Resultado = DocumentoBll.GenerarNFT(UsuarioActual, Id, out Documento, out Nft);
+            if (Resultado == ResultadoDocumento.Exitoso)
+            {
+                // 7. Mensaje de generación exitosa con el identificador del NFT
+                MostrarMensaje(Traductor.T("doc.nftGenerado", Documento.Nombre, Nft.Identificador));
+                Nft.Vigente = true;
+                MostrarNFT(Documento, Nft);
+            }
+            else
+            {
+                MostrarError(MensajeResultado(Resultado));
+            }
+            CargarGrilla();
+        }
+        else if (e.CommandName == "ConsultarNFT")
+        {
+            if (!PuedeConsultarNFT) { MostrarError(Traductor.T("error.056")); return; }
+            DocumentoBE Documento;
+            NFTBE Nft;
+            ResultadoDocumento Resultado = DocumentoBll.ConsultarNFT(UsuarioActual, Id, out Documento, out Nft);
+            if (Resultado == ResultadoDocumento.Exitoso)
+            {
+                MostrarNFT(Documento, Nft);
             }
             else
             {
@@ -205,6 +249,30 @@ public partial class Documentos : PaginaBase
         DocumentoBLL DocumentoBll = new DocumentoBLL();
         gvHistorial.DataSource = DocumentoBll.Historial(documento.Id);
         gvHistorial.DataBind();
+    }
+    /// CU-001-007 paso 7 y CU-001-013 paso 6: datos del NFT y su estado.
+    private void MostrarNFT(DocumentoBE documento, NFTBE nft)
+    {
+        pnlNFT.Visible = true;
+        litNFTNombre.Text = documento.Nombre;
+        lblNFTEstado.Text = HttpUtility.HtmlEncode(Traductor.T(nft.Vigente ? "doc.nftVigente" : "doc.nftNoCoincide"));
+        lblNFTEstado.CssClass = "alert d-block " + (nft.Vigente ? "alert-success" : "alert-danger");
+        litNFTIdentificador.Text = nft.Identificador;
+        litNFTToken.Text = "#" + nft.TokenId;
+        litNFTHash.Text = nft.Hash;
+        litNFTFecha.Text = nft.FechaEmision.ToString("dd/MM/yyyy HH:mm:ss");
+        litNFTRed.Text = nft.Red ?? Traductor.T("doc.registroLocal");
+        phNFTPropietario.Visible = nft.Propietario != null;
+        litNFTPropietario.Text = nft.Propietario;
+        phNFTTransaccion.Visible = nft.Transaccion != null;
+        litNFTTransaccion.Text = nft.Transaccion;
+        lnkNFTExplorador.Visible = nft.UrlExplorador != null;
+        lnkNFTExplorador.NavigateUrl = nft.UrlExplorador;
+        lnkNFTExplorador.Text = HttpUtility.HtmlEncode(Traductor.T("doc.nftVerExplorador"));
+    }
+    protected void btnCerrarNFT_Click(object sender, EventArgs e)
+    {
+        pnlNFT.Visible = false;
     }
     /// Manda el archivo al navegador como descarga. El nombre se codifica
     /// para que acentos o espacios no rompan el encabezado.
@@ -259,6 +327,7 @@ public partial class Documentos : PaginaBase
     protected void btnCompartir_Click(object sender, EventArgs e)
     {
         pnlVerificacion.Visible = false;
+        pnlNFT.Visible = false;
         if (!PuedeCompartir) { MostrarError(Traductor.T("error.056")); return; }
         string Enlace;
         string UrlBase = Request.Url.GetLeftPart(UriPartial.Authority) + Request.ApplicationPath;
@@ -319,6 +388,7 @@ public partial class Documentos : PaginaBase
     {
         if (e.CommandName != "Revocar") return;
         pnlVerificacion.Visible = false;
+        pnlNFT.Visible = false;
         if (!PuedeCompartir) { MostrarError(Traductor.T("error.056")); return; }
         ResultadoDocumento Resultado = new DocumentoCompartidoBLL().Revocar(UsuarioActual, Convert.ToInt32(e.CommandArgument));
         if (Resultado == ResultadoDocumento.Exitoso)
@@ -348,6 +418,10 @@ public partial class Documentos : PaginaBase
             case ResultadoDocumento.ErrorObtener: return Traductor.T("error.017");
             case ResultadoDocumento.Modificado: return Traductor.T("error.018");
             case ResultadoDocumento.ErrorEliminar: return Traductor.T("error.006");
+            case ResultadoDocumento.NFTExistente: return Traductor.T("error.019");
+            case ResultadoDocumento.ErrorNFT: return Traductor.T("error.020");
+            case ResultadoDocumento.SinNFT: return Traductor.T("error.031");
+            case ResultadoDocumento.ErrorConsultaNFT: return Traductor.T("error.032");
             case ResultadoDocumento.SinSuscripcion: return Traductor.T(UsuarioActual.EmpresaId == null ? "susc.requerida" : "susc.requeridaEmpresa");
             default: return Traductor.T("error.056");
         }

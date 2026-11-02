@@ -29,9 +29,10 @@ namespace SERVICE
     public class RegistroBlockchainNethereum : IRegistroBlockchain
     {
         /// Las transacciones de una misma wallet se numeran (nonce): se
-        /// envían de a una para que dos subidas simultáneas no tomen el mismo.
-        private static readonly object BloqueoEnvio = new object();
-        private static readonly TimeSpan EsperaMaxima = TimeSpan.FromMinutes(3);
+        /// envían de a una (también las de RegistroNFTNethereum, que usa la
+        /// misma wallet) para que dos envíos simultáneos no tomen el mismo.
+        internal static readonly object BloqueoEnvio = new object();
+        internal static readonly TimeSpan EsperaMaxima = TimeSpan.FromMinutes(3);
 
         [Function("registrar")]
         private class RegistrarFuncion : FunctionMessage
@@ -108,7 +109,7 @@ namespace SERVICE
                 UrlExplorador = string.IsNullOrWhiteSpace(Explorador) ? null : Explorador.TrimEnd('/') + "/tx/" + recibo.TransactionHash
             };
         }
-        private static Web3 CrearWeb3(bool conCuenta)
+        internal static Web3 CrearWeb3(bool conCuenta)
         {
             string Url = Configuracion("BlockchainRpcUrl");
             if (!conCuenta) return new Web3(Url);
@@ -119,7 +120,7 @@ namespace SERVICE
         {
             return Configuracion("BlockchainContrato");
         }
-        private static string Configuracion(string clave)
+        internal static string Configuracion(string clave)
         {
             string Valor = ConfigurationManager.AppSettings[clave];
             if (string.IsNullOrWhiteSpace(Valor)) throw new ConfigurationErrorsException("Falta configurar " + clave + ".");

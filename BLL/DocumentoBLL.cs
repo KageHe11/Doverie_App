@@ -204,6 +204,69 @@ namespace BLL
             }
             return verificacion.Integro ? ResultadoDocumento.Exitoso : ResultadoDocumento.Modificado;
         }
+        /// Un NFT por documento: dos pedidos simultáneos para el mismo
+        /// documento no pueden emitir dos tokens.
+        private static readonly object BloqueoNFT = new object();
+        /// CU-001-007 Generar NFT Documento.
+        public ResultadoDocumento GenerarNFT(UsuarioBE usuario, int id, out DocumentoBE documento, out NFTBE nft)
+        {
+            nft = null;
+            ResultadoDocumento Acceso = ObtenerAccesible(usuario, id, out documento);
+            if (Acceso != ResultadoDocumento.Exitoso) return Acceso;
+            lock (BloqueoNFT)
+            {
+                // 4. Verificar que no tenga un NFT [ERROR-019]. Se relee dentro
+                // del bloqueo por si otro pedido lo acaba de generar.
+                documento = new DocumentoDAL().ObtenerDatos(id);
+                if (!string.IsNullOrEmpty(documento.NFTId)) return ResultadoDocumento.NFTExistente;
+                // 5. Generar el NFT en la red blockchain [ERROR-020]
+                try
+                {
+                    nft = ProveedorServicios.NFT().Generar(documento.Hash);
+                }
+                catch (NFTExistenteException)
+                {
+                    // Otro documento con el mismo contenido ya tiene su NFT.
+                    return ResultadoDocumento.NFTExistente;
+                }
+                catch (Exception)
+                {
+                    return ResultadoDocumento.ErrorNFT;
+                }
+                // 6. Asociar el NFT al documento
+                if (!new DocumentoDAL().RegistrarNFT(documento.Id, nft.Identificador))
+                {
+                    nft = null;
+                    return ResultadoDocumento.ErrorNFT;
+                }
+                documento.NFTId = nft.Identificador;
+            }
+            RegistrarEvento("Generar NFT", documento, nft.Identificador, usuario.Id);
+            return ResultadoDocumento.Exitoso;
+        }
+        /// CU-001-013 Consultar Estado de NFT. El NFT está vigente si existe
+        /// en la red y certifica el mismo hash que tiene el documento.
+        public ResultadoDocumento ConsultarNFT(UsuarioBE usuario, int id, out DocumentoBE documento, out NFTBE nft)
+        {
+            nft = null;
+            ResultadoDocumento Acceso = ObtenerAccesible(usuario, id, out documento);
+            if (Acceso != ResultadoDocumento.Exitoso) return Acceso;
+            // 4. Obtener el identificador del NFT [ERROR-031]
+            if (string.IsNullOrEmpty(documento.NFTId)) return ResultadoDocumento.SinNFT;
+            // 5. Consultar el NFT en la red blockchain [ERROR-032]
+            try
+            {
+                nft = ProveedorServicios.NFT().Consultar(documento.NFTId);
+            }
+            catch (Exception)
+            {
+                return ResultadoDocumento.ErrorConsultaNFT;
+            }
+            if (nft == null) return ResultadoDocumento.ErrorConsultaNFT;
+            nft.Vigente = string.Equals(nft.Hash, documento.Hash, StringComparison.OrdinalIgnoreCase);
+            RegistrarEvento("Consultar NFT", documento, nft.Vigente ? "vigente" : "NO COINCIDE", usuario.Id);
+            return ResultadoDocumento.Exitoso;
+        }
         /// Historial de accesos y modificaciones de un documento (CU-001-006
         /// paso 9), tomado de la Bitácora completa (base + archivo XML).
         public List<BitacoraBE> Historial(int id)
