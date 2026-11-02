@@ -26,13 +26,21 @@ namespace BE
         /// Fin del período abonado: ahí se renueva o vence.
         public DateTime FechaRenovacion { get; set; }
 
-        // No persistido: lo completa la BLL.
+        // No persistidos: los completa la BLL.
         public PlanBE Plan { get; set; }
+        /// Si la renovación quedó pendiente de pago (pasarela sin débito
+        /// automático), hasta cuándo se mantiene el acceso para pagarla.
+        public DateTime? FinGracia { get; set; }
 
-        /// Da acceso a las funcionalidades del plan.
+        /// Da acceso a las funcionalidades del plan: dentro del período
+        /// abonado o, con la renovación pendiente, dentro del plazo de gracia.
         public bool Vigente
         {
-            get { return (Estado == EstadoActiva || Estado == EstadoCancelada) && FechaRenovacion > DateTime.Now; }
+            get
+            {
+                if (Estado != EstadoActiva && Estado != EstadoCancelada) return false;
+                return FechaRenovacion > DateTime.Now || (FinGracia.HasValue && FinGracia.Value > DateTime.Now);
+            }
         }
     }
 }

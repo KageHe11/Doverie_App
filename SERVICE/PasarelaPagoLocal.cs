@@ -15,7 +15,8 @@ namespace SERVICE
         private static readonly object Bloqueo = new object();
         private static readonly Dictionary<int, OperacionPagoBE> Cobros = new Dictionary<int, OperacionPagoBE>();
 
-        public string IniciarPago(int referencia, decimal monto, string descripcion, string urlRetorno)
+        public bool DebitoAutomatico { get { return true; } }
+        public string IniciarPago(int referencia, DateTime fecha, decimal monto, string descripcion, string urlRetorno)
         {
             lock (Bloqueo)
             {
@@ -30,7 +31,7 @@ namespace SERVICE
             }
             return "~/PagoSimulado.aspx?ref=" + referencia;
         }
-        public OperacionPagoBE ConsultarPago(int referencia)
+        public OperacionPagoBE ConsultarPago(int referencia, DateTime fecha)
         {
             lock (Bloqueo)
             {

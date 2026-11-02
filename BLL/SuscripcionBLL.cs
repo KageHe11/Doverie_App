@@ -106,7 +106,7 @@ namespace BLL
                 // Un pago anterior que quedó abandonado en el checkout ya no
                 // se puede confirmar.
                 PagoDal.AnularPendientes(CuentaId);
-                DateTime Ahora = DateTime.Now;
+                DateTime Ahora = AhoraSinMilisegundos();
                 SuscripcionBE Nueva = new SuscripcionBE
                 {
                     UsuarioId = CuentaId,
@@ -134,7 +134,7 @@ namespace BLL
             // 6. Redirigir al proceso de pago [ERROR-014]
             try
             {
-                urlCheckout = ProveedorServicios.PasarelaPago().IniciarPago(Pago.Id, Pago.Monto, "Doverie - " + DescribirPlan(Plan), urlRetorno + "?pago=" + Pago.Id);
+                urlCheckout = ProveedorServicios.PasarelaPago().IniciarPago(Pago.Id, Pago.Fecha, Pago.Monto, "Doverie - " + DescribirPlan(Plan), urlRetorno + "?pago=" + Pago.Id);
             }
             catch (Exception)
             {
@@ -164,13 +164,15 @@ namespace BLL
             OperacionPagoBE Operacion;
             try
             {
-                Operacion = ProveedorServicios.PasarelaPago().ConsultarPago(pago.Id);
+                Operacion = ProveedorServicios.PasarelaPago().ConsultarPago(pago.Id, pago.Fecha);
             }
             catch (Exception)
             {
                 return ResultadoSuscripcion.PagoPendiente;
             }
             if (Operacion.Estado == OperacionPagoBE.EstadoPendiente) return ResultadoSuscripcion.PagoPendiente;
+            ValidarMonto(Operacion, pago);
+            if (pago.Concepto == PagoBE.ConceptoRenovacion) return ConfirmarRenovacion(usuario, ref pago, Operacion);
             PlanBE Plan = new PlanDAL().ObtenerDatos(pago.PlanId);
             if (Operacion.Estado != OperacionPagoBE.EstadoAprobado)
             {
@@ -314,8 +316,10 @@ namespace BLL
         }
 
         /// Fin del período abonado. Activa: se renueva con débito automático
-        /// (si el cobro se rechaza, vence). Cancelada: vence. Se repite por
-        /// si pasó más de un período sin que nadie entrara.
+        /// (si el cobro se rechaza, vence) o, si la pasarela no debita sola,
+        /// queda la renovación pendiente de pago con plazo de gracia.
+        /// Cancelada: vence. Se repite por si pasó más de un período sin que
+        /// nadie entrara.
         private void ProcesarFinDePeriodo(SuscripcionBE suscripcion)
         {
             SuscripcionDAL SuscripcionDal = new SuscripcionDAL();
@@ -325,13 +329,16 @@ namespace BLL
                 PlanBE Plan = new PlanDAL().ObtenerDatos(suscripcion.PlanId);
                 if (suscripcion.Estado == SuscripcionBE.EstadoCancelada)
                 {
-                    SuscripcionDal.ActualizarEstado(suscripcion.Id, SuscripcionBE.EstadoVencida);
-                    suscripcion.Estado = SuscripcionBE.EstadoVencida;
-                    new BitacoraBLL().Registrar("Vencimiento Suscripción", "Plan: " + DescribirPlan(Plan), suscripcion.UsuarioId);
-                    GestorEventos.Notificar(CatalogoEventos.SuscripcionVencimiento, suscripcion.UsuarioId, Plan.Nombre);
+                    Vencer(suscripcion, Plan);
                     return;
                 }
                 if (suscripcion.Estado != SuscripcionBE.EstadoActiva) return;
+                IPasarelaPago Pasarela = ProveedorServicios.PasarelaPago();
+                if (!Pasarela.DebitoAutomatico)
+                {
+                    if (!ProcesarRenovacionManual(suscripcion, Plan, Pasarela)) return;
+                    continue;
+                }
                 PagoDAL PagoDal = new PagoDAL();
                 PagoBE Pago = new PagoBE
                 {
@@ -354,11 +361,7 @@ namespace BLL
                 }
                 if (Operacion.Estado == OperacionPagoBE.EstadoAprobado)
                 {
-                    PagoDal.ActualizarEstado(Pago.Id, PagoBE.EstadoAprobado, Operacion.Operacion);
-                    suscripcion.FechaRenovacion = suscripcion.FechaRenovacion.AddMonths(Plan.Meses);
-                    SuscripcionDal.ActualizarRenovacion(suscripcion.Id, suscripcion.FechaRenovacion);
-                    new BitacoraBLL().Registrar("Renovación Suscripción", "Plan: " + DescribirPlan(Plan) + " | Pago Id: " + Pago.Id + " | Hasta: " + suscripcion.FechaRenovacion.ToString("dd/MM/yyyy"), suscripcion.UsuarioId);
-                    GestorEventos.Notificar(CatalogoEventos.SuscripcionRenovacion, suscripcion.UsuarioId, Plan.Nombre);
+                    AplicarRenovacion(suscripcion, Plan, Pago.Id, Operacion.Operacion);
                 }
                 else
                 {
@@ -370,6 +373,179 @@ namespace BLL
                     return;
                 }
             }
+        }
+
+        // ---------- Renovación sin débito automático (Mercado Pago) ----------
+
+        /// Días que se mantiene el acceso después del fin del período para
+        /// pagar la renovación.
+        public const int DiasGracia = 7;
+        /// Si la pasarela configurada renueva sola (débito automático) o la
+        /// renovación la paga el Usuario.
+        public static bool RenovacionAutomatica
+        {
+            get { return ProveedorServicios.PasarelaPago().DebitoAutomatico; }
+        }
+
+        /// La renovación de una suscripción Activa cuyo período terminó y que
+        /// la pasarela no puede debitar sola: queda un pago de renovación
+        /// pendiente y el acceso sigue durante el plazo de gracia; si se cumple
+        /// sin pago, vence. Devuelve true si la suscripción quedó renovada.
+        private bool ProcesarRenovacionManual(SuscripcionBE suscripcion, PlanBE plan, IPasarelaPago pasarela)
+        {
+            PagoDAL PagoDal = new PagoDAL();
+            DateTime FinGracia = suscripcion.FechaRenovacion.AddDays(DiasGracia);
+            List<PagoBE> Renovaciones = PagosDeRenovacion(suscripcion);
+            PagoBE Pendiente = Renovaciones.FirstOrDefault(P => P.Estado == PagoBE.EstadoPendiente);
+            if (DateTime.Now >= FinGracia)
+            {
+                // Antes de darla por vencida, por si pagó a último momento.
+                if (Pendiente != null)
+                {
+                    try
+                    {
+                        OperacionPagoBE Operacion = pasarela.ConsultarPago(Pendiente.Id, Pendiente.Fecha);
+                        ValidarMonto(Operacion, Pendiente);
+                        if (Operacion.Estado == OperacionPagoBE.EstadoAprobado)
+                        {
+                            AplicarRenovacion(suscripcion, plan, Pendiente.Id, Operacion.Operacion);
+                            return true;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Sin respuesta de la pasarela se espera al próximo
+                        // ingreso: no se da por vencida una suscripción que
+                        // quizás se pagó.
+                        suscripcion.FinGracia = FinGracia;
+                        return false;
+                    }
+                    PagoDal.ActualizarEstado(Pendiente.Id, PagoBE.EstadoAnulado, null);
+                }
+                Vencer(suscripcion, plan);
+                return false;
+            }
+            suscripcion.FinGracia = FinGracia;
+            if (Renovaciones.Count == 0)
+            {
+                PagoBE Pago = NuevoPagoRenovacion(suscripcion, plan);
+                new BitacoraBLL().Registrar("Renovación Pendiente de Pago", "Plan: " + DescribirPlan(plan) + " | Pago Id: " + Pago.Id + " | Plazo: " + FinGracia.ToString("dd/MM/yyyy"), suscripcion.UsuarioId);
+                GestorEventos.Notificar(CatalogoEventos.RenovacionPendiente, suscripcion.UsuarioId, plan.Nombre);
+            }
+            return false;
+        }
+        /// Renovación pendiente de pago de la cuenta (con su plazo de gracia), o
+        /// null si no hay ninguna.
+        public PagoBE ObtenerRenovacionPendiente(UsuarioBE usuario, out SuscripcionBE suscripcion)
+        {
+            suscripcion = EsTitular(usuario) ? ObtenerVigente(usuario) : null;
+            if (suscripcion == null || !suscripcion.FinGracia.HasValue) return null;
+            SuscripcionBE Vigente = suscripcion;
+            PagoBE Pendiente = PagosDeRenovacion(Vigente).FirstOrDefault(P => P.Estado == PagoBE.EstadoPendiente);
+            // Si el pago anterior se rechazó, se genera otro para reintentar.
+            return Pendiente ?? NuevoPagoRenovacion(Vigente, Vigente.Plan);
+        }
+        /// Lleva al checkout de la pasarela para pagar la renovación pendiente.
+        public ResultadoSuscripcion PagarRenovacion(UsuarioBE usuario, string urlRetorno, out string urlCheckout)
+        {
+            urlCheckout = null;
+            if (!EsTitular(usuario)) return ResultadoSuscripcion.SinAcceso;
+            SuscripcionBE Suscripcion;
+            PagoBE Pago = ObtenerRenovacionPendiente(usuario, out Suscripcion);
+            if (Pago == null) return ResultadoSuscripcion.SinSuscripcion;
+            try
+            {
+                urlCheckout = ProveedorServicios.PasarelaPago().IniciarPago(Pago.Id, Pago.Fecha, Pago.Monto,
+                    "Doverie - Renovación " + DescribirPlan(Suscripcion.Plan), urlRetorno + "?pago=" + Pago.Id);
+            }
+            catch (Exception)
+            {
+                return ResultadoSuscripcion.ErrorPago;
+            }
+            new BitacoraBLL().Registrar("Iniciar Pago Renovación", "Pago Id: " + Pago.Id + " | Plan: " + DescribirPlan(Suscripcion.Plan) + " | Monto: " + FormatearMonto(Pago.Monto), usuario.Id);
+            return ResultadoSuscripcion.Exitoso;
+        }
+        /// Resultado del pago de una renovación al volver del checkout.
+        private ResultadoSuscripcion ConfirmarRenovacion(UsuarioBE usuario, ref PagoBE pago, OperacionPagoBE operacion)
+        {
+            PagoDAL PagoDal = new PagoDAL();
+            lock (BloqueoRenovacion)
+            {
+                // Se relee adentro del bloqueo: dos vueltas del checkout a la
+                // vez no pueden extender dos veces el período.
+                pago = PagoDal.ObtenerDatos(pago.Id);
+                if (pago.Estado == PagoBE.EstadoAprobado) return ResultadoSuscripcion.Exitoso;
+                if (pago.Estado != PagoBE.EstadoPendiente) return ResultadoSuscripcion.ErrorPago;
+                SuscripcionBE Suscripcion = new SuscripcionDAL().ObtenerDatos(pago.SuscripcionId);
+                PlanBE Plan = new PlanDAL().ObtenerDatos(Suscripcion.PlanId);
+                if (operacion.Estado != OperacionPagoBE.EstadoAprobado)
+                {
+                    // Sigue en el plazo de gracia: puede reintentar con otro medio.
+                    PagoDal.ActualizarEstado(pago.Id, PagoBE.EstadoRechazado, operacion.Operacion);
+                    new BitacoraBLL().Registrar("Pago Rechazado", "Renovación | Pago Id: " + pago.Id + " | Plan: " + DescribirPlan(Plan), usuario.Id);
+                    GestorEventos.Notificar(CatalogoEventos.PagoRechazado, Suscripcion.UsuarioId, Plan.Nombre);
+                    pago = PagoDal.ObtenerDatos(pago.Id);
+                    return ResultadoSuscripcion.ErrorPago;
+                }
+                AplicarRenovacion(Suscripcion, Plan, pago.Id, operacion.Operacion);
+                pago = PagoDal.ObtenerDatos(pago.Id);
+                return ResultadoSuscripcion.Exitoso;
+            }
+        }
+        private static void AplicarRenovacion(SuscripcionBE suscripcion, PlanBE plan, int pagoId, string operacion)
+        {
+            new PagoDAL().ActualizarEstado(pagoId, PagoBE.EstadoAprobado, operacion);
+            suscripcion.FechaRenovacion = suscripcion.FechaRenovacion.AddMonths(plan.Meses);
+            suscripcion.FinGracia = null;
+            new SuscripcionDAL().ActualizarRenovacion(suscripcion.Id, suscripcion.FechaRenovacion);
+            new BitacoraBLL().Registrar("Renovación Suscripción", "Plan: " + DescribirPlan(plan) + " | Pago Id: " + pagoId + " | Hasta: " + suscripcion.FechaRenovacion.ToString("dd/MM/yyyy"), suscripcion.UsuarioId);
+            GestorEventos.Notificar(CatalogoEventos.SuscripcionRenovacion, suscripcion.UsuarioId, plan.Nombre);
+        }
+        /// Pagos de renovación del período que terminó (creados desde su fin).
+        private static List<PagoBE> PagosDeRenovacion(SuscripcionBE suscripcion)
+        {
+            return new PagoDAL().ListarPorUsuario(suscripcion.UsuarioId)
+                .Where(P => P.SuscripcionId == suscripcion.Id && P.Concepto == PagoBE.ConceptoRenovacion && P.Fecha >= suscripcion.FechaRenovacion)
+                .ToList();
+        }
+        private PagoBE NuevoPagoRenovacion(SuscripcionBE suscripcion, PlanBE plan)
+        {
+            PagoDAL PagoDal = new PagoDAL();
+            PagoBE Pago = new PagoBE
+            {
+                SuscripcionId = suscripcion.Id,
+                MedioPagoId = PagoDal.ObtenerUltimoMedioAprobado(suscripcion.UsuarioId) ?? ListarMediosPago().First().Id,
+                Estado = PagoBE.EstadoPendiente,
+                Fecha = AhoraSinMilisegundos(),
+                Monto = plan.Total,
+                Concepto = PagoBE.ConceptoRenovacion
+            };
+            PagoDal.Registrar(Pago);
+            return Pago;
+        }
+        private static void Vencer(SuscripcionBE suscripcion, PlanBE plan)
+        {
+            new SuscripcionDAL().ActualizarEstado(suscripcion.Id, SuscripcionBE.EstadoVencida);
+            suscripcion.Estado = SuscripcionBE.EstadoVencida;
+            suscripcion.FinGracia = null;
+            new BitacoraBLL().Registrar("Vencimiento Suscripción", "Plan: " + DescribirPlan(plan), suscripcion.UsuarioId);
+            GestorEventos.Notificar(CatalogoEventos.SuscripcionVencimiento, suscripcion.UsuarioId, plan.Nombre);
+        }
+        /// Un cobro aprobado por menos de lo que vale el pago no lo paga.
+        private static void ValidarMonto(OperacionPagoBE operacion, PagoBE pago)
+        {
+            if (operacion.Estado == OperacionPagoBE.EstadoAprobado && operacion.Monto > 0 && operacion.Monto < pago.Monto)
+            {
+                new BitacoraBLL().Registrar("Pago Rechazado", "Pago Id: " + pago.Id + " | Monto cobrado " + FormatearMonto(operacion.Monto) + " menor que " + FormatearMonto(pago.Monto), null);
+                operacion.Estado = OperacionPagoBE.EstadoRechazado;
+            }
+        }
+        /// Fecha de los pagos sin milisegundos: es parte de la referencia del
+        /// cobro en la pasarela y tiene que leerse igual desde la base.
+        private static DateTime AhoraSinMilisegundos()
+        {
+            DateTime Ahora = DateTime.Now;
+            return new DateTime(Ahora.Year, Ahora.Month, Ahora.Day, Ahora.Hour, Ahora.Minute, Ahora.Second);
         }
         /// Usuarios de la cuenta: el titular y sus empleados (sin los
         /// revocados).

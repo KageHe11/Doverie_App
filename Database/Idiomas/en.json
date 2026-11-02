@@ -458,5 +458,12 @@
   "pag.mostrando": "{0}–{1} of {2}",
   "pag.paginas": "Pages",
   "pag.anterior": "Previous page",
-  "pag.siguiente": "Next page"
+  "pag.siguiente": "Next page",
+  "susc.pagarRenovacion": "Pay renewal",
+  "susc.renovacionPendiente": "Your plan reached its renewal date ({1}). Pay the {0} renewal before {2} to keep your access.",
+  "susc.exitoRenovacion": "Done! The renewal of your {0} plan was paid.",
+  "susc.renovacionManualDetalle": "On {0} we will remind you to pay the renewal (you have {1} days)",
+  "notif.evento.RenovacionPendiente": "Renewal pending payment",
+  "notif.msg.RenovacionPendiente": "Your {0} plan reached its renewal date. Pay the renewal from Subscription to keep your access.",
+  "susc.estado.ActivaManual": "Active · we will remind you to pay the renewal"
 }

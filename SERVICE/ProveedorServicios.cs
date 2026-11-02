@@ -6,9 +6,8 @@ namespace SERVICE
     /// Decide qué implementación de almacenamiento, de blockchain y de
     /// pasarela de pago usa el sistema, según AppSettings ("Almacenamiento",
     /// "Blockchain" y "PasarelaPago"). Todas tienen una versión "Local" para
-    /// desarrollo; el almacenamiento además tiene "S3" (AWS) y la blockchain
-    /// "Nethereum" (Ethereum real). Cuando se sume Mercado Pago, se agrega
-    /// acá su caso y la BLL no cambia.
+    /// desarrollo; además el almacenamiento tiene "S3" (AWS), la blockchain
+    /// "Nethereum" (Ethereum real) y la pasarela "MercadoPago".
     public static class ProveedorServicios
     {
         public static IAlmacenamientoArchivos Almacenamiento()
@@ -50,6 +49,7 @@ namespace SERVICE
             switch (Tipo)
             {
                 case "Local": return PasarelaLocal;
+                case "MercadoPago": return new PasarelaMercadoPago();
                 default: throw new ConfigurationErrorsException("Pasarela de pago no soportada: " + Tipo);
             }
         }

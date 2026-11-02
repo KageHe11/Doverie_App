@@ -184,6 +184,7 @@
     <Compile Include="IRegistroBlockchain.cs" />
     <Compile Include="IRegistroNFT.cs" />
     <Compile Include="ITraduccion.cs" />
+    <Compile Include="PasarelaMercadoPago.cs" />
     <Compile Include="PasarelaPagoLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProveedorServicios.cs" />

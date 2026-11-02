@@ -16,6 +16,12 @@
     <asp:Label ID="lblInfo" runat="server" CssClass="alert alert-info d-block" Visible="false" EnableViewState="false"></asp:Label>
     <asp:Label ID="lblError" runat="server" CssClass="alert alert-danger d-block" Visible="false" EnableViewState="false"></asp:Label>
 
+    <%-- Renovación pendiente de pago (pasarela sin débito automático) --%>
+    <asp:Panel ID="pnlRenovacion" runat="server" CssClass="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-2" Visible="false">
+        <span><asp:Literal ID="litRenovacion" runat="server" Mode="Encode" /></span>
+        <asp:Button ID="btnPagarRenovacion" runat="server" CssClass="btn btn-warning" OnClick="btnPagarRenovacion_Click" />
+    </asp:Panel>
+
     <%-- CU-001-008 paso 2: plan actual con sus características y vencimiento --%>
     <asp:Panel ID="pnlActual" runat="server" CssClass="card mb-4" Visible="false">
         <div class="card-body">

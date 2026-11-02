@@ -458,5 +458,12 @@
   "pag.mostrando": "{0}–{1} de {2}",
   "pag.paginas": "Páginas",
   "pag.anterior": "Página anterior",
-  "pag.siguiente": "Página siguiente"
+  "pag.siguiente": "Página siguiente",
+  "susc.pagarRenovacion": "Pagar renovación",
+  "susc.renovacionPendiente": "Tu plan llegó a su fecha de renovación ({1}). Pagá la renovación de {0} antes del {2} para no perder el acceso.",
+  "susc.exitoRenovacion": "¡Listo! Se pagó la renovación de tu plan {0}.",
+  "susc.renovacionManualDetalle": "El {0} te avisamos para pagar la renovación (tenés {1} días)",
+  "notif.evento.RenovacionPendiente": "Renovación pendiente de pago",
+  "notif.msg.RenovacionPendiente": "Tu plan {0} llegó a su fecha de renovación. Pagá la renovación desde Suscripción para no perder el acceso.",
+  "susc.estado.ActivaManual": "Activa · te avisamos para pagar la renovación"
 }

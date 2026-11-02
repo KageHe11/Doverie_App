@@ -30,4 +30,10 @@
 	<add key="BlockchainExplorador" value="https://sepolia.etherscan.io" />
 	<!-- <add key="DocumentosRuta" value="C:\DoverieDatos\Documentos" /> -->
 	<!-- <add key="BlockchainLocalRuta" value="C:\DoverieDatos\Blockchain\registro.jsonl" /> -->
+	<!-- Pasarela de pago de las suscripciones: "Local" (checkout simulado) o "MercadoPago"
+	     (Checkout Pro). Con el Access Token de producción los cobros son reales; con
+	     Mercado Pago las renovaciones las paga el Usuario dentro del plazo de gracia. -->
+	<add key="PasarelaPago" value="Local" />
+	<add key="MercadoPagoAccessToken" value="APP_USR-access-token-de-la-aplicacion" />
+	<!-- <add key="MercadoPagoSandbox" value="true" /> (con credenciales de prueba: checkout sandbox) -->
 </appSettings>

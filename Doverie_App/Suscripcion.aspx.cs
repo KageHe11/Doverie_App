@@ -36,6 +36,7 @@ public partial class Suscripcion : PaginaBase
         btnPagar.Text = Traductor.T("susc.irAPagar");
         btnVolverPlanes.Text = Traductor.T("susc.volverPlanes");
         btnVolverActual.Text = Traductor.T("susc.volverActual");
+        btnPagarRenovacion.Text = Traductor.T("susc.pagarRenovacion");
         if (!IsPostBack)
         {
             int PagoId;
@@ -67,7 +68,8 @@ public partial class Suscripcion : PaginaBase
         pnlActual.Visible = true;
         litActualNivel.Text = Traductor.T("plan.nivel." + Plan.Nombre);
         litActualModalidad.Text = Traductor.T("plan.tipo." + Plan.Tipo);
-        lblActualEstado.Text = Traductor.T(Cancelada ? "susc.estado.Cancelada" : "susc.estado.Activa");
+        lblActualEstado.Text = Traductor.T(Cancelada ? "susc.estado.Cancelada"
+            : SuscripcionBLL.RenovacionAutomatica ? "susc.estado.Activa" : "susc.estado.ActivaManual");
         lblActualEstado.CssClass = "badge " + (Cancelada ? "bg-warning text-dark" : "bg-success");
         litActualPrecio.Text = DetallePrecio(Plan);
         litActualInicio.Text = suscripcion.FechaInicio.ToString("dd/MM/yyyy");
@@ -82,6 +84,30 @@ public partial class Suscripcion : PaginaBase
         litActualCaracteristicas.Text = Caracteristicas(Plan.Nombre);
         btnCambiarPlan.Visible = PuedeGestionar;
         btnCancelar.Visible = PuedeGestionar && !Cancelada;
+        // Período terminado y renovación sin pagar: aviso con el plazo de gracia.
+        pnlRenovacion.Visible = suscripcion.FinGracia.HasValue;
+        btnPagarRenovacion.Visible = PuedeGestionar;
+        if (suscripcion.FinGracia.HasValue)
+        {
+            litRenovacion.Text = Traductor.T("susc.renovacionPendiente", SuscripcionBLL.FormatearMonto(Plan.Total),
+                suscripcion.FechaRenovacion.ToString("dd/MM/yyyy"), suscripcion.FinGracia.Value.ToString("dd/MM/yyyy"));
+        }
+    }
+    /// Paga la renovación pendiente en el checkout de la pasarela.
+    protected void btnPagarRenovacion_Click(object sender, EventArgs e)
+    {
+        if (!PuedeGestionar) { MostrarError(Traductor.T("error.056")); MostrarEstado(); return; }
+        string UrlRetorno = Request.Url.GetLeftPart(UriPartial.Authority) + ResolveUrl("~/Suscripcion.aspx");
+        string UrlCheckout;
+        ResultadoSuscripcion Resultado = new SuscripcionBLL().PagarRenovacion(UsuarioActual, UrlRetorno, out UrlCheckout);
+        if (Resultado == ResultadoSuscripcion.Exitoso)
+        {
+            Response.Redirect(UrlCheckout, false);
+            Context.ApplicationInstance.CompleteRequest();
+            return;
+        }
+        MostrarError(MensajeResultado(Resultado));
+        MostrarEstado();
     }
     /// Planes de la modalidad elegida. planActualId marca el plan que ya
     /// tiene (cambio de plan).
@@ -167,7 +193,8 @@ public partial class Suscripcion : PaginaBase
         litPagoPlan.Text = Traductor.T("plan.nivel." + Plan.Nombre) + " - " + Traductor.T("plan.tipo." + Plan.Tipo);
         litPagoPrecio.Text = DetallePrecio(Plan);
         litPagoTotal.Text = SuscripcionBLL.FormatearMonto(Plan.Total);
-        litPagoRenovacion.Text = Traductor.T("susc.renovacionAutoDetalle", DateTime.Now.AddMonths(Plan.Meses).ToString("dd/MM/yyyy"));
+        litPagoRenovacion.Text = Traductor.T(SuscripcionBLL.RenovacionAutomatica ? "susc.renovacionAutoDetalle" : "susc.renovacionManualDetalle",
+            DateTime.Now.AddMonths(Plan.Meses).ToString("dd/MM/yyyy"), SuscripcionBLL.DiasGracia);
         if (Vigente != null)
         {
             MostrarInfo(Traductor.T("susc.cambioAviso", Traductor.T("plan.nivel." + Vigente.Plan.Nombre) + " - " + Traductor.T("plan.tipo." + Vigente.Plan.Tipo)));
@@ -231,7 +258,9 @@ public partial class Suscripcion : PaginaBase
         {
             case ResultadoSuscripcion.Exitoso:
                 string Plan = Traductor.T("plan.nivel." + Pago.PlanNombre) + " - " + Traductor.T("plan.tipo." + Pago.PlanTipo);
-                string Mensaje = Traductor.T(Pago.Concepto == PagoBE.ConceptoCambioPlan ? "susc.exitoCambio" : "susc.exitoAlta", Plan);
+                string Mensaje = Pago.Concepto == PagoBE.ConceptoRenovacion
+                    ? Traductor.T("susc.exitoRenovacion", Plan)
+                    : Traductor.T(Pago.Concepto == PagoBE.ConceptoCambioPlan ? "susc.exitoCambio" : "susc.exitoAlta", Plan);
                 // Solo se dice que salió el correo si salió en este request.
                 if (EmailEnviado) Mensaje += " " + Traductor.T("susc.emailEnviado");
                 MostrarMensaje(Mensaje);

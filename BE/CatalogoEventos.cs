@@ -15,9 +15,10 @@ namespace BE
         public const string DocumentoSubido = "DocumentoSubido";
         public const string DocumentoAccedido = "DocumentoAccedido";
         public const string ModificacionDetectada = "ModificacionDetectada";
-        // Suscripción (todavía no hay suscripciones que los disparen)
+        // Suscripción
         public const string SuscripcionVencimiento = "SuscripcionVencimiento";
         public const string SuscripcionRenovacion = "SuscripcionRenovacion";
+        public const string RenovacionPendiente = "RenovacionPendiente";
         public const string PagoRechazado = "PagoRechazado";
         // Accesos
         public const string InicioSesionNuevoDispositivo = "InicioSesionNuevoDispositivo";
@@ -36,6 +37,7 @@ namespace BE
             new KeyValuePair<string, string>(ModificacionDetectada, CategoriaDocumentos),
             new KeyValuePair<string, string>(SuscripcionVencimiento, CategoriaSuscripcion),
             new KeyValuePair<string, string>(SuscripcionRenovacion, CategoriaSuscripcion),
+            new KeyValuePair<string, string>(RenovacionPendiente, CategoriaSuscripcion),
             new KeyValuePair<string, string>(PagoRechazado, CategoriaSuscripcion),
             new KeyValuePair<string, string>(InicioSesionNuevoDispositivo, CategoriaAccesos),
             new KeyValuePair<string, string>(PermisosModificados, CategoriaAccesos),

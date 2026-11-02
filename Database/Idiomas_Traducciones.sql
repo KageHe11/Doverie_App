@@ -472,7 +472,14 @@ BEGIN
   "pag.mostrando": "{0}–{1} de {2}",
   "pag.paginas": "Páginas",
   "pag.anterior": "Página anterior",
-  "pag.siguiente": "Página siguiente"
+  "pag.siguiente": "Página siguiente",
+  "susc.pagarRenovacion": "Pagar renovación",
+  "susc.renovacionPendiente": "Tu plan llegó a su fecha de renovación ({1}). Pagá la renovación de {0} antes del {2} para no perder el acceso.",
+  "susc.exitoRenovacion": "¡Listo! Se pagó la renovación de tu plan {0}.",
+  "susc.renovacionManualDetalle": "El {0} te avisamos para pagar la renovación (tenés {1} días)",
+  "notif.evento.RenovacionPendiente": "Renovación pendiente de pago",
+  "notif.msg.RenovacionPendiente": "Tu plan {0} llegó a su fecha de renovación. Pagá la renovación desde Suscripción para no perder el acceso.",
+  "susc.estado.ActivaManual": "Activa · te avisamos para pagar la renovación"
 }';
 END
 ELSE
@@ -936,7 +943,14 @@ ELSE
   "pag.mostrando": "{0}–{1} de {2}",
   "pag.paginas": "Páginas",
   "pag.anterior": "Página anterior",
-  "pag.siguiente": "Página siguiente"
+  "pag.siguiente": "Página siguiente",
+  "susc.pagarRenovacion": "Pagar renovación",
+  "susc.renovacionPendiente": "Tu plan llegó a su fecha de renovación ({1}). Pagá la renovación de {0} antes del {2} para no perder el acceso.",
+  "susc.exitoRenovacion": "¡Listo! Se pagó la renovación de tu plan {0}.",
+  "susc.renovacionManualDetalle": "El {0} te avisamos para pagar la renovación (tenés {1} días)",
+  "notif.evento.RenovacionPendiente": "Renovación pendiente de pago",
+  "notif.msg.RenovacionPendiente": "Tu plan {0} llegó a su fecha de renovación. Pagá la renovación desde Suscripción para no perder el acceso.",
+  "susc.estado.ActivaManual": "Activa · te avisamos para pagar la renovación"
 }';
 
 -- English (en)
@@ -1404,7 +1418,14 @@ BEGIN
   "pag.mostrando": "{0}–{1} of {2}",
   "pag.paginas": "Pages",
   "pag.anterior": "Previous page",
-  "pag.siguiente": "Next page"
+  "pag.siguiente": "Next page",
+  "susc.pagarRenovacion": "Pay renewal",
+  "susc.renovacionPendiente": "Your plan reached its renewal date ({1}). Pay the {0} renewal before {2} to keep your access.",
+  "susc.exitoRenovacion": "Done! The renewal of your {0} plan was paid.",
+  "susc.renovacionManualDetalle": "On {0} we will remind you to pay the renewal (you have {1} days)",
+  "notif.evento.RenovacionPendiente": "Renewal pending payment",
+  "notif.msg.RenovacionPendiente": "Your {0} plan reached its renewal date. Pay the renewal from Subscription to keep your access.",
+  "susc.estado.ActivaManual": "Active · we will remind you to pay the renewal"
 }';
 END
 ELSE
@@ -1868,7 +1889,14 @@ ELSE
   "pag.mostrando": "{0}–{1} of {2}",
   "pag.paginas": "Pages",
   "pag.anterior": "Previous page",
-  "pag.siguiente": "Next page"
+  "pag.siguiente": "Next page",
+  "susc.pagarRenovacion": "Pay renewal",
+  "susc.renovacionPendiente": "Your plan reached its renewal date ({1}). Pay the {0} renewal before {2} to keep your access.",
+  "susc.exitoRenovacion": "Done! The renewal of your {0} plan was paid.",
+  "susc.renovacionManualDetalle": "On {0} we will remind you to pay the renewal (you have {1} days)",
+  "notif.evento.RenovacionPendiente": "Renewal pending payment",
+  "notif.msg.RenovacionPendiente": "Your {0} plan reached its renewal date. Pay the renewal from Subscription to keep your access.",
+  "susc.estado.ActivaManual": "Active · we will remind you to pay the renewal"
 }';
 
 -- Português (pt)
@@ -2336,7 +2364,14 @@ BEGIN
   "pag.mostrando": "{0}–{1} de {2}",
   "pag.paginas": "Páginas",
   "pag.anterior": "Página anterior",
-  "pag.siguiente": "Próxima página"
+  "pag.siguiente": "Próxima página",
+  "susc.pagarRenovacion": "Pagar renovação",
+  "susc.renovacionPendiente": "Seu plano chegou à data de renovação ({1}). Pague a renovação de {0} antes de {2} para não perder o acesso.",
+  "susc.exitoRenovacion": "Pronto! A renovação do seu plano {0} foi paga.",
+  "susc.renovacionManualDetalle": "Em {0} avisaremos para pagar a renovação (você tem {1} dias)",
+  "notif.evento.RenovacionPendiente": "Renovação pendente de pagamento",
+  "notif.msg.RenovacionPendiente": "Seu plano {0} chegou à data de renovação. Pague a renovação em Assinatura para não perder o acesso.",
+  "susc.estado.ActivaManual": "Ativa · avisaremos para pagar a renovação"
 }';
 END
 ELSE
@@ -2800,6 +2835,13 @@ ELSE
   "pag.mostrando": "{0}–{1} de {2}",
   "pag.paginas": "Páginas",
   "pag.anterior": "Página anterior",
-  "pag.siguiente": "Próxima página"
+  "pag.siguiente": "Próxima página",
+  "susc.pagarRenovacion": "Pagar renovação",
+  "susc.renovacionPendiente": "Seu plano chegou à data de renovação ({1}). Pague a renovação de {0} antes de {2} para não perder o acesso.",
+  "susc.exitoRenovacion": "Pronto! A renovação do seu plano {0} foi paga.",
+  "susc.renovacionManualDetalle": "Em {0} avisaremos para pagar a renovação (você tem {1} dias)",
+  "notif.evento.RenovacionPendiente": "Renovação pendente de pagamento",
+  "notif.msg.RenovacionPendiente": "Seu plano {0} chegou à data de renovação. Pague a renovação em Assinatura para não perder o acesso.",
+  "susc.estado.ActivaManual": "Ativa · avisaremos para pagar a renovação"
 }';
 GO
