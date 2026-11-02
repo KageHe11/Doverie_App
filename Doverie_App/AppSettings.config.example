@@ -45,4 +45,6 @@
 	<!-- Opcional, solo para pruebas o demos sin internet: si tiene una
 	     carpeta, los correos no se envían, se guardan ahí como .eml. -->
 	<add key="SmtpCarpetaPrueba" value="" />
+	<!-- Email de contacto de la página de inicio: se muestra y recibe el formulario. -->
+	<add key="ContactoEmail" value="appdoverie@gmail.com" />
 </appSettings>

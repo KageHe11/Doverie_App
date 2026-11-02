@@ -47,6 +47,7 @@ public partial class Site : MasterPage
         {
             pnlLogueado.Visible = false;
             pnlNoLogueado.Visible = true;
+            pnlNavPublico.Visible = true;
             pnlAdmin.Visible = false;
             pnlIdiomas.Visible = false;
             pnlEstadisticas.Visible = false;

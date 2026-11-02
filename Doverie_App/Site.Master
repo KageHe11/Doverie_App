@@ -30,6 +30,13 @@
                 <div class="collapse navbar-collapse" id="navbarMenu">
                     <ul class="navbar-nav me-auto">
 
+                        <asp:Panel ID="pnlNavPublico" runat="server" CssClass="d-flex flex-column flex-lg-row" Visible="false">
+                            <li class="nav-item"><a class="nav-link" href="/Default.aspx#funcionalidades"><%: Traductor.T("home.nav.funciones") %></a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Default.aspx#planes"><%: Traductor.T("home.nav.planes") %></a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Default.aspx#nosotros"><%: Traductor.T("home.nav.nosotros") %></a></li>
+                            <li class="nav-item"><a class="nav-link" href="/Default.aspx#contacto"><%: Traductor.T("home.nav.contacto") %></a></li>
+                        </asp:Panel>
+
                         <asp:Panel ID="pnlAdmin" runat="server" CssClass="d-flex flex-column flex-lg-row" Visible="false">
                             <li class="nav-item">
                                 <a class="nav-link" href="/Usuarios.aspx"><%: Traductor.T("nav.usuarios") %></a>

@@ -67,6 +67,7 @@
     <Compile Include="ResultadoIdioma.cs" />
     <Compile Include="ResultadoModificarPerfil.cs" />
     <Compile Include="ResultadoRecuperacion.cs" />
+    <Compile Include="ResultadoContacto.cs" />
     <Compile Include="ResultadoRegistro.cs" />
     <Compile Include="ResultadoRestablecimiento.cs" />
     <Compile Include="ResultadoSuscripcion.cs" />

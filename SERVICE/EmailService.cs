@@ -8,6 +8,11 @@ namespace SERVICE
 {
     public class EmailService
     {
+        /// Casilla de Doverie a la que llega el formulario de contacto.
+        public static string DireccionContacto
+        {
+            get { return ConfigurationManager.AppSettings["ContactoEmail"]; }
+        }
         public void EnviarEmail(string destinatario, string asunto, string cuerpoHtml)
         {
             EnviarEmail(destinatario, asunto, cuerpoHtml, null, null);
