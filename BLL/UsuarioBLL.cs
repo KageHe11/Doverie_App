@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -286,15 +287,15 @@ namespace BLL
             string Token = TokenServ.GenerarTokenRecuperacion(Usuario);
             string Link = urlBase + "/RestablecerContrasena.aspx?token=" + Uri.EscapeDataString(Token);
 
-            string Cuerpo = "<p>Hola " + Usuario.Nombre + ",</p>" +
-                            "<p>Recibimos una solicitud para restablecer tu contraseña en Doverie.</p>" +
-                            "<p><a href=\"" + Link + "\">Hacé clic acá para elegir una nueva contraseña</a></p>" +
-                            "<p>Este enlace vence en 30 minutos. Si no fuiste vos, podés ignorar este email.</p>";
-
-            EmailService EmailServ = new EmailService();
             try
             {
-                EmailServ.EnviarEmail(Usuario.Gmail, "Recuperar contraseña - Doverie", Cuerpo);
+                // En el idioma preferido del titular de la cuenta.
+                ContextoIdioma Idioma = new IdiomaBLL().CrearContexto(Usuario.IdiomaId);
+                string Cuerpo = "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("notif.email.saludo", Usuario.Nombre)) + "</p>" +
+                                "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("recuperar.email.solicitud")) + "</p>" +
+                                "<p><a href=\"" + WebUtility.HtmlEncode(Link) + "\">" + WebUtility.HtmlEncode(Idioma.Traducir("recuperar.email.enlace")) + "</a></p>" +
+                                "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("recuperar.email.vence")) + "</p>";
+                new EmailService().EnviarEmail(Usuario.Gmail, Idioma.Traducir("recuperar.email.asunto"), Cuerpo);
             }
             catch (Exception)
             {

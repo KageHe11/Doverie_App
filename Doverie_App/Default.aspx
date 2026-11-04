@@ -236,7 +236,7 @@
                                 <uc:Mensaje ID="Mensaje" runat="server" />
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label" for="<%= txtNombreContacto.ClientID %>"><%: Traductor.T("comun.nombre") %></label>
+                                        <label class="form-label" for="<%= txtNombreContacto.ClientID %>"><%: Traductor.T("home.contacto.nombre") %></label>
                                         <asp:TextBox ID="txtNombreContacto" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
                                         <asp:RequiredFieldValidator ID="rfvNombreContacto" runat="server" ControlToValidate="txtNombreContacto" ValidationGroup="Contacto" Display="Dynamic" CssClass="text-danger small" ErrorMessage="<%$ Traduccion:valid.obligatorio %>" />
                                     </div>

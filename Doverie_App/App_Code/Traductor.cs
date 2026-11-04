@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using BLL;
 using SERVICE;
 
@@ -8,6 +9,9 @@ using SERVICE;
 public static class Traductor
 {
     private const string ClaveSesion = "ContextoIdioma";
+    /// Cada cuánto una sesión vuelve a leer las traducciones de su idioma,
+    /// para ver los cambios hechos en Idiomas o por script sin volver a entrar.
+    private static readonly TimeSpan Vigencia = TimeSpan.FromMinutes(1);
 
     /// Contexto de la sesión actual. Si todavía no hay uno (visitante sin
     /// login, o sesión recién creada), se arma con el idioma predeterminado.
@@ -21,6 +25,19 @@ public static class Traductor
             {
                 Actual = new IdiomaBLL().CrearContexto(null);
                 if (Sesion != null) Sesion[ClaveSesion] = Actual;
+            }
+            else if (DateTime.UtcNow - Actual.Cargado > Vigencia)
+            {
+                try
+                {
+                    Actual = new IdiomaBLL().CrearContexto(Actual.IdiomaId);
+                    Sesion[ClaveSesion] = Actual;
+                }
+                catch (Exception)
+                {
+                    // Base no disponible (por ejemplo, durante un restore):
+                    // se sigue con las traducciones que ya estaban.
+                }
             }
             return Actual;
         }

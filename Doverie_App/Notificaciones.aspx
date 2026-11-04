@@ -25,7 +25,7 @@
                                     <span><%# Eval("Fecha", "{0:dd/MM/yyyy HH:mm}") %></span>
                                 </div>
                                 <div>
-                                    <%#: Traductor.T("notif.msg." + Eval("Evento"), Eval("Detalle") ?? "") %>
+                                    <%#: BLL.NotificacionBLL.ArmarMensaje(Traductor.Contexto, (string)Eval("Evento"), Eval("Detalle") as string) %>
                                     <%# (bool)Eval("Leida") ? "" : "<span class=\"badge bg-primary ms-1\">" + HttpUtility.HtmlEncode(Traductor.T("notif.nueva")) + "</span>" %>
                                 </div>
                             </li>

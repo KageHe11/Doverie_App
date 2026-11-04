@@ -609,7 +609,12 @@ BEGIN
   "home.contacto.error": "No pudimos enviar tu mensaje. Probá de nuevo o escribinos a {0}.",
   "home.contacto.ubicacion": "Ubicación",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · atención 100% digital",
-  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain."
+  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain.",
+  "home.contacto.nombre": "Nombre",
+  "recuperar.email.asunto": "Recuperar contraseña - Doverie",
+  "recuperar.email.solicitud": "Recibimos una solicitud para restablecer tu contraseña en Doverie.",
+  "recuperar.email.enlace": "Hacé clic acá para elegir una nueva contraseña",
+  "recuperar.email.vence": "Este enlace vence en 30 minutos. Si no fuiste vos, podés ignorar este email."
 }';
 END
 ELSE
@@ -1210,7 +1215,12 @@ ELSE
   "home.contacto.error": "No pudimos enviar tu mensaje. Probá de nuevo o escribinos a {0}.",
   "home.contacto.ubicacion": "Ubicación",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · atención 100% digital",
-  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain."
+  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain.",
+  "home.contacto.nombre": "Nombre",
+  "recuperar.email.asunto": "Recuperar contraseña - Doverie",
+  "recuperar.email.solicitud": "Recibimos una solicitud para restablecer tu contraseña en Doverie.",
+  "recuperar.email.enlace": "Hacé clic acá para elegir una nueva contraseña",
+  "recuperar.email.vence": "Este enlace vence en 30 minutos. Si no fuiste vos, podés ignorar este email."
 }';
 
 -- English (en)
@@ -1520,9 +1530,9 @@ BEGIN
   "error.056": "You don''t have permission to perform this operation.",
   "nav.suscripcion": "Subscription",
   "nav.miPlan": "My plan",
-  "plan.nivel.Plata": "Plata",
-  "plan.nivel.Oro": "Oro",
-  "plan.nivel.Platino": "Platino",
+  "plan.nivel.Plata": "Silver",
+  "plan.nivel.Oro": "Gold",
+  "plan.nivel.Platino": "Platinum",
   "plan.subtitulo.Plata": "Essential · independent notaries and lawyers",
   "plan.subtitulo.Oro": "Professional · firms of up to 5 professionals",
   "plan.subtitulo.Platino": "Premium · mid-sized law and notary firms",
@@ -1531,8 +1541,8 @@ BEGIN
   "plan.tipo.Semestral": "Semiannual",
   "plan.tipo.Anual": "Yearly",
   "plan.caracteristicas.Plata": "A single user|Timestamping|Blockchain integrity verification|Basic storage|Email support",
-  "plan.caracteristicas.Oro": "Everything in Plata|Up to 5 users|More documents and storage|Differentiated roles and permissions|Usage reports|Priority support",
-  "plan.caracteristicas.Platino": "Everything in Oro|Unlimited users and documents|Extended storage|API integration|Personalized training|Premium support",
+  "plan.caracteristicas.Oro": "Everything in Silver|Up to 5 users|More documents and storage|Differentiated roles and permissions|Usage reports|Priority support",
+  "plan.caracteristicas.Platino": "Everything in Gold|Unlimited users and documents|Extended storage|API integration|Personalized training|Premium support",
   "pago.medio.1": "Credit card",
   "pago.medio.2": "Debit card",
   "pago.medio.3": "Mercado Pago account balance",
@@ -1815,7 +1825,12 @@ BEGIN
   "home.contacto.error": "We could not send your message. Try again or write to {0}.",
   "home.contacto.ubicacion": "Location",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · 100% online support",
-  "home.pie": "© {0} Doverie. Document management and protection with blockchain."
+  "home.pie": "© {0} Doverie. Document management and protection with blockchain.",
+  "home.contacto.nombre": "Name",
+  "recuperar.email.asunto": "Reset your password - Doverie",
+  "recuperar.email.solicitud": "We received a request to reset your Doverie password.",
+  "recuperar.email.enlace": "Click here to choose a new password",
+  "recuperar.email.vence": "This link expires in 30 minutes. If this was not you, you can ignore this email."
 }';
 END
 ELSE
@@ -2121,9 +2136,9 @@ ELSE
   "error.056": "You don''t have permission to perform this operation.",
   "nav.suscripcion": "Subscription",
   "nav.miPlan": "My plan",
-  "plan.nivel.Plata": "Plata",
-  "plan.nivel.Oro": "Oro",
-  "plan.nivel.Platino": "Platino",
+  "plan.nivel.Plata": "Silver",
+  "plan.nivel.Oro": "Gold",
+  "plan.nivel.Platino": "Platinum",
   "plan.subtitulo.Plata": "Essential · independent notaries and lawyers",
   "plan.subtitulo.Oro": "Professional · firms of up to 5 professionals",
   "plan.subtitulo.Platino": "Premium · mid-sized law and notary firms",
@@ -2132,8 +2147,8 @@ ELSE
   "plan.tipo.Semestral": "Semiannual",
   "plan.tipo.Anual": "Yearly",
   "plan.caracteristicas.Plata": "A single user|Timestamping|Blockchain integrity verification|Basic storage|Email support",
-  "plan.caracteristicas.Oro": "Everything in Plata|Up to 5 users|More documents and storage|Differentiated roles and permissions|Usage reports|Priority support",
-  "plan.caracteristicas.Platino": "Everything in Oro|Unlimited users and documents|Extended storage|API integration|Personalized training|Premium support",
+  "plan.caracteristicas.Oro": "Everything in Silver|Up to 5 users|More documents and storage|Differentiated roles and permissions|Usage reports|Priority support",
+  "plan.caracteristicas.Platino": "Everything in Gold|Unlimited users and documents|Extended storage|API integration|Personalized training|Premium support",
   "pago.medio.1": "Credit card",
   "pago.medio.2": "Debit card",
   "pago.medio.3": "Mercado Pago account balance",
@@ -2416,7 +2431,12 @@ ELSE
   "home.contacto.error": "We could not send your message. Try again or write to {0}.",
   "home.contacto.ubicacion": "Location",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · 100% online support",
-  "home.pie": "© {0} Doverie. Document management and protection with blockchain."
+  "home.pie": "© {0} Doverie. Document management and protection with blockchain.",
+  "home.contacto.nombre": "Name",
+  "recuperar.email.asunto": "Reset your password - Doverie",
+  "recuperar.email.solicitud": "We received a request to reset your Doverie password.",
+  "recuperar.email.enlace": "Click here to choose a new password",
+  "recuperar.email.vence": "This link expires in 30 minutes. If this was not you, you can ignore this email."
 }';
 
 -- Português (pt)
@@ -2726,9 +2746,9 @@ BEGIN
   "error.056": "Você não tem permissão para realizar esta operação.",
   "nav.suscripcion": "Assinatura",
   "nav.miPlan": "Meu plano",
-  "plan.nivel.Plata": "Plata",
-  "plan.nivel.Oro": "Oro",
-  "plan.nivel.Platino": "Platino",
+  "plan.nivel.Plata": "Prata",
+  "plan.nivel.Oro": "Ouro",
+  "plan.nivel.Platino": "Platina",
   "plan.subtitulo.Plata": "Essencial · tabeliães e advogados autônomos",
   "plan.subtitulo.Oro": "Profissional · escritórios de até 5 profissionais",
   "plan.subtitulo.Platino": "Premium · escritórios e cartórios de médio porte",
@@ -2737,8 +2757,8 @@ BEGIN
   "plan.tipo.Semestral": "Semestral",
   "plan.tipo.Anual": "Anual",
   "plan.caracteristicas.Plata": "Um único usuário|Carimbo de tempo|Verificação de integridade com blockchain|Armazenamento básico|Suporte por e-mail",
-  "plan.caracteristicas.Oro": "Tudo do plano Plata|Até 5 usuários|Mais documentos e armazenamento|Funções e permissões diferenciadas|Relatórios de uso|Suporte prioritário",
-  "plan.caracteristicas.Platino": "Tudo do plano Oro|Usuários e documentos ilimitados|Armazenamento ampliado|Integração via API|Treinamento personalizado|Suporte premium",
+  "plan.caracteristicas.Oro": "Tudo do plano Prata|Até 5 usuários|Mais documentos e armazenamento|Funções e permissões diferenciadas|Relatórios de uso|Suporte prioritário",
+  "plan.caracteristicas.Platino": "Tudo do plano Ouro|Usuários e documentos ilimitados|Armazenamento ampliado|Integração via API|Treinamento personalizado|Suporte premium",
   "pago.medio.1": "Cartão de crédito",
   "pago.medio.2": "Cartão de débito",
   "pago.medio.3": "Saldo em conta do Mercado Pago",
@@ -3021,7 +3041,12 @@ BEGIN
   "home.contacto.error": "Não conseguimos enviar sua mensagem. Tente novamente ou escreva para {0}.",
   "home.contacto.ubicacion": "Localização",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · atendimento 100% digital",
-  "home.pie": "© {0} Doverie. Gestão e proteção de documentos com blockchain."
+  "home.pie": "© {0} Doverie. Gestão e proteção de documentos com blockchain.",
+  "home.contacto.nombre": "Nome",
+  "recuperar.email.asunto": "Recuperar senha - Doverie",
+  "recuperar.email.solicitud": "Recebemos uma solicitação para redefinir sua senha no Doverie.",
+  "recuperar.email.enlace": "Clique aqui para escolher uma nova senha",
+  "recuperar.email.vence": "Este link expira em 30 minutos. Se não foi você, pode ignorar este e-mail."
 }';
 END
 ELSE
@@ -3327,9 +3352,9 @@ ELSE
   "error.056": "Você não tem permissão para realizar esta operação.",
   "nav.suscripcion": "Assinatura",
   "nav.miPlan": "Meu plano",
-  "plan.nivel.Plata": "Plata",
-  "plan.nivel.Oro": "Oro",
-  "plan.nivel.Platino": "Platino",
+  "plan.nivel.Plata": "Prata",
+  "plan.nivel.Oro": "Ouro",
+  "plan.nivel.Platino": "Platina",
   "plan.subtitulo.Plata": "Essencial · tabeliães e advogados autônomos",
   "plan.subtitulo.Oro": "Profissional · escritórios de até 5 profissionais",
   "plan.subtitulo.Platino": "Premium · escritórios e cartórios de médio porte",
@@ -3338,8 +3363,8 @@ ELSE
   "plan.tipo.Semestral": "Semestral",
   "plan.tipo.Anual": "Anual",
   "plan.caracteristicas.Plata": "Um único usuário|Carimbo de tempo|Verificação de integridade com blockchain|Armazenamento básico|Suporte por e-mail",
-  "plan.caracteristicas.Oro": "Tudo do plano Plata|Até 5 usuários|Mais documentos e armazenamento|Funções e permissões diferenciadas|Relatórios de uso|Suporte prioritário",
-  "plan.caracteristicas.Platino": "Tudo do plano Oro|Usuários e documentos ilimitados|Armazenamento ampliado|Integração via API|Treinamento personalizado|Suporte premium",
+  "plan.caracteristicas.Oro": "Tudo do plano Prata|Até 5 usuários|Mais documentos e armazenamento|Funções e permissões diferenciadas|Relatórios de uso|Suporte prioritário",
+  "plan.caracteristicas.Platino": "Tudo do plano Ouro|Usuários e documentos ilimitados|Armazenamento ampliado|Integração via API|Treinamento personalizado|Suporte premium",
   "pago.medio.1": "Cartão de crédito",
   "pago.medio.2": "Cartão de débito",
   "pago.medio.3": "Saldo em conta do Mercado Pago",
@@ -3622,6 +3647,11 @@ ELSE
   "home.contacto.error": "Não conseguimos enviar sua mensagem. Tente novamente ou escreva para {0}.",
   "home.contacto.ubicacion": "Localização",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · atendimento 100% digital",
-  "home.pie": "© {0} Doverie. Gestão e proteção de documentos com blockchain."
+  "home.pie": "© {0} Doverie. Gestão e proteção de documentos com blockchain.",
+  "home.contacto.nombre": "Nome",
+  "recuperar.email.asunto": "Recuperar senha - Doverie",
+  "recuperar.email.solicitud": "Recebemos uma solicitação para redefinir sua senha no Doverie.",
+  "recuperar.email.enlace": "Clique aqui para escolher uma nova senha",
+  "recuperar.email.vence": "Este link expira em 30 minutos. Se não foi você, pode ignorar este e-mail."
 }';
 GO

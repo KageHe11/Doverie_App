@@ -16,6 +16,14 @@ namespace SERVICE
 
         public int? IdiomaId { get; private set; }
         public string Codigo { get; private set; }
+        /// Cuándo se leyeron las traducciones: la sesión las vuelve a leer
+        /// cada tanto para ver los cambios de un idioma (ver Traductor).
+        public DateTime Cargado { get; private set; }
+
+        public ContextoIdioma()
+        {
+            Cargado = DateTime.UtcNow;
+        }
 
         /// Carga el JSON del idioma y lo deja como estrategia activa.
         /// Lanza FormatException si el JSON no es válido.

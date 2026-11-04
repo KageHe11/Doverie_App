@@ -20,7 +20,7 @@ namespace BLL
             IdiomaBLL IdiomaBll = new IdiomaBLL();
             ContextoIdioma Idioma = IdiomaBll.CrearContexto(Destinatario.IdiomaId);
             string Asunto = Idioma.Traducir("notif.email.asunto", Idioma.Traducir("notif.evento." + evento));
-            string Mensaje = Idioma.Traducir("notif.msg." + evento, datos.Detalle ?? "");
+            string Mensaje = NotificacionBLL.ArmarMensaje(Idioma, evento, datos.Detalle);
             string Cuerpo = "<p>" + WebUtility.HtmlEncode(Idioma.Traducir("notif.email.saludo", Destinatario.Nombre)) + "</p>" +
                             "<p>" + WebUtility.HtmlEncode(Mensaje) + "</p>" +
                             "<p style=\"color:#888\">" + WebUtility.HtmlEncode(Idioma.Traducir("notif.email.pie")) + "</p>";

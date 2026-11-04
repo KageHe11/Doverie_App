@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BE;
 using DAL;
+using SERVICE;
 
 namespace BLL
 {
@@ -9,6 +10,16 @@ namespace BLL
     /// recibidas dentro de la plataforma.
     public class NotificacionBLL
     {
+        /// Texto de una notificación en el idioma dado. En los eventos de
+        /// suscripción el detalle es el nivel del plan, que también se traduce.
+        public static string ArmarMensaje(ContextoIdioma idioma, string evento, string detalle)
+        {
+            string Valor = detalle ?? "";
+            bool EsPlan = evento == CatalogoEventos.SuscripcionVencimiento || evento == CatalogoEventos.SuscripcionRenovacion ||
+                evento == CatalogoEventos.RenovacionPendiente || evento == CatalogoEventos.PagoRechazado;
+            if (EsPlan && Valor.Length > 0) Valor = idioma.Traducir("plan.nivel." + Valor);
+            return idioma.Traducir("notif.msg." + evento, Valor);
+        }
         public const int CantidadBandeja = 50;
 
         /// Preferencias del Usuario para cada evento del catálogo. Si nunca

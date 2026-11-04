@@ -595,5 +595,10 @@
   "home.contacto.error": "No pudimos enviar tu mensaje. Probá de nuevo o escribinos a {0}.",
   "home.contacto.ubicacion": "Ubicación",
   "home.contacto.ubicacionTexto": "Buenos Aires, Argentina · atención 100% digital",
-  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain."
+  "home.pie": "© {0} Doverie. Gestión y protección de documentos con blockchain.",
+  "home.contacto.nombre": "Nombre",
+  "recuperar.email.asunto": "Recuperar contraseña - Doverie",
+  "recuperar.email.solicitud": "Recibimos una solicitud para restablecer tu contraseña en Doverie.",
+  "recuperar.email.enlace": "Hacé clic acá para elegir una nueva contraseña",
+  "recuperar.email.vence": "Este enlace vence en 30 minutos. Si no fuiste vos, podés ignorar este email."
 }

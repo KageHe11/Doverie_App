@@ -3,7 +3,7 @@
 <%@ Register Src="~/CerrarSesion.ascx" TagPrefix="uc" TagName="CerrarSesion" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="<%: Traductor.Contexto.Codigo ?? "es" %>">
 <head runat="server">
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <script src="/Scripts/bootstrap.bundle.min.js"></script>
