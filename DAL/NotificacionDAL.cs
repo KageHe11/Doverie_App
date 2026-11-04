@@ -74,7 +74,7 @@ namespace DAL
             {
                 { "@UsuarioId", PusuarioId },
                 { "@Evento", Pevento },
-                { "@Detalle", (object)Pdetalle ?? DBNull.Value }
+                { "@Detalle", (object)CifradoDatos.Cifrar(Pdetalle) ?? DBNull.Value }
             };
             Dao.ExecuteNonQueryStoredProcedure("SP_NotificacionRecibida_Registrar", Parametros, CommandType.StoredProcedure);
         }
@@ -95,7 +95,7 @@ namespace DAL
                     Id = Convert.ToInt32(Fila["Id"]),
                     UsuarioId = Convert.ToInt32(Fila["UsuarioId"]),
                     Evento = Fila["Evento"].ToString(),
-                    Detalle = Fila["Detalle"] == DBNull.Value ? null : Fila["Detalle"].ToString(),
+                    Detalle = Fila["Detalle"] == DBNull.Value ? null : CifradoDatos.Descifrar(Fila["Detalle"].ToString()),
                     Fecha = Convert.ToDateTime(Fila["Fecha"]),
                     Leida = Convert.ToBoolean(Fila["Leida"])
                 });

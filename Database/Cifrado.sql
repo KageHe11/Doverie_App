@@ -7,8 +7,9 @@ GO
 -- ========================================
 -- Cifrado de los datos personales (checklist: "todos los datos sensibles
 -- de las tablas cifrados").
--- Usuario.Gmail, Dni y Telefono, DocumentoCompartido.EmailDestinatario y
--- Dispositivo.Descripcion (lleva la IP) se guardan cifrados con AES-256
+-- Usuario.Gmail, Dni y Telefono, DocumentoCompartido.EmailDestinatario,
+-- Dispositivo.Descripcion (lleva la IP) y NotificacionRecibida.Detalle
+-- (lleva la IP o el email del destinatario) se guardan cifrados con AES-256
 -- desde la DAL (DAL/CifradoDatos.cs). La clave está en AppSettings
 -- (CifradoClave), no en la base.
 -- Un valor cifrado ocupa más que el original: se agrandan las columnas.
@@ -34,6 +35,7 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'UQ_Usuario_GmailIndice' A
 GO
 ALTER TABLE DocumentoCompartido ALTER COLUMN EmailDestinatario NVARCHAR(400) NOT NULL;
 ALTER TABLE Dispositivo ALTER COLUMN Descripcion NVARCHAR(600) NULL;
+ALTER TABLE NotificacionRecibida ALTER COLUMN Detalle NVARCHAR(MAX) NULL;
 GO
 
 -- ----------------------------------------
@@ -151,6 +153,17 @@ BEGIN
     SET NOCOUNT ON;
     INSERT INTO DocumentoCompartido (Id, DocumentoId, UsuarioId, EmailDestinatario, TokenHash, FechaCreacion, FechaVencimiento)
     VALUES (@Id, @DocumentoId, @UsuarioId, @EmailDestinatario, @TokenHash, @FechaCreacion, @FechaVencimiento);
+END
+GO
+
+CREATE OR ALTER PROCEDURE SP_NotificacionRecibida_Registrar
+    @UsuarioId INT,
+    @Evento NVARCHAR(100),
+    @Detalle NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO NotificacionRecibida (UsuarioId, Evento, Detalle) VALUES (@UsuarioId, @Evento, @Detalle);
 END
 GO
 

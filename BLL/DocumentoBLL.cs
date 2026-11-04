@@ -299,6 +299,8 @@ namespace BLL
         {
             try { almacenamiento.Eliminar(ubicacion); } catch (Exception) { }
         }
+        /// Cómo se nombra un enlace compartido en la Bitácora.
+        internal const string ReferenciaEnlace = "enlace #";
         private static string PrefijoBitacora(int id)
         {
             return "Documento #" + id + ":";

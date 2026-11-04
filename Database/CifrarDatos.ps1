@@ -1,6 +1,7 @@
 ﻿# Cifra los datos personales que ya estaban en la base antes de
 # Database/Cifrado.sql: Usuario (Gmail, Dni, Telefono y su GmailIndice),
-# DocumentoCompartido.EmailDestinatario y Dispositivo.Descripcion.
+# DocumentoCompartido.EmailDestinatario, Dispositivo.Descripcion y
+# NotificacionRecibida.Detalle.
 # Usa la misma clase que la aplicación (DAL.CifradoDatos, desde Bin\DAL.dll)
 # y la clave CifradoClave de Doverie_App\AppSettings.config.
 # Se puede ejecutar más de una vez: lo que ya está cifrado no se toca.
@@ -31,7 +32,8 @@ try {
     foreach ($Consulta in @(
         @{ Tabla = 'Usuario'; Sql = 'SELECT Id, Gmail, Dni, Telefono FROM Usuario' },
         @{ Tabla = 'DocumentoCompartido'; Sql = 'SELECT Id, EmailDestinatario FROM DocumentoCompartido' },
-        @{ Tabla = 'Dispositivo'; Sql = 'SELECT Id, Descripcion FROM Dispositivo' })) {
+        @{ Tabla = 'Dispositivo'; Sql = 'SELECT Id, Descripcion FROM Dispositivo' },
+        @{ Tabla = 'NotificacionRecibida'; Sql = 'SELECT Id, Detalle FROM NotificacionRecibida' })) {
         $Lector = New-Object System.Data.SqlClient.SqlCommand $Consulta.Sql, $Conexion, $Transaccion
         $Filas = New-Object System.Data.DataTable
         $Filas.Load($Lector.ExecuteReader())
@@ -59,8 +61,14 @@ try {
         Parametro $Comando '@Id' $Fila.Id
         [void]$Comando.ExecuteNonQuery()
     }
+    foreach ($Fila in $Tablas['NotificacionRecibida'].Rows) {
+        $Comando = New-Object System.Data.SqlClient.SqlCommand 'UPDATE NotificacionRecibida SET Detalle = @Detalle WHERE Id = @Id', $Conexion, $Transaccion
+        Parametro $Comando '@Detalle' (Cifrar $Fila.Detalle)
+        Parametro $Comando '@Id' $Fila.Id
+        [void]$Comando.ExecuteNonQuery()
+    }
     $Transaccion.Commit()
-    Write-Host ("Cifrado: {0} usuarios, {1} documentos compartidos, {2} dispositivos." -f $Tablas['Usuario'].Rows.Count, $Tablas['DocumentoCompartido'].Rows.Count, $Tablas['Dispositivo'].Rows.Count)
+    Write-Host ("Cifrado: {0} usuarios, {1} documentos compartidos, {2} dispositivos, {3} notificaciones." -f $Tablas['Usuario'].Rows.Count, $Tablas['DocumentoCompartido'].Rows.Count, $Tablas['Dispositivo'].Rows.Count, $Tablas['NotificacionRecibida'].Rows.Count)
     Write-Host 'Ahora: Integridad -> Recalcular todos los dígitos.'
 }
 catch {

@@ -59,19 +59,27 @@ namespace DAL
         public static string Descifrar(string valor, string clave)
         {
             if (valor == null || !valor.StartsWith(Prefijo, StringComparison.Ordinal)) return valor;
-            byte[] Datos = Convert.FromBase64String(valor.Substring(Prefijo.Length));
-            using (Aes Algoritmo = Aes.Create())
+            try
             {
-                Algoritmo.Key = Derivar(clave, "cifrado");
-                byte[] IV = new byte[Algoritmo.BlockSize / 8];
-                Array.Copy(Datos, IV, IV.Length);
-                Algoritmo.IV = IV;
-                using (ICryptoTransform Descifrador = Algoritmo.CreateDecryptor())
+                byte[] Datos = Convert.FromBase64String(valor.Substring(Prefijo.Length));
+                using (Aes Algoritmo = Aes.Create())
                 {
-                    byte[] Texto = Descifrador.TransformFinalBlock(Datos, IV.Length, Datos.Length - IV.Length);
-                    return Encoding.UTF8.GetString(Texto);
+                    Algoritmo.Key = Derivar(clave, "cifrado");
+                    byte[] IV = new byte[Algoritmo.BlockSize / 8];
+                    Array.Copy(Datos, IV, IV.Length);
+                    Algoritmo.IV = IV;
+                    using (ICryptoTransform Descifrador = Algoritmo.CreateDecryptor())
+                    {
+                        byte[] Texto = Descifrador.TransformFinalBlock(Datos, IV.Length, Datos.Length - IV.Length);
+                        return Encoding.UTF8.GetString(Texto);
+                    }
                 }
             }
+            // Valor alterado en la base: se devuelve como está para que las
+            // pantallas sigan funcionando; lo detectan los dígitos verificadores.
+            catch (FormatException) { return valor; }
+            catch (ArgumentException) { return valor; }
+            catch (CryptographicException) { return valor; }
         }
         /// Mismo email (sin espacios y sin distinguir mayúsculas), mismo índice.
         public static string Indice(string texto, string clave)

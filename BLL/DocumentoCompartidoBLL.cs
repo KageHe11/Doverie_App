@@ -54,7 +54,7 @@ namespace BLL
                 return ResultadoDocumento.ErrorEnlace;
             }
             enlace = urlBase.TrimEnd('/') + "/DocumentoCompartido.aspx?token=" + Token;
-            DocumentoBLL.RegistrarEvento("Compartir Documento", Documento, Email, usuario.Id);
+            DocumentoBLL.RegistrarEvento("Compartir Documento", Documento, DocumentoBLL.ReferenciaEnlace + Compartido.Id, usuario.Id);
             // 6. Enviar el enlace por email [ERROR-013]
             try
             {
@@ -89,7 +89,7 @@ namespace BLL
                 return ResultadoDocumento.SinAcceso;
             }
             CompartidoDal.Revocar(compartidoId);
-            DocumentoBLL.RegistrarEvento("Revocar Enlace Compartido", new DocumentoDAL().ObtenerDatos(Compartido.DocumentoId), Compartido.EmailDestinatario, usuario.Id);
+            DocumentoBLL.RegistrarEvento("Revocar Enlace Compartido", new DocumentoDAL().ObtenerDatos(Compartido.DocumentoId), DocumentoBLL.ReferenciaEnlace + Compartido.Id, usuario.Id);
             return ResultadoDocumento.Exitoso;
         }
         /// CU-001-018 pasos 2 y 3: valida el token del enlace. Un token que
@@ -136,7 +136,7 @@ namespace BLL
                 DocumentoCompartidoDAL CompartidoDal = new DocumentoCompartidoDAL();
                 CompartidoDal.RegistrarAcceso(compartido.Id);
             }
-            DocumentoBLL.RegistrarEvento(descarga ? "Descarga Documento Compartido" : "Acceso Documento Compartido", documento, compartido.EmailDestinatario, null);
+            DocumentoBLL.RegistrarEvento(descarga ? "Descarga Documento Compartido" : "Acceso Documento Compartido", documento, DocumentoBLL.ReferenciaEnlace + compartido.Id, null);
             if (notificarTitular)
             {
                 GestorEventos.Notificar(CatalogoEventos.DocumentoAccedido, documento.CuentaId, documento.Nombre + " (" + compartido.EmailDestinatario + ")");
