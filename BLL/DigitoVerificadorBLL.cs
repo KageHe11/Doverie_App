@@ -33,11 +33,11 @@ namespace BLL
             return Problemas;
         }
         /// Recalcula los dígitos de una tabla, aceptando sus datos actuales.
+        /// Si la tabla fue eliminada, acepta que ya no está.
         public List<ProblemaIntegridadBE> RecalcularTabla(UsuarioBE administrador, string tabla)
         {
             DigitoVerificadorDAL Dal = new DigitoVerificadorDAL();
-            if (!Dal.ListarTablas().Contains(tabla)) return Verificar();
-            Dal.RecalcularTabla(tabla);
+            if (!Dal.RecalcularTabla(tabla)) return Verificar();
             List<ProblemaIntegridadBE> Problemas = Dal.VerificarTodo();
             new BitacoraBLL().Registrar("Recalcular Dígitos Verificadores", "Tabla " + tabla, administrador.Id);
             return Problemas;

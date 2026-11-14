@@ -100,13 +100,38 @@ namespace DAL
             DataSet Ds = new DAO().ExecuteDataSetStoredProcedure("SP_DV_ListarTablas", null, CommandType.StoredProcedure);
             return Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString()).ToList();
         }
+        /// Tablas con dígitos guardados que ya no están protegidas: se borró
+        /// la tabla o su columna DVH. ListarTablas no las ve, porque solo
+        /// lista las tablas que existen y tienen DVH.
+        private static List<string> TablasEliminadas(List<string> protegidas)
+        {
+            DataSet Ds;
+            try
+            {
+                Ds = new DAO().ExecuteDataSetStoredProcedure("SP_DV_ListarTablasConDigitos", null, CommandType.StoredProcedure);
+            }
+            catch (System.Data.SqlClient.SqlException Ex) when (Ex.Number == 2812)
+            {
+                // Base restaurada de un backup anterior a este SP: se verifica
+                // como antes, para no dejar a nadie afuera. Se vuelve a crear
+                // ejecutando Database/DigitoVerificador.sql.
+                return new List<string>();
+            }
+            return Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString())
+                .Where(T => !protegidas.Contains(T, StringComparer.OrdinalIgnoreCase)).ToList();
+        }
         /// Verifica todas las tablas y actualiza BaseComprometida.
         public List<ProblemaIntegridadBE> VerificarTodo()
         {
             lock (Bloqueo)
             {
                 List<ProblemaIntegridadBE> Problemas = new List<ProblemaIntegridadBE>();
-                foreach (string Tabla in ListarTablas()) Problemas.AddRange(Verificar(Tabla));
+                List<string> Protegidas = ListarTablas();
+                foreach (string Tabla in Protegidas) Problemas.AddRange(Verificar(Tabla));
+                foreach (string Tabla in TablasEliminadas(Protegidas))
+                {
+                    Problemas.Add(new ProblemaIntegridadBE { Tabla = Tabla, Nivel = ProblemaIntegridadBE.NivelTabla, Detalle = "Tabla eliminada o sin columna DVH" });
+                }
                 comprometida = Problemas.Count > 0;
                 return Problemas;
             }
@@ -155,20 +180,37 @@ namespace DAL
 
         /// Recalcula los dígitos de una tabla aceptando sus datos actuales
         /// (lo usa el Administrador después de revisar una alteración).
-        public void RecalcularTabla(string tabla)
+        /// Para una tabla eliminada, aceptar el estado actual es borrar sus
+        /// dígitos. Devuelve false si la tabla no es protegida ni eliminada.
+        public bool RecalcularTabla(string tabla)
         {
             lock (Bloqueo)
             {
-                Recalcular(tabla);
+                List<string> Protegidas = ListarTablas();
+                if (Protegidas.Contains(tabla)) Recalcular(tabla);
+                else if (TablasEliminadas(Protegidas).Contains(tabla)) OlvidarTabla(tabla);
+                else return false;
+                return true;
             }
         }
         public void RecalcularTodo()
         {
             lock (Bloqueo)
             {
-                foreach (string Tabla in ListarTablas()) Recalcular(Tabla);
+                List<string> Protegidas = ListarTablas();
+                foreach (string Tabla in Protegidas) Recalcular(Tabla);
+                foreach (string Tabla in TablasEliminadas(Protegidas)) OlvidarTabla(Tabla);
                 comprometida = false;
             }
+        }
+        /// Borra los dígitos guardados de una tabla que ya no está protegida.
+        private static void OlvidarTabla(string tabla)
+        {
+            new DAO().ExecuteNonQueryStoredProcedure("SP_DV_GuardarDigitos", new Dictionary<string, object>
+            {
+                { "@Tabla", tabla },
+                { "@Json", "[]" }
+            }, CommandType.StoredProcedure);
         }
         private static void Recalcular(string tabla)
         {

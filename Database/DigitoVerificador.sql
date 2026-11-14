@@ -139,6 +139,17 @@ BEGIN
 END
 GO
 
+-- Tablas que tienen dígitos guardados. Si una ya no está entre las
+-- protegidas (se borró la tabla o su columna DVH), la verificación lo
+-- informa: SP_DV_ListarTablas solo ve las tablas que siguen existiendo.
+CREATE OR ALTER PROCEDURE SP_DV_ListarTablasConDigitos
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT DISTINCT Tabla FROM DigitoVerificador ORDER BY Tabla;
+END
+GO
+
 -- Reemplaza los dígitos verticales de una tabla. @Json:
 -- [{"Columna":"Nombre","DV":"..."}, ..., {"Columna":"","DV":"..."}]
 CREATE OR ALTER PROCEDURE SP_DV_GuardarDigitos
