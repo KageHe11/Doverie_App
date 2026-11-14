@@ -27,6 +27,7 @@ namespace DAL
     public class DigitoVerificadorDAL
     {
         private const string ColumnaDVH = "DVH";
+        private const string TablaDigitos = "DigitoVerificador";
         /// Una escritura protegida a la vez: si dos se mezclaran, una vería la
         /// fila de la otra todavía sin su DVH y la tomaría como alterada.
         private static readonly object Bloqueo = new object();
@@ -49,7 +50,17 @@ namespace DAL
             if (Tablas.Length == 0) return ejecutar();
             lock (Bloqueo)
             {
-                List<string> Integras = Tablas.Where(Tabla => Verificar(Tabla).Count == 0).ToList();
+                List<string> Integras;
+                try
+                {
+                    Integras = Tablas.Where(Tabla => Verificar(Tabla).Count == 0).ToList();
+                }
+                catch (Exception)
+                {
+                    // Sin la tabla DigitoVerificador no se puede verificar: la
+                    // escritura sigue y la base queda marcada como comprometida.
+                    Integras = new List<string>();
+                }
                 if (Integras.Count < Tablas.Length) comprometida = true;
                 try
                 {
@@ -76,21 +87,23 @@ namespace DAL
         /// Tablas protegidas que modifica el SP (se averigua una vez por SP).
         private static string[] TablasModificadas(string procedimiento)
         {
-            return TablasPorProcedimiento.GetOrAdd(procedimiento, Sp =>
+            string[] Tablas;
+            if (TablasPorProcedimiento.TryGetValue(procedimiento, out Tablas)) return Tablas;
+            try
             {
-                try
-                {
-                    DataSet Ds = new DAO().ExecuteDataSetStoredProcedure("SP_DV_TablasModificadas",
-                        new Dictionary<string, object> { { "@Procedimiento", Sp } }, CommandType.StoredProcedure);
-                    return Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString()).ToArray();
-                }
-                catch (Exception)
-                {
-                    // Sin la estructura de dígitos (por ejemplo, después de
-                    // restaurar un backup anterior) la escritura sigue igual.
-                    return new string[0];
-                }
-            });
+                DataSet Ds = new DAO().ExecuteDataSetStoredProcedure("SP_DV_TablasModificadas",
+                    new Dictionary<string, object> { { "@Procedimiento", procedimiento } }, CommandType.StoredProcedure);
+                Tablas = Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString()).ToArray();
+            }
+            catch (Exception)
+            {
+                // Sin la estructura de dígitos (por ejemplo, después de
+                // restaurar un backup anterior, o con una tabla eliminada) la
+                // escritura sigue igual. No se guarda: se vuelve a averiguar
+                // cuando la base esté bien.
+                return new string[0];
+            }
+            return TablasPorProcedimiento.GetOrAdd(procedimiento, Tablas);
         }
 
         // ---------- Verificación ----------
@@ -105,6 +118,13 @@ namespace DAL
         /// lista las tablas que existen y tienen DVH.
         private static List<string> TablasEliminadas(List<string> protegidas)
         {
+            return (LeerTablasConDigitos() ?? new List<string>())
+                .Where(T => !protegidas.Contains(T, StringComparer.OrdinalIgnoreCase)).ToList();
+        }
+        /// Tablas con dígitos guardados, o null si se eliminó la propia tabla
+        /// DigitoVerificador.
+        private static List<string> LeerTablasConDigitos()
+        {
             DataSet Ds;
             try
             {
@@ -117,8 +137,11 @@ namespace DAL
                 // ejecutando Database/DigitoVerificador.sql.
                 return new List<string>();
             }
-            return Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString())
-                .Where(T => !protegidas.Contains(T, StringComparer.OrdinalIgnoreCase)).ToList();
+            catch (System.Data.SqlClient.SqlException Ex) when (Ex.Number == 208)
+            {
+                return null;
+            }
+            return Ds.Tables[0].Rows.Cast<DataRow>().Select(F => F["Tabla"].ToString()).ToList();
         }
         /// Verifica todas las tablas y actualiza BaseComprometida.
         public List<ProblemaIntegridadBE> VerificarTodo()
@@ -126,9 +149,18 @@ namespace DAL
             lock (Bloqueo)
             {
                 List<ProblemaIntegridadBE> Problemas = new List<ProblemaIntegridadBE>();
+                List<string> ConDigitos = LeerTablasConDigitos();
+                if (ConDigitos == null)
+                {
+                    // Sin los dígitos guardados no hay nada contra qué comparar:
+                    // la única salida es restaurar un backup.
+                    Problemas.Add(new ProblemaIntegridadBE { Tabla = TablaDigitos, Nivel = ProblemaIntegridadBE.NivelTabla, Detalle = "Tabla eliminada" });
+                    comprometida = true;
+                    return Problemas;
+                }
                 List<string> Protegidas = ListarTablas();
                 foreach (string Tabla in Protegidas) Problemas.AddRange(Verificar(Tabla));
-                foreach (string Tabla in TablasEliminadas(Protegidas))
+                foreach (string Tabla in ConDigitos.Where(T => !Protegidas.Contains(T, StringComparer.OrdinalIgnoreCase)))
                 {
                     Problemas.Add(new ProblemaIntegridadBE { Tabla = Tabla, Nivel = ProblemaIntegridadBE.NivelTabla, Detalle = "Tabla eliminada o sin columna DVH" });
                 }
@@ -197,6 +229,8 @@ namespace DAL
         {
             lock (Bloqueo)
             {
+                // Sin la tabla DigitoVerificador no hay dónde guardarlos.
+                if (LeerTablasConDigitos() == null) return;
                 List<string> Protegidas = ListarTablas();
                 foreach (string Tabla in Protegidas) Recalcular(Tabla);
                 foreach (string Tabla in TablasEliminadas(Protegidas)) OlvidarTabla(Tabla);

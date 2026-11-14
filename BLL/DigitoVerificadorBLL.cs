@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BE;
 using DAL;
@@ -13,12 +14,40 @@ namespace BLL
     public class DigitoVerificadorBLL
     {
         public const string PermisoGestion = "GestionarIntegridad";
+        /// Perfil que puede entrar en modo recuperación.
+        public const string PerfilAdministrador = "Administrador";
+        /// Lo único que se habilita en modo recuperación: Integridad y Backup.
+        public static readonly string[] PermisosRecuperacion = { PermisoGestion, "GenerarBackup", "RestaurarBackup" };
 
         /// Lo que sabe la aplicación sin volver a verificar: lo usa PaginaBase
         /// en cada request para sacar a los Usuarios si la base se compromete.
         public static bool BaseComprometida
         {
             get { return DigitoVerificadorDAL.BaseComprometida; }
+        }
+        /// Para los resguardos ante una tabla eliminada: si algo falló y la
+        /// base no se sabía alterada, se verifica en ese momento. Si está
+        /// íntegra, la falla es otra y se deja pasar el error.
+        public static bool HayAlteracion()
+        {
+            if (BaseComprometida) return true;
+            try
+            {
+                return new DigitoVerificadorBLL().Verificar().Count > 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// Modo recuperación: la base está alterada y el árbol de permisos no
+        /// alcanza para reconocer al Administrador (se borraron Permiso,
+        /// FamiliaComponente o PerfilFamilia, o sus filas). Se lo reconoce por
+        /// su Perfil, y solo puede ir a Integridad y Backup para restaurar.
+        public static bool EsModoRecuperacion(UsuarioBE usuario)
+        {
+            return BaseComprometida && usuario != null && usuario.Perfil != null &&
+                usuario.Perfil.NombrePerfil == PerfilAdministrador && !UsuarioBLL.TienePermiso(usuario, PermisoGestion);
         }
         /// Verifica todas las tablas. Al detectar una alteración la registra en
         /// la Bitácora (una vez, hasta que la base vuelva a estar íntegra).

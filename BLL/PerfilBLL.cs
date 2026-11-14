@@ -76,7 +76,17 @@ namespace BLL
         public PerfilBE ObtenerDatos(int id)
         {
             PerfilDAL PerfilDal = new PerfilDAL();
-            return PerfilDal.ObtenerDatos(id);
+            try
+            {
+                return PerfilDal.ObtenerDatos(id);
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Con la base alterada puede faltar alguna tabla de permisos:
+                // el Perfil queda sin Familias y solo el Administrador entra,
+                // en modo recuperación (DigitoVerificadorBLL.EsModoRecuperacion).
+                return PerfilDal.ObtenerSinPermisos(id);
+            }
         }
         public void ActualizarPermisos(PerfilBE perfil)
         {

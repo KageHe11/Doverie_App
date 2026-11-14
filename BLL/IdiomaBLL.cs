@@ -32,7 +32,20 @@ namespace BLL
         {
             ContextoIdioma Contexto = new ContextoIdioma();
             IdiomaDAL IdiomaDal = new IdiomaDAL();
-            IdiomaBE Predeterminado = IdiomaDal.ObtenerPredeterminado();
+            IdiomaResguardoService Resguardo = new IdiomaResguardoService();
+            IdiomaBE Predeterminado;
+            bool DesdeResguardo = false;
+            try
+            {
+                Predeterminado = IdiomaDal.ObtenerPredeterminado();
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Tabla Idioma eliminada: se traduce con la copia de App_Data,
+                // para que el Administrador pueda entrar y restaurar.
+                Predeterminado = Resguardo.Leer();
+                DesdeResguardo = true;
+            }
             if (Predeterminado == null)
             {
                 // Sin idiomas cargados: el contexto devuelve las claves tal cual.
@@ -49,6 +62,8 @@ namespace BLL
                 // posible, el contexto devuelve las claves tal cual.
                 return new ContextoIdioma();
             }
+            if (DesdeResguardo) return Contexto;
+            Resguardo.Guardar(Predeterminado);
             if (idiomaId.HasValue && idiomaId.Value != Predeterminado.Id)
             {
                 IdiomaBE Preferido = IdiomaDal.ObtenerDatos(idiomaId.Value);

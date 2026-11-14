@@ -66,18 +66,8 @@ namespace DAL
         }
         public PerfilBE ObtenerDatos(int Pid)
         {
-            DAO Dao = new DAO();
-            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
-            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ObtenerDatos", Parametros, CommandType.StoredProcedure);
-            if (Ds.Tables[0].Rows.Count == 0) return null;
-            DataRow Fila = Ds.Tables[0].Rows[0];
-            PerfilBE Perfil = new PerfilBE
-            {
-                Id = Convert.ToInt32(Fila["Id"]),
-                NombrePerfil = Fila["NombrePerfil"].ToString(),
-                Activo = Convert.ToBoolean(Fila["Activo"]),
-                AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
-            };
+            PerfilBE Perfil = ObtenerSinPermisos(Pid);
+            if (Perfil == null) return null;
             FamiliaDAL FamiliaDal = new FamiliaDAL();
             Dictionary<int, ComponentePermiso> Arbol = FamiliaDal.ArmarArbol();
             foreach (int IdFamilia in ObtenerFamiliasActuales(Pid))
@@ -89,6 +79,23 @@ namespace DAL
             }
 
             return Perfil;
+        }
+        /// Solo los datos del Perfil, sin su árbol de Familias: alcanza para
+        /// reconocer al Administrador cuando las tablas de permisos faltan.
+        public PerfilBE ObtenerSinPermisos(int Pid)
+        {
+            DAO Dao = new DAO();
+            Dictionary<string, object> Parametros = new Dictionary<string, object> { { "@Id", Pid } };
+            DataSet Ds = Dao.ExecuteDataSetStoredProcedure("SP_Perfil_ObtenerDatos", Parametros, CommandType.StoredProcedure);
+            if (Ds.Tables[0].Rows.Count == 0) return null;
+            DataRow Fila = Ds.Tables[0].Rows[0];
+            return new PerfilBE
+            {
+                Id = Convert.ToInt32(Fila["Id"]),
+                NombrePerfil = Fila["NombrePerfil"].ToString(),
+                Activo = Convert.ToBoolean(Fila["Activo"]),
+                AsignablePorEmpresa = Convert.ToBoolean(Fila["AsignablePorEmpresa"])
+            };
         }
         public List<PerfilBE> Listar()
         {

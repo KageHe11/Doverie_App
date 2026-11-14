@@ -66,7 +66,17 @@ public partial class Site : MasterPage
     {
         UsuarioBE Usuario = Session["Usuario"] as UsuarioBE;
         if (Usuario == null || !pnlCampana.Visible) return;
-        int NoLeidas = new NotificacionBLL().ContarNoLeidas(Usuario.Id);
+        int NoLeidas;
+        try
+        {
+            NoLeidas = new NotificacionBLL().ContarNoLeidas(Usuario.Id);
+        }
+        catch (Exception)
+        {
+            // Tabla de notificaciones eliminada: la campana queda sin contador.
+            if (!DigitoVerificadorBLL.HayAlteracion()) throw;
+            NoLeidas = 0;
+        }
         lblNoLeidas.Visible = NoLeidas > 0;
         lblNoLeidas.Text = NoLeidas > 99 ? "99+" : NoLeidas.ToString();
     }
@@ -78,12 +88,9 @@ public partial class Site : MasterPage
         if (usuario.Independiente) return Traductor.T("saludo.freelance", usuario.Nombre);
         return Traductor.T("saludo.general", usuario.Nombre);
     }
+    /// En modo recuperación también muestra Integridad y Backup.
     private bool TienePermiso(UsuarioBE usuario, string nombrePermiso)
     {
-        if (usuario.Perfil == null) return false;
-        PermisoBLL PermisoBll = new PermisoBLL();
-        PermisoBE Permiso = PermisoBll.ObtenerPorNombre(nombrePermiso);
-        if (Permiso == null) return false;
-        return usuario.Perfil.TienePermiso(Permiso.Id);
+        return UsuarioBLL.TieneAcceso(usuario, nombrePermiso);
     }
 }

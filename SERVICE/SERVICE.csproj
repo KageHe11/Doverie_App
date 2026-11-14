@@ -176,6 +176,7 @@
     <Compile Include="AlmacenamientoS3.cs" />
     <Compile Include="BitacoraArchivoService.cs" />
     <Compile Include="ContextoIdioma.cs" />
+    <Compile Include="IdiomaResguardoService.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="GeneradorPdf.cs" />
     <Compile Include="HashService.cs" />

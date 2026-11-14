@@ -370,3 +370,4 @@ Doverie_App/App_Data/Blockchain/
 
 # Generado por Database/CompletarHistoricos.ps1 (contiene datos de la Bitácora)
 Database/CompletarHistoricos.generado.sql
+Doverie_App/App_Data/IdiomaResguardo.xml

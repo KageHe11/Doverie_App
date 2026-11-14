@@ -14,7 +14,18 @@ public partial class SelectorIdioma : UserControl
         if (!IsPostBack)
         {
             IdiomaBLL IdiomaBll = new IdiomaBLL();
-            List<IdiomaBE> Idiomas = IdiomaBll.Listar();
+            List<IdiomaBE> Idiomas;
+            try
+            {
+                Idiomas = IdiomaBll.Listar();
+            }
+            catch (Exception)
+            {
+                // Tabla Idioma eliminada: no hay idiomas para elegir.
+                if (!DigitoVerificadorBLL.HayAlteracion()) throw;
+                Visible = false;
+                return;
+            }
             // Con un solo idioma no hay nada para elegir.
             Visible = Idiomas.Count > 1;
             ddlIdioma.DataSource = Idiomas;

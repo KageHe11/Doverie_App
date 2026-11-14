@@ -190,10 +190,20 @@ namespace BLL
             HashService HashServ = new HashService();
             string Identificador = HashServ.CalcularHashArchivo(Encoding.UTF8.GetBytes(tokenDispositivo));
             DispositivoDAL DispositivoDal = new DispositivoDAL();
-            if (DispositivoDal.Existe(usuario.Id, Identificador)) return;
-            bool TeniaOtros = DispositivoDal.Contar(usuario.Id) > 0;
-            if (descripcion != null && descripcion.Length > 200) descripcion = descripcion.Substring(0, 200);
-            DispositivoDal.Registrar(usuario.Id, Identificador, descripcion);
+            bool TeniaOtros;
+            try
+            {
+                if (DispositivoDal.Existe(usuario.Id, Identificador)) return;
+                TeniaOtros = DispositivoDal.Contar(usuario.Id) > 0;
+                if (descripcion != null && descripcion.Length > 200) descripcion = descripcion.Substring(0, 200);
+                DispositivoDal.Registrar(usuario.Id, Identificador, descripcion);
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Tabla Dispositivo eliminada: el aviso es secundario y no
+                // tiene que impedir que el Administrador entre a restaurar.
+                return;
+            }
             if (TeniaOtros)
             {
                 GestorEventos.Notificar(CatalogoEventos.InicioSesionNuevoDispositivo, usuario.Id, descripcion);
@@ -452,7 +462,7 @@ namespace BLL
             // Dígitos verificadores: con la base inconsistente solo entra quien
             // puede gestionar la integridad (el Administrador), para recalcular
             // los dígitos o restaurar un backup.
-            if (new DigitoVerificadorBLL().Verificar().Count > 0 && !TienePermiso(Usuario, DigitoVerificadorBLL.PermisoGestion))
+            if (new DigitoVerificadorBLL().Verificar().Count > 0 && !TieneAcceso(Usuario, DigitoVerificadorBLL.PermisoGestion))
             {
                 return ResultadoLogin.BaseInconsistente;
             }
@@ -470,9 +480,24 @@ namespace BLL
         /// el Permiso.
         public static bool TienePermiso(UsuarioBE usuario, string nombrePermiso)
         {
-            if (usuario.Perfil == null) return false;
-            PermisoBE Permiso = new PermisoBLL().ObtenerPorNombre(nombrePermiso);
+            if (usuario == null || usuario.Perfil == null) return false;
+            PermisoBE Permiso;
+            try
+            {
+                Permiso = new PermisoBLL().ObtenerPorNombre(nombrePermiso);
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Tabla Permiso eliminada: no se puede saber, así que no.
+                return false;
+            }
             return Permiso != null && usuario.Perfil.TienePermiso(Permiso.Id);
+        }
+        /// El permiso, o el acceso a Integridad y Backup en modo recuperación.
+        public static bool TieneAcceso(UsuarioBE usuario, string nombrePermiso)
+        {
+            return TienePermiso(usuario, nombrePermiso) ||
+                (DigitoVerificadorBLL.PermisosRecuperacion.Contains(nombrePermiso) && DigitoVerificadorBLL.EsModoRecuperacion(usuario));
         }
     }
 }

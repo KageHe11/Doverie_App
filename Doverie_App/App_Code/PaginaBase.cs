@@ -57,6 +57,14 @@ public class PaginaBase : Page
         NuevaCookie.HttpOnly = true;
         NuevaCookie.Expires = DateTime.Now.AddMinutes(30);
         Response.Cookies.Add(NuevaCookie);
+        // En modo recuperación (base alterada y sin poder leer los permisos)
+        // el Administrador solo puede ir a Integridad y Backup.
+        if (DigitoVerificadorBLL.EsModoRecuperacion(Usuario) &&
+            Array.IndexOf(DigitoVerificadorBLL.PermisosRecuperacion, PermisoRequerido) < 0)
+        {
+            Response.Redirect("~/Integridad.aspx");
+            return;
+        }
         // 5) Si la página pidió un Permiso puntual (PermisoRequerido) y
         // el Usuario no lo tiene, lo mandamos a Acceso Denegado.
         if (PermisoRequerido != null && !TienePermiso(Usuario, PermisoRequerido))
@@ -79,14 +87,11 @@ public class PaginaBase : Page
     }
     /// Busca el Permiso por nombre y chequea si el árbol de Familias del
     /// Perfil del Usuario lo contiene (recorrido recursivo vía el
-    /// patrón Composite armado en BE).
+    /// patrón Composite armado en BE). En modo recuperación también da
+    /// acceso a Integridad y Backup.
     private bool TienePermiso(UsuarioBE usuario, string nombrePermiso)
     {
-        if (usuario.Perfil == null) return false;
-        PermisoBLL PermisoBll = new PermisoBLL();
-        PermisoBE Permiso = PermisoBll.ObtenerPorNombre(nombrePermiso);
-        if (Permiso == null) return false;
-        return usuario.Perfil.TienePermiso(Permiso.Id);
+        return UsuarioBLL.TieneAcceso(usuario, nombrePermiso);
     }
     ///Limpia la sesión y manda al Usuario de vuelta al Login.
     private void CerrarSesionYRedirigir()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -61,7 +62,48 @@ namespace BLL
         }
         public List<BackupBE> Listar()
         {
-            return new BackupDAL().Listar();
+            try
+            {
+                return new BackupDAL().Listar();
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                return ListarArchivos();
+            }
+        }
+        /// Sin la tabla BackUp: los .bak de la carpeta de backups, con Id 0,
+        /// para poder restaurar igual (RestaurarDesdeCarpeta).
+        private List<BackupBE> ListarArchivos()
+        {
+            List<BackupBE> Lista = new List<BackupBE>();
+            string Carpeta;
+            try
+            {
+                Carpeta = new BackupDAL().ObtenerCarpeta();
+            }
+            catch (Exception)
+            {
+                return Lista;
+            }
+            if (!Directory.Exists(Carpeta)) return Lista;
+            foreach (string Ruta in Directory.GetFiles(Carpeta, PrefijoArchivo + "*.bak"))
+            {
+                DateTime Fecha;
+                string Etiqueta = BuscarEtiqueta(Path.GetFileName(Ruta));
+                if (Etiqueta == null || Path.GetFileName(Ruta) != PrefijoArchivo + Etiqueta + ".bak" ||
+                    !DateTime.TryParseExact(Etiqueta, "yyyyMMdd-HHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out Fecha))
+                {
+                    continue;
+                }
+                Lista.Add(new BackupBE
+                {
+                    Fecha = Fecha,
+                    NombreUsuario = "-",
+                    Estado = BackupBE.EstadoExitoso,
+                    Detalle = "Base: " + Path.GetFileName(Ruta) + " (" + FormatearTamano(new FileInfo(Ruta).Length) + "). Recuperado de la carpeta de backups."
+                });
+            }
+            return Lista.OrderByDescending(B => B.Fecha).ToList();
         }
 
         // ---------- Restore ----------
@@ -91,6 +133,27 @@ namespace BLL
                     return ResultadoRestauracion.ArchivoNoDisponible;
                 }
                 return Restaurar(administrador, Ruta, Etiqueta, "backup del " + Elegido.Fecha.ToString("dd/MM/yyyy HH:mm:ss"), out previo);
+            }
+        }
+        /// Restaura un .bak de la carpeta de backups por su etiqueta, para
+        /// cuando no está la tabla BackUp y el historial sale de la carpeta.
+        public ResultadoRestauracion RestaurarDesdeCarpeta(UsuarioBE administrador, string etiqueta, out BackupBE previo)
+        {
+            previo = null;
+            if (etiqueta == null || !Regex.IsMatch(etiqueta, @"^\d{8}-\d{6}$")) return ResultadoRestauracion.NoEncontrado;
+            lock (Bloqueo)
+            {
+                string Ruta;
+                try
+                {
+                    Ruta = Path.Combine(new BackupDAL().ObtenerCarpeta(), PrefijoArchivo + etiqueta + ".bak");
+                    if (!File.Exists(Ruta)) return ResultadoRestauracion.ArchivoNoDisponible;
+                }
+                catch (Exception)
+                {
+                    return ResultadoRestauracion.ArchivoNoDisponible;
+                }
+                return Restaurar(administrador, Ruta, etiqueta, "archivo " + Path.GetFileName(Ruta), out previo);
             }
         }
         /// Restaura un .bak subido por el Administrador. Se guarda en la carpeta
@@ -144,8 +207,22 @@ namespace BLL
             // Backup de seguridad del estado actual.
             if (Generar(administrador, out previo) != ResultadoBackup.Exitoso) return ResultadoRestauracion.ErrorRespaldoPrevio;
             // El historial de backups está en la misma base que se restaura:
-            // se guarda antes, porque esos backups siguen existiendo.
-            List<BackupBE> Historial = BackupDal.Listar();
+            // se guarda antes, porque esos backups siguen existiendo. Sin la
+            // tabla BackUp, se arma con los .bak de la carpeta y el backup de
+            // seguridad, para no perder los posteriores al que se restaura.
+            List<BackupBE> Historial;
+            try
+            {
+                Historial = BackupDal.Listar();
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                DateTime FechaPrevio = previo.Fecha;
+                Historial = ListarArchivos();
+                Historial.RemoveAll(B => B.Fecha == FechaPrevio);
+                Historial.ForEach(B => B.UsuarioId = administrador.Id);
+                Historial.Add(previo);
+            }
             // Base de datos
             try
             {
@@ -179,14 +256,21 @@ namespace BLL
         private static void RegistrarRestore(UsuarioBE administrador, BackupBE previo, List<BackupBE> historial, string detalle)
         {
             BackupDAL BackupDal = new BackupDAL();
-            List<BackupBE> Actual = BackupDal.Listar();
             bool PrevioAgregado = false;
-            // Del más viejo al más nuevo, para que los Id sigan el orden de las fechas.
-            foreach (BackupBE Backup in historial.OrderBy(B => B.Fecha))
+            try
             {
-                if (Actual.Exists(B => B.Fecha == Backup.Fecha && B.Estado == Backup.Estado)) continue;
-                BackupDal.Registrar(Backup);
-                if (Backup.Fecha == previo.Fecha) PrevioAgregado = true;
+                List<BackupBE> Actual = BackupDal.Listar();
+                // Del más viejo al más nuevo, para que los Id sigan el orden de las fechas.
+                foreach (BackupBE Backup in historial.OrderBy(B => B.Fecha))
+                {
+                    if (Actual.Exists(B => B.Fecha == Backup.Fecha && B.Estado == Backup.Estado)) continue;
+                    BackupDal.Registrar(Backup);
+                    if (Backup.Fecha == previo.Fecha) PrevioAgregado = true;
+                }
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // El restore falló y la tabla BackUp sigue sin existir.
             }
             if (PrevioAgregado)
             {
@@ -201,7 +285,15 @@ namespace BLL
         {
             backup.Estado = resultado == ResultadoBackup.Exitoso ? BackupBE.EstadoExitoso : BackupBE.EstadoFallido;
             backup.Detalle = detalle.Length > 500 ? detalle.Substring(0, 500) : detalle;
-            new BackupDAL().Registrar(backup);
+            try
+            {
+                new BackupDAL().Registrar(backup);
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Tabla BackUp eliminada: el .bak existe igual y, si se usa
+                // como backup de seguridad de un restore, se registra después.
+            }
             new BitacoraBLL().Registrar("Generar Backup Manual", backup.Estado + ". " + backup.Detalle, backup.UsuarioId);
             return resultado;
         }

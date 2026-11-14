@@ -78,7 +78,18 @@ public partial class _Default : System.Web.UI.Page
     private static List<object> Planes()
     {
         List<object> Resultado = new List<object>();
-        foreach (IGrouping<string, PlanBE> Nivel in new SuscripcionBLL().ListarPlanes().GroupBy(P => P.Nombre))
+        List<PlanBE> Planes;
+        try
+        {
+            Planes = new SuscripcionBLL().ListarPlanes();
+        }
+        catch (Exception)
+        {
+            // Tabla Plan eliminada: la página de inicio se muestra sin planes.
+            if (!DigitoVerificadorBLL.HayAlteracion()) throw;
+            return Resultado;
+        }
+        foreach (IGrouping<string, PlanBE> Nivel in Planes.GroupBy(P => P.Nombre))
         {
             decimal Desde = Nivel.Min(P => P.PrecioMensual);
             Resultado.Add(new

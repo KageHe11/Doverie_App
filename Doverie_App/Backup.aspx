@@ -58,7 +58,7 @@
             <asp:TemplateField>
                 <ItemTemplate>
                     <asp:LinkButton ID="btnRestaurar" runat="server" CssClass="btn btn-sm btn-outline-warning text-nowrap"
-                        CommandName="Restaurar" CommandArgument='<%# Eval("Id") %>' Text='<%# Traductor.T("restore.boton") %>'
+                        CommandName="Restaurar" CommandArgument='<%# (int)Eval("Id") > 0 ? Eval("Id").ToString() : "carpeta:" + BLL.BackupBLL.EtiquetaDe((DateTime)Eval("Fecha")) %>' Text='<%# Traductor.T("restore.boton") %>'
                         OnClientClick='<%# Confirmacion.Para("restore.confirmar") %>' />
                 </ItemTemplate>
             </asp:TemplateField>

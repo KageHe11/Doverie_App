@@ -18,7 +18,16 @@ namespace BLL
         public void Registrar(string accion, string detalle, int? usuarioId)
         {
             DAL.BitacoraDAL BitacoraDal = new DAL.BitacoraDAL();
-            BitacoraDal.Registrar(accion, detalle, usuarioId);
+            try
+            {
+                BitacoraDal.Registrar(accion, detalle, usuarioId);
+            }
+            catch (Exception) when (DigitoVerificadorBLL.HayAlteracion())
+            {
+                // Tabla Bitacora eliminada: el evento no se puede guardar, pero
+                // la operación sigue, para poder entrar y restaurar un backup.
+                return;
+            }
             // Mantenimiento de los últimos 30 días: lo vencido se archiva en
             // el XML y recién después sale de la tabla.
             List<BitacoraBE> Vencidos = BitacoraDal.ObtenerVencidos(DiasRetencion);

@@ -34,8 +34,11 @@ public partial class Integridad : PaginaBase
     }
     protected void btnRecalcularTodo_Click(object sender, EventArgs e)
     {
-        Mostrar(new DigitoVerificadorBLL().RecalcularTodo(UsuarioActual));
-        Mensaje.Exito(Traductor.T("integ.recalculado"));
+        List<ProblemaIntegridadBE> Problemas = new DigitoVerificadorBLL().RecalcularTodo(UsuarioActual);
+        Mostrar(Problemas);
+        // Sin la tabla DigitoVerificador no se puede recalcular: queda el
+        // problema a la vista y la salida es restaurar un backup.
+        if (Problemas.Count == 0) Mensaje.Exito(Traductor.T("integ.recalculado"));
     }
     protected void gvProblemas_RowCommand(object sender, GridViewCommandEventArgs e)
     {

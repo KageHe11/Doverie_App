@@ -67,7 +67,12 @@ public partial class Backup : PaginaBase
         if (e.CommandName != "Restaurar") return;
         if (!PuedeRestaurar) { MostrarError(Traductor.T("error.056")); return; }
         BackupBE Previo;
-        ResultadoRestauracion Resultado = new BackupBLL().RestaurarDesdeHistorial(UsuarioActual, Convert.ToInt32(e.CommandArgument), out Previo);
+        string Argumento = e.CommandArgument.ToString();
+        // Sin la tabla BackUp, el historial sale de la carpeta de backups y
+        // cada fila trae la etiqueta del .bak en lugar del Id.
+        ResultadoRestauracion Resultado = Argumento.StartsWith("carpeta:")
+            ? new BackupBLL().RestaurarDesdeCarpeta(UsuarioActual, Argumento.Substring("carpeta:".Length), out Previo)
+            : new BackupBLL().RestaurarDesdeHistorial(UsuarioActual, Convert.ToInt32(Argumento), out Previo);
         MostrarRestauracion(Resultado, Previo);
     }
     protected void btnRestaurarArchivo_Click(object sender, EventArgs e)
@@ -90,6 +95,12 @@ public partial class Backup : PaginaBase
     }
     private void MostrarRestauracion(ResultadoRestauracion resultado, BackupBE previo)
     {
+        // La base cambió: el Perfil de la sesión se vuelve a leer, porque en
+        // modo recuperación se había cargado sin su árbol de permisos.
+        if (resultado == ResultadoRestauracion.Exitoso || resultado == ResultadoRestauracion.ExitosoSinArchivos)
+        {
+            UsuarioActual.Perfil = new PerfilBLL().ObtenerDatos(UsuarioActual.Perfil.Id);
+        }
         string Previo = previo == null ? "" : previo.Fecha.ToString("dd/MM/yyyy HH:mm:ss");
         switch (resultado)
         {
