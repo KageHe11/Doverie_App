@@ -17,9 +17,25 @@ public partial class Facturacion : PaginaBase
         btnEnviarEmail.Text = Traductor.T("fact.enviarEmail");
         if (!IsPostBack)
         {
+            RevisarPendientes();
             CargarPlan();
             CargarPagos();
         }
+    }
+    /// Si quedó un pago pendiente que ya se aprobó en la pasarela, se
+    /// confirma antes de mostrar el historial (ver SuscripcionBLL.ConfirmarPendientes).
+    private void RevisarPendientes()
+    {
+        PagoBE Pago;
+        bool EmailEnviado;
+        ResultadoSuscripcion? Resultado = new SuscripcionBLL().ConfirmarPendientes(UsuarioActual, out Pago, out EmailEnviado);
+        if (Resultado != ResultadoSuscripcion.Exitoso || Pago == null) return;
+        string Plan = Traductor.T("plan.nivel." + Pago.PlanNombre) + " - " + Traductor.T("plan.tipo." + Pago.PlanTipo);
+        string Mensaje = Pago.Concepto == PagoBE.ConceptoRenovacion
+            ? Traductor.T("susc.exitoRenovacion", Plan)
+            : Traductor.T(Pago.Concepto == PagoBE.ConceptoCambioPlan ? "susc.exitoCambio" : "susc.exitoAlta", Plan);
+        if (EmailEnviado) Mensaje += " " + Traductor.T("susc.emailEnviado");
+        this.Mensaje.Exito(Mensaje);
     }
     private void CargarPlan()
     {

@@ -41,6 +41,7 @@ public partial class Suscripcion : PaginaBase
         {
             int PagoId;
             if (int.TryParse(Request.QueryString["pago"], out PagoId)) ProcesarRetorno(PagoId);
+            else RevisarPendientes();
             MostrarEstado();
         }
     }
@@ -254,6 +255,19 @@ public partial class Suscripcion : PaginaBase
         PagoBE Pago;
         bool EmailEnviado;
         ResultadoSuscripcion Resultado = new SuscripcionBLL().ConfirmarPago(UsuarioActual, pagoId, out Pago, out EmailEnviado);
+        MostrarResultadoPago(Resultado, Pago, EmailEnviado);
+    }
+    /// Sin volver del checkout: si quedó un pago pendiente que ya se aprobó
+    /// o se rechazó en la pasarela, se resuelve y se avisa.
+    private void RevisarPendientes()
+    {
+        PagoBE Pago;
+        bool EmailEnviado;
+        ResultadoSuscripcion? Resultado = new SuscripcionBLL().ConfirmarPendientes(UsuarioActual, out Pago, out EmailEnviado);
+        if (Resultado.HasValue) MostrarResultadoPago(Resultado.Value, Pago, EmailEnviado);
+    }
+    private void MostrarResultadoPago(ResultadoSuscripcion Resultado, PagoBE Pago, bool EmailEnviado)
+    {
         switch (Resultado)
         {
             case ResultadoSuscripcion.Exitoso:

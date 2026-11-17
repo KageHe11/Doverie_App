@@ -204,6 +204,34 @@ namespace BLL
             }
             return ResultadoSuscripcion.Exitoso;
         }
+        /// Días hacia atrás en que se revisan los pagos pendientes.
+        public const int DiasPagoPendiente = 7;
+        /// Revisa en la pasarela los pagos pendientes recientes de la cuenta.
+        /// Mercado Pago no avisa solo, y si el Usuario pagó pero no volvió a
+        /// Doverie, el pago quedaba pendiente: se confirma al entrar a
+        /// Suscripción o Facturación. Devuelve el resultado del último pago
+        /// que se aprobó o se rechazó en esta llamada, o null si ninguno cambió.
+        public ResultadoSuscripcion? ConfirmarPendientes(UsuarioBE usuario, out PagoBE pago, out bool emailEnviado)
+        {
+            pago = null;
+            emailEnviado = false;
+            if (!EsTitular(usuario)) return null;
+            ResultadoSuscripcion? Resultado = null;
+            DateTime Desde = DateTime.Now.AddDays(-DiasPagoPendiente);
+            List<PagoBE> Pendientes = new PagoDAL().ListarPorUsuario(DocumentoBLL.CuentaDe(usuario))
+                .Where(P => P.Estado == PagoBE.EstadoPendiente && P.Fecha >= Desde).ToList();
+            foreach (PagoBE Pendiente in Pendientes)
+            {
+                PagoBE Revisado;
+                bool Enviado;
+                ResultadoSuscripcion Revision = ConfirmarPago(usuario, Pendiente.Id, out Revisado, out Enviado);
+                if (Revision != ResultadoSuscripcion.Exitoso && Revision != ResultadoSuscripcion.ErrorPago) continue;
+                Resultado = Revision;
+                pago = Revisado;
+                emailEnviado = Enviado;
+            }
+            return Resultado;
+        }
         /// Pago pendiente de la cuenta del Usuario, o null. Lo usa el
         /// checkout simulado para no mostrar ni resolver pagos ajenos.
         public PagoBE ObtenerPagoPendiente(UsuarioBE usuario, int pagoId)
